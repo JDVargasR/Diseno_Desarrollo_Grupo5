@@ -10,16 +10,13 @@
 namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class GARANTIAS
+    public partial class USUARIO_LOGIN_SP_Result
     {
-        public int ID_GARANTIA { get; set; }
-        public int ID_PRODUCTO { get; set; }
-        public string DESCRIPCION { get; set; }
-        public int DURACION_MESES { get; set; }
-        public string CONDICIONES { get; set; }
-    
-        public virtual PRODUCTOS PRODUCTOS { get; set; }
+        public int ID_USUARIO { get; set; }
+        public string NOMBRE { get; set; }
+        public string CORREO { get; set; }
+        public int ID_ROL { get; set; }
+        public string ROL { get; set; }
     }
 }

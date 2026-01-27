@@ -129,6 +129,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AutenticacionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="EF\BITACORA.cs">
       <DependentUpon>Model1.tt</DependentUpon>
@@ -199,12 +200,16 @@
     <Compile Include="EF\USUARIOS.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="EF\USUARIO_LOGIN_SP_Result.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="EF\VENTAS.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AutenticacionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -261,16 +266,20 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="StaticFiles\css\estilos.css" />
+    <Content Include="StaticFiles\css\Index.css" />
     <Content Include="StaticFiles\css\jquery.mCustomScrollbar.css" />
-    <Content Include="StaticFiles\css\login.css" />
-    <Content Include="StaticFiles\css\main.css" />
     <Content Include="StaticFiles\css\material-design-iconic-font.min.css" />
     <Content Include="StaticFiles\css\material.min.css" />
     <Content Include="StaticFiles\css\normalize.css" />
     <Content Include="StaticFiles\css\normalize2.css" />
-    <Content Include="StaticFiles\css\styles.css" />
-    <Content Include="StaticFiles\css\sweetalert2.css" />
+    <Content Include="StaticFiles\css\Autenticacion.css" />
+    <Content Include="StaticFiles\img\AlphaStockLogo.png" />
+    <Content Include="StaticFiles\js\Autenticacion.js" />
+    <Content Include="StaticFiles\js\customScrollReveal.js" />
+    <Content Include="StaticFiles\js\Index.js" />
+    <Content Include="StaticFiles\js\jquery-1.11.2.min.js" />
+    <Content Include="StaticFiles\js\jquery.mCustomScrollbar.concat.min.js" />
+    <Content Include="StaticFiles\js\scrollReveal.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -283,17 +292,16 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_LayoutCliente.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Shared\_LayoutLogin.cshtml" />
+    <Content Include="Views\Shared\_LayoutAutenticacion.cshtml" />
     <Content Include="Views\Shared\_LayoutAdministrador.cshtml" />
     <Content Include="Views\Shared\_LayoutVendedor.cshtml" />
+    <Content Include="Views\Autenticacion\Login.cshtml" />
+    <Content Include="Views\Autenticacion\Registro.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Services\" />
     <Folder Include="StaticFiles\fonts\" />
-    <Folder Include="StaticFiles\img\" />
-    <Folder Include="StaticFiles\js\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\Vendedor\" />
   </ItemGroup>

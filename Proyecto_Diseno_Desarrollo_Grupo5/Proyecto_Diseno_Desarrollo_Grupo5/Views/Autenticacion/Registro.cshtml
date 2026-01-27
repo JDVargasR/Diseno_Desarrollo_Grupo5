@@ -1,0 +1,69 @@
+﻿@model Proyecto_Diseno_Desarrollo_Grupo5.Models.AutenticacionModel
+@{
+    ViewBag.Title = "Registro";
+    Layout = "~/Views/Shared/_LayoutAutenticacion.cshtml";
+}
+
+@if (ViewBag.Mensaje != null)
+{
+    <div data-swal data-type="error" data-title="No se pudo Registrar" data-text="@ViewBag.Mensaje"></div>
+}
+@if (ViewBag.OK != null)
+{
+    <div data-swal data-type="success" data-title="Listo" data-text="@ViewBag.OK"></div>
+}
+
+<div class="auth">
+    <div class="auth__brand">
+        <div class="brand__logo">
+            <img src="@Url.Content("~/StaticFiles/img/AlphaStockLogo.png")"
+                 alt="AlphaStock"
+                 class="brand__logo-img" />
+        </div>
+    </div>
+
+    <div class="auth__panel">
+        <form class="form" method="post" action="@Url.Action("Registro","Autenticacion")">
+            @Html.AntiForgeryToken()
+
+            <div class="form__top">
+                <h1>Crear cuenta</h1>
+                <p>Ingresá tus datos para registrarte.</p>
+            </div>
+
+            <div class="field">
+                <label>Nombre</label>
+                <div class="field__wrap">
+                    <i class='bx bx-user field__icon'></i>
+                    @Html.TextBoxFor(m => m.Nombre, new { @class = "input", placeholder = "Tu nombre" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "error" })
+            </div>
+
+            <div class="field">
+                <label>Correo</label>
+                <div class="field__wrap">
+                    <i class='bx bx-envelope field__icon'></i>
+                    @Html.TextBoxFor(m => m.Correo, new { @class = "input", type = "email", placeholder = "correo@ejemplo.com" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Correo, "", new { @class = "error" })
+            </div>
+
+            <div class="field">
+                <label>Contraseña</label>
+                <div class="field__wrap">
+                    <i class='bx bx-lock-alt field__icon'></i>
+                    @Html.PasswordFor(m => m.Contrasena, new { @class = "input", placeholder = "••••••••" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Contrasena, "", new { @class = "error" })
+            </div>
+
+            <button class="btn" type="submit">Registrarme</button>
+
+            <div class="link-row">
+                <span>¿Ya tenés cuenta?</span>
+                <a href="@Url.Action("Login","Autenticacion")">Iniciar sesión</a>
+            </div>
+        </form>
+    </div>
+</div>

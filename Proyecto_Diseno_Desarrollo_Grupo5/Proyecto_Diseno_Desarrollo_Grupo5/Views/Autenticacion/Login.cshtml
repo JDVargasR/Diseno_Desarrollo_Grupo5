@@ -1,0 +1,60 @@
+﻿@model Proyecto_Diseno_Desarrollo_Grupo5.Models.AutenticacionModel
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LayoutAutenticacion.cshtml";
+}
+
+@if (ViewBag.Mensaje != null)
+{
+    <div data-swal data-type="error" data-title="Credenciales Incorrectas" data-text="@ViewBag.Mensaje"></div>
+}
+@if (ViewBag.OK != null)
+{
+    <div data-swal data-type="success" data-title="Listo" data-text="@ViewBag.OK"></div>
+}
+
+<div class="auth">
+    <div class="auth__brand">
+        <div class="brand__logo">
+            <img src="@Url.Content("~/StaticFiles/img/AlphaStockLogo.png")"
+                 alt="AlphaStock"
+                 class="brand__logo-img" />
+        </div>
+    </div>
+
+    <div class="auth__panel">
+        <form class="form" method="post" action="@Url.Action("Login","Autenticacion")">
+            @Html.AntiForgeryToken()
+
+            <div class="form__top">
+                <h1>Iniciar sesión</h1>
+                <p>Ingresá con tu correo y contraseña para continuar.</p>
+            </div>
+
+            <div class="field">
+                <label>Correo</label>
+                <div class="field__wrap">
+                    <i class='bx bx-envelope field__icon'></i>
+                    @Html.TextBoxFor(m => m.Correo, new { @class = "input", type = "email", placeholder = "Correo@Email.com" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Correo, "", new { @class = "error" })
+            </div>
+
+            <div class="field">
+                <label>Contraseña</label>
+                <div class="field__wrap">
+                    <i class='bx bx-lock-alt field__icon'></i>
+                    @Html.PasswordFor(m => m.Contrasena, new { @class = "input", placeholder = "••••••••" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Contrasena, "", new { @class = "error" })
+            </div>
+
+            <button class="btn" type="submit">Entrar</button>
+
+            <div class="link-row">
+                <span>¿No tenés cuenta?</span>
+                <a href="@Url.Action("Registro","Autenticacion")">Crear cuenta</a>
+            </div>
+        </form>
+    </div>
+</div>
