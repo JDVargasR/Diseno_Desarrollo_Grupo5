@@ -1,0 +1,1578 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Model1.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BITACORA">
+          <Key>
+            <PropertyRef Name="ID_BITACORA" />
+          </Key>
+          <Property Name="ID_BITACORA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_USUARIO" Type="int" Nullable="false" />
+          <Property Name="ACCION" Type="nvarchar" MaxLength="80" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="nvarchar" MaxLength="250" />
+          <Property Name="FECHA" Type="datetime2" Precision="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CATEGORIAS">
+          <Key>
+            <PropertyRef Name="ID_CATEGORIA" />
+          </Key>
+          <Property Name="ID_CATEGORIA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="80" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="nvarchar" MaxLength="200" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CLIENTES">
+          <Key>
+            <PropertyRef Name="ID_CLIENTE" />
+          </Key>
+          <Property Name="ID_CLIENTE" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="TELEFONO" Type="nvarchar" MaxLength="30" />
+          <Property Name="CORREO" Type="nvarchar" MaxLength="120" />
+          <Property Name="DIRECCION" Type="nvarchar" MaxLength="200" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CORTES">
+          <Key>
+            <PropertyRef Name="ID_CORTE" />
+          </Key>
+          <Property Name="ID_CORTE" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="120" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="nvarchar" MaxLength="250" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DESPERDICIOS_MATERIAL">
+          <Key>
+            <PropertyRef Name="ID_DESPERDICIO" />
+          </Key>
+          <Property Name="ID_DESPERDICIO" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_MATERIAL" Type="int" Nullable="false" />
+          <Property Name="CANTIDAD_DESPERDICIADA" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="REUTILIZABLE" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="CANTIDAD_REUTILIZADA" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="MOTIVO" Type="nvarchar" MaxLength="250" />
+          <Property Name="FECHA" Type="datetime2" Precision="0" Nullable="false" />
+          <Property Name="ID_USUARIO" Type="int" />
+        </EntityType>
+        <EntityType Name="DETALLES_VENTAS">
+          <Key>
+            <PropertyRef Name="ID_DETALLE" />
+          </Key>
+          <Property Name="ID_DETALLE" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_VENTA" Type="int" Nullable="false" />
+          <Property Name="ID_PRODUCTO" Type="int" Nullable="false" />
+          <Property Name="CANTIDAD" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="PRECIO_UNITARIO" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="SUBTOTAL" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DEVOLUCIONES">
+          <Key>
+            <PropertyRef Name="ID_DEVOLUCION" />
+          </Key>
+          <Property Name="ID_DEVOLUCION" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_VENTA" Type="int" Nullable="false" />
+          <Property Name="MOTIVO" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="FECHA" Type="datetime2" Precision="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ESTADO">
+          <Key>
+            <PropertyRef Name="ID_ESTADO" />
+          </Key>
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="GARANTIAS">
+          <Key>
+            <PropertyRef Name="ID_GARANTIA" />
+          </Key>
+          <Property Name="ID_GARANTIA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_PRODUCTO" Type="int" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="nvarchar" MaxLength="250" />
+          <Property Name="DURACION_MESES" Type="int" Nullable="false" />
+          <Property Name="CONDICIONES" Type="nvarchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="MATERIALES">
+          <Key>
+            <PropertyRef Name="ID_MATERIAL" />
+          </Key>
+          <Property Name="ID_MATERIAL" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="120" Nullable="false" />
+          <Property Name="TIPO" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="STOCK" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="COSTO_UNITARIO" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ID_PROVEEDOR" Type="int" Nullable="false" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MOVIMIENTOS_INVENTARIO">
+          <Key>
+            <PropertyRef Name="ID_MOVIMIENTO" />
+          </Key>
+          <Property Name="ID_MOVIMIENTO" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_MATERIAL" Type="int" Nullable="false" />
+          <Property Name="TIPO_MOVIMIENTO" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="CANTIDAD" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="FECHA" Type="datetime2" Precision="0" Nullable="false" />
+          <Property Name="OBSERVACION" Type="nvarchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="PERMISOS">
+          <Key>
+            <PropertyRef Name="ID_PERMISO" />
+          </Key>
+          <Property Name="ID_PERMISO" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="80" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="nvarchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="PRODUCTO_MATERIAL">
+          <Key>
+            <PropertyRef Name="ID_PRODUCTO" />
+            <PropertyRef Name="ID_MATERIAL" />
+          </Key>
+          <Property Name="ID_PRODUCTO" Type="int" Nullable="false" />
+          <Property Name="ID_MATERIAL" Type="int" Nullable="false" />
+          <Property Name="CANTIDAD_USADA" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PRODUCTOS">
+          <Key>
+            <PropertyRef Name="ID_PRODUCTO" />
+          </Key>
+          <Property Name="ID_PRODUCTO" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="140" Nullable="false" />
+          <Property Name="PRECIO_VENTA" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ID_CATEGORIA" Type="int" Nullable="false" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PROVEEDORES">
+          <Key>
+            <PropertyRef Name="ID_PROVEEDOR" />
+          </Key>
+          <Property Name="ID_PROVEEDOR" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="120" Nullable="false" />
+          <Property Name="CONTACTO" Type="nvarchar" MaxLength="120" />
+          <Property Name="TELEFONO" Type="nvarchar" MaxLength="30" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="REGISTRO_CORTES">
+          <Key>
+            <PropertyRef Name="ID_REGISTRO_CORTE" />
+          </Key>
+          <Property Name="ID_REGISTRO_CORTE" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_CORTE" Type="int" Nullable="false" />
+          <Property Name="ID_MATERIAL" Type="int" Nullable="false" />
+          <Property Name="CANTIDAD" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="FECHA" Type="datetime2" Precision="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ROLES">
+          <Key>
+            <PropertyRef Name="ID_ROL" />
+          </Key>
+          <Property Name="ID_ROL" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="nvarchar" MaxLength="200" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ROLES_PERMISOS">
+          <Key>
+            <PropertyRef Name="ID_ROL" />
+            <PropertyRef Name="ID_PERMISO" />
+          </Key>
+          <Property Name="ID_ROL" Type="int" Nullable="false" />
+          <Property Name="ID_PERMISO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="USUARIOS">
+          <Key>
+            <PropertyRef Name="ID_USUARIO" />
+          </Key>
+          <Property Name="ID_USUARIO" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="80" Nullable="false" />
+          <Property Name="CORREO" Type="nvarchar" MaxLength="120" Nullable="false" />
+          <Property Name="CONTRASENA" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="ID_ROL" Type="int" Nullable="false" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VENTAS">
+          <Key>
+            <PropertyRef Name="ID_VENTA" />
+          </Key>
+          <Property Name="ID_VENTA" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_CLIENTE" Type="int" Nullable="false" />
+          <Property Name="FECHA" Type="datetime2" Precision="0" Nullable="false" />
+          <Property Name="TOTAL" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_BIT_USU">
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="1" />
+          <End Role="BITACORA" Type="Self.BITACORA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="BITACORA">
+              <PropertyRef Name="ID_USUARIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CATEGORIAS_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="CATEGORIAS" Type="Self.CATEGORIAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="CATEGORIAS">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CLIENTES_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="CLIENTES" Type="Self.CLIENTES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="CLIENTES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CORTES_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="CORTES" Type="Self.CORTES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="CORTES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DEV_VEN">
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="1" />
+          <End Role="DEVOLUCIONES" Type="Self.DEVOLUCIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Principal>
+            <Dependent Role="DEVOLUCIONES">
+              <PropertyRef Name="ID_VENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DM_MAT">
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="1" />
+          <End Role="DESPERDICIOS_MATERIAL" Type="Self.DESPERDICIOS_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MATERIALES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Principal>
+            <Dependent Role="DESPERDICIOS_MATERIAL">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DM_USU">
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="0..1" />
+          <End Role="DESPERDICIOS_MATERIAL" Type="Self.DESPERDICIOS_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="DESPERDICIOS_MATERIAL">
+              <PropertyRef Name="ID_USUARIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DV_PROD">
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="1" />
+          <End Role="DETALLES_VENTAS" Type="Self.DETALLES_VENTAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="DETALLES_VENTAS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DV_VENTA">
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="1" />
+          <End Role="DETALLES_VENTAS" Type="Self.DETALLES_VENTAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Principal>
+            <Dependent Role="DETALLES_VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GAR_PROD">
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="1" />
+          <End Role="GARANTIAS" Type="Self.GARANTIAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="GARANTIAS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MAT_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="MATERIALES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MAT_PROV">
+          <End Role="PROVEEDORES" Type="Self.PROVEEDORES" Multiplicity="1" />
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PROVEEDORES">
+              <PropertyRef Name="ID_PROVEEDOR" />
+            </Principal>
+            <Dependent Role="MATERIALES">
+              <PropertyRef Name="ID_PROVEEDOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MI_MAT">
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="1" />
+          <End Role="MOVIMIENTOS_INVENTARIO" Type="Self.MOVIMIENTOS_INVENTARIO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MATERIALES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Principal>
+            <Dependent Role="MOVIMIENTOS_INVENTARIO">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PM_MAT">
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="1" />
+          <End Role="PRODUCTO_MATERIAL" Type="Self.PRODUCTO_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MATERIALES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Principal>
+            <Dependent Role="PRODUCTO_MATERIAL">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PM_PROD">
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="1" />
+          <End Role="PRODUCTO_MATERIAL" Type="Self.PRODUCTO_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="PRODUCTO_MATERIAL">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROD_CAT">
+          <End Role="CATEGORIAS" Type="Self.CATEGORIAS" Multiplicity="1" />
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CATEGORIAS">
+              <PropertyRef Name="ID_CATEGORIA" />
+            </Principal>
+            <Dependent Role="PRODUCTOS">
+              <PropertyRef Name="ID_CATEGORIA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROD_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="PRODUCTOS">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROVEEDORES_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="PROVEEDORES" Type="Self.PROVEEDORES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="PROVEEDORES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RC_CORTE">
+          <End Role="CORTES" Type="Self.CORTES" Multiplicity="1" />
+          <End Role="REGISTRO_CORTES" Type="Self.REGISTRO_CORTES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CORTES">
+              <PropertyRef Name="ID_CORTE" />
+            </Principal>
+            <Dependent Role="REGISTRO_CORTES">
+              <PropertyRef Name="ID_CORTE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RC_MAT">
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="1" />
+          <End Role="REGISTRO_CORTES" Type="Self.REGISTRO_CORTES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MATERIALES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Principal>
+            <Dependent Role="REGISTRO_CORTES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ROLES_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="ROLES" Type="Self.ROLES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="ROLES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RP_PER">
+          <End Role="PERMISOS" Type="Self.PERMISOS" Multiplicity="1" />
+          <End Role="ROLES_PERMISOS" Type="Self.ROLES_PERMISOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PERMISOS">
+              <PropertyRef Name="ID_PERMISO" />
+            </Principal>
+            <Dependent Role="ROLES_PERMISOS">
+              <PropertyRef Name="ID_PERMISO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RP_ROL">
+          <End Role="ROLES" Type="Self.ROLES" Multiplicity="1" />
+          <End Role="ROLES_PERMISOS" Type="Self.ROLES_PERMISOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ROLES">
+              <PropertyRef Name="ID_ROL" />
+            </Principal>
+            <Dependent Role="ROLES_PERMISOS">
+              <PropertyRef Name="ID_ROL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USU_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="USUARIOS">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USU_ROL">
+          <End Role="ROLES" Type="Self.ROLES" Multiplicity="1" />
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ROLES">
+              <PropertyRef Name="ID_ROL" />
+            </Principal>
+            <Dependent Role="USUARIOS">
+              <PropertyRef Name="ID_ROL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VEN_CLI">
+          <End Role="CLIENTES" Type="Self.CLIENTES" Multiplicity="1" />
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CLIENTES">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Principal>
+            <Dependent Role="VENTAS">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VEN_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="VENTAS">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Model1StoreContainer">
+          <EntitySet Name="BITACORA" EntityType="Self.BITACORA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CATEGORIAS" EntityType="Self.CATEGORIAS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CLIENTES" EntityType="Self.CLIENTES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CORTES" EntityType="Self.CORTES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DESPERDICIOS_MATERIAL" EntityType="Self.DESPERDICIOS_MATERIAL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DETALLES_VENTAS" EntityType="Self.DETALLES_VENTAS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DEVOLUCIONES" EntityType="Self.DEVOLUCIONES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ESTADO" EntityType="Self.ESTADO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GARANTIAS" EntityType="Self.GARANTIAS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MATERIALES" EntityType="Self.MATERIALES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MOVIMIENTOS_INVENTARIO" EntityType="Self.MOVIMIENTOS_INVENTARIO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PERMISOS" EntityType="Self.PERMISOS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PRODUCTO_MATERIAL" EntityType="Self.PRODUCTO_MATERIAL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PRODUCTOS" EntityType="Self.PRODUCTOS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PROVEEDORES" EntityType="Self.PROVEEDORES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="REGISTRO_CORTES" EntityType="Self.REGISTRO_CORTES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ROLES" EntityType="Self.ROLES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ROLES_PERMISOS" EntityType="Self.ROLES_PERMISOS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="USUARIOS" EntityType="Self.USUARIOS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VENTAS" EntityType="Self.VENTAS" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_BIT_USU" Association="Self.FK_BIT_USU">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="BITACORA" EntitySet="BITACORA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CATEGORIAS_ESTADO" Association="Self.FK_CATEGORIAS_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="CATEGORIAS" EntitySet="CATEGORIAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CLIENTES_ESTADO" Association="Self.FK_CLIENTES_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="CLIENTES" EntitySet="CLIENTES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CORTES_ESTADO" Association="Self.FK_CORTES_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="CORTES" EntitySet="CORTES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DEV_VEN" Association="Self.FK_DEV_VEN">
+            <End Role="VENTAS" EntitySet="VENTAS" />
+            <End Role="DEVOLUCIONES" EntitySet="DEVOLUCIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DM_MAT" Association="Self.FK_DM_MAT">
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+            <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DM_USU" Association="Self.FK_DM_USU">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DV_PROD" Association="Self.FK_DV_PROD">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="DETALLES_VENTAS" EntitySet="DETALLES_VENTAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DV_VENTA" Association="Self.FK_DV_VENTA">
+            <End Role="VENTAS" EntitySet="VENTAS" />
+            <End Role="DETALLES_VENTAS" EntitySet="DETALLES_VENTAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GAR_PROD" Association="Self.FK_GAR_PROD">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="GARANTIAS" EntitySet="GARANTIAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MAT_ESTADO" Association="Self.FK_MAT_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MAT_PROV" Association="Self.FK_MAT_PROV">
+            <End Role="PROVEEDORES" EntitySet="PROVEEDORES" />
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MI_MAT" Association="Self.FK_MI_MAT">
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+            <End Role="MOVIMIENTOS_INVENTARIO" EntitySet="MOVIMIENTOS_INVENTARIO" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PM_MAT" Association="Self.FK_PM_MAT">
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+            <End Role="PRODUCTO_MATERIAL" EntitySet="PRODUCTO_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PM_PROD" Association="Self.FK_PM_PROD">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="PRODUCTO_MATERIAL" EntitySet="PRODUCTO_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROD_CAT" Association="Self.FK_PROD_CAT">
+            <End Role="CATEGORIAS" EntitySet="CATEGORIAS" />
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROD_ESTADO" Association="Self.FK_PROD_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROVEEDORES_ESTADO" Association="Self.FK_PROVEEDORES_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="PROVEEDORES" EntitySet="PROVEEDORES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RC_CORTE" Association="Self.FK_RC_CORTE">
+            <End Role="CORTES" EntitySet="CORTES" />
+            <End Role="REGISTRO_CORTES" EntitySet="REGISTRO_CORTES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RC_MAT" Association="Self.FK_RC_MAT">
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+            <End Role="REGISTRO_CORTES" EntitySet="REGISTRO_CORTES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ROLES_ESTADO" Association="Self.FK_ROLES_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="ROLES" EntitySet="ROLES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RP_PER" Association="Self.FK_RP_PER">
+            <End Role="PERMISOS" EntitySet="PERMISOS" />
+            <End Role="ROLES_PERMISOS" EntitySet="ROLES_PERMISOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RP_ROL" Association="Self.FK_RP_ROL">
+            <End Role="ROLES" EntitySet="ROLES" />
+            <End Role="ROLES_PERMISOS" EntitySet="ROLES_PERMISOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USU_ESTADO" Association="Self.FK_USU_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USU_ROL" Association="Self.FK_USU_ROL">
+            <End Role="ROLES" EntitySet="ROLES" />
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VEN_CLI" Association="Self.FK_VEN_CLI">
+            <End Role="CLIENTES" EntitySet="CLIENTES" />
+            <End Role="VENTAS" EntitySet="VENTAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VEN_ESTADO" Association="Self.FK_VEN_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="VENTAS" EntitySet="VENTAS" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Model1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BITACORA">
+          <Key>
+            <PropertyRef Name="ID_BITACORA" />
+          </Key>
+          <Property Name="ID_BITACORA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_USUARIO" Type="Int32" Nullable="false" />
+          <Property Name="ACCION" Type="String" MaxLength="80" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="USUARIOS" Relationship="Self.FK_BIT_USU" FromRole="BITACORA" ToRole="USUARIOS" />
+        </EntityType>
+        <EntityType Name="CATEGORIAS">
+          <Key>
+            <PropertyRef Name="ID_CATEGORIA" />
+          </Key>
+          <Property Name="ID_CATEGORIA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="80" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_CATEGORIAS_ESTADO" FromRole="CATEGORIAS" ToRole="ESTADO" />
+          <NavigationProperty Name="PRODUCTOS" Relationship="Self.FK_PROD_CAT" FromRole="CATEGORIAS" ToRole="PRODUCTOS" />
+        </EntityType>
+        <EntityType Name="CLIENTES">
+          <Key>
+            <PropertyRef Name="ID_CLIENTE" />
+          </Key>
+          <Property Name="ID_CLIENTE" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TELEFONO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="CORREO" Type="String" MaxLength="120" FixedLength="false" Unicode="true" />
+          <Property Name="DIRECCION" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_CLIENTES_ESTADO" FromRole="CLIENTES" ToRole="ESTADO" />
+          <NavigationProperty Name="VENTAS" Relationship="Self.FK_VEN_CLI" FromRole="CLIENTES" ToRole="VENTAS" />
+        </EntityType>
+        <EntityType Name="CORTES">
+          <Key>
+            <PropertyRef Name="ID_CORTE" />
+          </Key>
+          <Property Name="ID_CORTE" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="120" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_CORTES_ESTADO" FromRole="CORTES" ToRole="ESTADO" />
+          <NavigationProperty Name="REGISTRO_CORTES" Relationship="Self.FK_RC_CORTE" FromRole="CORTES" ToRole="REGISTRO_CORTES" />
+        </EntityType>
+        <EntityType Name="DESPERDICIOS_MATERIAL">
+          <Key>
+            <PropertyRef Name="ID_DESPERDICIO" />
+          </Key>
+          <Property Name="ID_DESPERDICIO" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_MATERIAL" Type="Int32" Nullable="false" />
+          <Property Name="CANTIDAD_DESPERDICIADA" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="REUTILIZABLE" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="CANTIDAD_REUTILIZADA" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="MOTIVO" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="ID_USUARIO" Type="Int32" />
+          <NavigationProperty Name="MATERIALES" Relationship="Self.FK_DM_MAT" FromRole="DESPERDICIOS_MATERIAL" ToRole="MATERIALES" />
+          <NavigationProperty Name="USUARIOS" Relationship="Self.FK_DM_USU" FromRole="DESPERDICIOS_MATERIAL" ToRole="USUARIOS" />
+        </EntityType>
+        <EntityType Name="DETALLES_VENTAS">
+          <Key>
+            <PropertyRef Name="ID_DETALLE" />
+          </Key>
+          <Property Name="ID_DETALLE" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_VENTA" Type="Int32" Nullable="false" />
+          <Property Name="ID_PRODUCTO" Type="Int32" Nullable="false" />
+          <Property Name="CANTIDAD" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="PRECIO_UNITARIO" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="SUBTOTAL" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <NavigationProperty Name="PRODUCTOS" Relationship="Self.FK_DV_PROD" FromRole="DETALLES_VENTAS" ToRole="PRODUCTOS" />
+          <NavigationProperty Name="VENTAS" Relationship="Self.FK_DV_VENTA" FromRole="DETALLES_VENTAS" ToRole="VENTAS" />
+        </EntityType>
+        <EntityType Name="DEVOLUCIONES">
+          <Key>
+            <PropertyRef Name="ID_DEVOLUCION" />
+          </Key>
+          <Property Name="ID_DEVOLUCION" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_VENTA" Type="Int32" Nullable="false" />
+          <Property Name="MOTIVO" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="VENTAS" Relationship="Self.FK_DEV_VEN" FromRole="DEVOLUCIONES" ToRole="VENTAS" />
+        </EntityType>
+        <EntityType Name="ESTADO">
+          <Key>
+            <PropertyRef Name="ID_ESTADO" />
+          </Key>
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <Property Name="NOMBRE" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="CATEGORIAS" Relationship="Self.FK_CATEGORIAS_ESTADO" FromRole="ESTADO" ToRole="CATEGORIAS" />
+          <NavigationProperty Name="CLIENTES" Relationship="Self.FK_CLIENTES_ESTADO" FromRole="ESTADO" ToRole="CLIENTES" />
+          <NavigationProperty Name="CORTES" Relationship="Self.FK_CORTES_ESTADO" FromRole="ESTADO" ToRole="CORTES" />
+          <NavigationProperty Name="MATERIALES" Relationship="Self.FK_MAT_ESTADO" FromRole="ESTADO" ToRole="MATERIALES" />
+          <NavigationProperty Name="PRODUCTOS" Relationship="Self.FK_PROD_ESTADO" FromRole="ESTADO" ToRole="PRODUCTOS" />
+          <NavigationProperty Name="PROVEEDORES" Relationship="Self.FK_PROVEEDORES_ESTADO" FromRole="ESTADO" ToRole="PROVEEDORES" />
+          <NavigationProperty Name="ROLES" Relationship="Self.FK_ROLES_ESTADO" FromRole="ESTADO" ToRole="ROLES" />
+          <NavigationProperty Name="USUARIOS" Relationship="Self.FK_USU_ESTADO" FromRole="ESTADO" ToRole="USUARIOS" />
+          <NavigationProperty Name="VENTAS" Relationship="Self.FK_VEN_ESTADO" FromRole="ESTADO" ToRole="VENTAS" />
+        </EntityType>
+        <EntityType Name="GARANTIAS">
+          <Key>
+            <PropertyRef Name="ID_GARANTIA" />
+          </Key>
+          <Property Name="ID_GARANTIA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_PRODUCTO" Type="Int32" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DURACION_MESES" Type="Int32" Nullable="false" />
+          <Property Name="CONDICIONES" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PRODUCTOS" Relationship="Self.FK_GAR_PROD" FromRole="GARANTIAS" ToRole="PRODUCTOS" />
+        </EntityType>
+        <EntityType Name="MATERIALES">
+          <Key>
+            <PropertyRef Name="ID_MATERIAL" />
+          </Key>
+          <Property Name="ID_MATERIAL" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="120" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TIPO" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="STOCK" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="COSTO_UNITARIO" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ID_PROVEEDOR" Type="Int32" Nullable="false" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DESPERDICIOS_MATERIAL" Relationship="Self.FK_DM_MAT" FromRole="MATERIALES" ToRole="DESPERDICIOS_MATERIAL" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_MAT_ESTADO" FromRole="MATERIALES" ToRole="ESTADO" />
+          <NavigationProperty Name="PROVEEDORES" Relationship="Self.FK_MAT_PROV" FromRole="MATERIALES" ToRole="PROVEEDORES" />
+          <NavigationProperty Name="MOVIMIENTOS_INVENTARIO" Relationship="Self.FK_MI_MAT" FromRole="MATERIALES" ToRole="MOVIMIENTOS_INVENTARIO" />
+          <NavigationProperty Name="PRODUCTO_MATERIAL" Relationship="Self.FK_PM_MAT" FromRole="MATERIALES" ToRole="PRODUCTO_MATERIAL" />
+          <NavigationProperty Name="REGISTRO_CORTES" Relationship="Self.FK_RC_MAT" FromRole="MATERIALES" ToRole="REGISTRO_CORTES" />
+        </EntityType>
+        <EntityType Name="MOVIMIENTOS_INVENTARIO">
+          <Key>
+            <PropertyRef Name="ID_MOVIMIENTO" />
+          </Key>
+          <Property Name="ID_MOVIMIENTO" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_MATERIAL" Type="Int32" Nullable="false" />
+          <Property Name="TIPO_MOVIMIENTO" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CANTIDAD" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="OBSERVACION" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="MATERIALES" Relationship="Self.FK_MI_MAT" FromRole="MOVIMIENTOS_INVENTARIO" ToRole="MATERIALES" />
+        </EntityType>
+        <EntityType Name="PERMISOS">
+          <Key>
+            <PropertyRef Name="ID_PERMISO" />
+          </Key>
+          <Property Name="ID_PERMISO" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="80" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ROLES" Relationship="Self.ROLES_PERMISOS" FromRole="PERMISOS" ToRole="ROLES" />
+        </EntityType>
+        <EntityType Name="PRODUCTO_MATERIAL">
+          <Key>
+            <PropertyRef Name="ID_PRODUCTO" />
+            <PropertyRef Name="ID_MATERIAL" />
+          </Key>
+          <Property Name="ID_PRODUCTO" Type="Int32" Nullable="false" />
+          <Property Name="ID_MATERIAL" Type="Int32" Nullable="false" />
+          <Property Name="CANTIDAD_USADA" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <NavigationProperty Name="MATERIALES" Relationship="Self.FK_PM_MAT" FromRole="PRODUCTO_MATERIAL" ToRole="MATERIALES" />
+          <NavigationProperty Name="PRODUCTOS" Relationship="Self.FK_PM_PROD" FromRole="PRODUCTO_MATERIAL" ToRole="PRODUCTOS" />
+        </EntityType>
+        <EntityType Name="PRODUCTOS">
+          <Key>
+            <PropertyRef Name="ID_PRODUCTO" />
+          </Key>
+          <Property Name="ID_PRODUCTO" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="140" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PRECIO_VENTA" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ID_CATEGORIA" Type="Int32" Nullable="false" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CATEGORIAS" Relationship="Self.FK_PROD_CAT" FromRole="PRODUCTOS" ToRole="CATEGORIAS" />
+          <NavigationProperty Name="DETALLES_VENTAS" Relationship="Self.FK_DV_PROD" FromRole="PRODUCTOS" ToRole="DETALLES_VENTAS" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_PROD_ESTADO" FromRole="PRODUCTOS" ToRole="ESTADO" />
+          <NavigationProperty Name="GARANTIAS" Relationship="Self.FK_GAR_PROD" FromRole="PRODUCTOS" ToRole="GARANTIAS" />
+          <NavigationProperty Name="PRODUCTO_MATERIAL" Relationship="Self.FK_PM_PROD" FromRole="PRODUCTOS" ToRole="PRODUCTO_MATERIAL" />
+        </EntityType>
+        <EntityType Name="PROVEEDORES">
+          <Key>
+            <PropertyRef Name="ID_PROVEEDOR" />
+          </Key>
+          <Property Name="ID_PROVEEDOR" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="120" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CONTACTO" Type="String" MaxLength="120" FixedLength="false" Unicode="true" />
+          <Property Name="TELEFONO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_PROVEEDORES_ESTADO" FromRole="PROVEEDORES" ToRole="ESTADO" />
+          <NavigationProperty Name="MATERIALES" Relationship="Self.FK_MAT_PROV" FromRole="PROVEEDORES" ToRole="MATERIALES" />
+        </EntityType>
+        <EntityType Name="REGISTRO_CORTES">
+          <Key>
+            <PropertyRef Name="ID_REGISTRO_CORTE" />
+          </Key>
+          <Property Name="ID_REGISTRO_CORTE" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_CORTE" Type="Int32" Nullable="false" />
+          <Property Name="ID_MATERIAL" Type="Int32" Nullable="false" />
+          <Property Name="CANTIDAD" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="CORTES" Relationship="Self.FK_RC_CORTE" FromRole="REGISTRO_CORTES" ToRole="CORTES" />
+          <NavigationProperty Name="MATERIALES" Relationship="Self.FK_RC_MAT" FromRole="REGISTRO_CORTES" ToRole="MATERIALES" />
+        </EntityType>
+        <EntityType Name="ROLES">
+          <Key>
+            <PropertyRef Name="ID_ROL" />
+          </Key>
+          <Property Name="ID_ROL" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DESCRIPCION" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_ROLES_ESTADO" FromRole="ROLES" ToRole="ESTADO" />
+          <NavigationProperty Name="USUARIOS" Relationship="Self.FK_USU_ROL" FromRole="ROLES" ToRole="USUARIOS" />
+          <NavigationProperty Name="PERMISOS" Relationship="Self.ROLES_PERMISOS" FromRole="ROLES" ToRole="PERMISOS" />
+        </EntityType>
+        <EntityType Name="USUARIOS">
+          <Key>
+            <PropertyRef Name="ID_USUARIO" />
+          </Key>
+          <Property Name="ID_USUARIO" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="80" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CORREO" Type="String" MaxLength="120" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CONTRASENA" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ID_ROL" Type="Int32" Nullable="false" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="BITACORA" Relationship="Self.FK_BIT_USU" FromRole="USUARIOS" ToRole="BITACORA" />
+          <NavigationProperty Name="DESPERDICIOS_MATERIAL" Relationship="Self.FK_DM_USU" FromRole="USUARIOS" ToRole="DESPERDICIOS_MATERIAL" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_USU_ESTADO" FromRole="USUARIOS" ToRole="ESTADO" />
+          <NavigationProperty Name="ROLES" Relationship="Self.FK_USU_ROL" FromRole="USUARIOS" ToRole="ROLES" />
+        </EntityType>
+        <EntityType Name="VENTAS">
+          <Key>
+            <PropertyRef Name="ID_VENTA" />
+          </Key>
+          <Property Name="ID_VENTA" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_CLIENTE" Type="Int32" Nullable="false" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="TOTAL" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CLIENTES" Relationship="Self.FK_VEN_CLI" FromRole="VENTAS" ToRole="CLIENTES" />
+          <NavigationProperty Name="DETALLES_VENTAS" Relationship="Self.FK_DV_VENTA" FromRole="VENTAS" ToRole="DETALLES_VENTAS" />
+          <NavigationProperty Name="DEVOLUCIONES" Relationship="Self.FK_DEV_VEN" FromRole="VENTAS" ToRole="DEVOLUCIONES" />
+          <NavigationProperty Name="ESTADO" Relationship="Self.FK_VEN_ESTADO" FromRole="VENTAS" ToRole="ESTADO" />
+        </EntityType>
+        <Association Name="FK_BIT_USU">
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="1" />
+          <End Role="BITACORA" Type="Self.BITACORA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="BITACORA">
+              <PropertyRef Name="ID_USUARIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CATEGORIAS_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="CATEGORIAS" Type="Self.CATEGORIAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="CATEGORIAS">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROD_CAT">
+          <End Role="CATEGORIAS" Type="Self.CATEGORIAS" Multiplicity="1" />
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CATEGORIAS">
+              <PropertyRef Name="ID_CATEGORIA" />
+            </Principal>
+            <Dependent Role="PRODUCTOS">
+              <PropertyRef Name="ID_CATEGORIA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CLIENTES_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="CLIENTES" Type="Self.CLIENTES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="CLIENTES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VEN_CLI">
+          <End Role="CLIENTES" Type="Self.CLIENTES" Multiplicity="1" />
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CLIENTES">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Principal>
+            <Dependent Role="VENTAS">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CORTES_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="CORTES" Type="Self.CORTES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="CORTES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RC_CORTE">
+          <End Role="CORTES" Type="Self.CORTES" Multiplicity="1" />
+          <End Role="REGISTRO_CORTES" Type="Self.REGISTRO_CORTES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CORTES">
+              <PropertyRef Name="ID_CORTE" />
+            </Principal>
+            <Dependent Role="REGISTRO_CORTES">
+              <PropertyRef Name="ID_CORTE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DM_MAT">
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="1" />
+          <End Role="DESPERDICIOS_MATERIAL" Type="Self.DESPERDICIOS_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MATERIALES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Principal>
+            <Dependent Role="DESPERDICIOS_MATERIAL">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DM_USU">
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="0..1" />
+          <End Role="DESPERDICIOS_MATERIAL" Type="Self.DESPERDICIOS_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="DESPERDICIOS_MATERIAL">
+              <PropertyRef Name="ID_USUARIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DV_PROD">
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="1" />
+          <End Role="DETALLES_VENTAS" Type="Self.DETALLES_VENTAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="DETALLES_VENTAS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DV_VENTA">
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="1" />
+          <End Role="DETALLES_VENTAS" Type="Self.DETALLES_VENTAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Principal>
+            <Dependent Role="DETALLES_VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DEV_VEN">
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="1" />
+          <End Role="DEVOLUCIONES" Type="Self.DEVOLUCIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Principal>
+            <Dependent Role="DEVOLUCIONES">
+              <PropertyRef Name="ID_VENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MAT_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="MATERIALES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROD_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="PRODUCTOS">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROVEEDORES_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="PROVEEDORES" Type="Self.PROVEEDORES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="PROVEEDORES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ROLES_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="ROLES" Type="Self.ROLES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="ROLES">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USU_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="USUARIOS">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VEN_ESTADO">
+          <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADO">
+              <PropertyRef Name="ID_ESTADO" />
+            </Principal>
+            <Dependent Role="VENTAS">
+              <PropertyRef Name="ID_ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GAR_PROD">
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="1" />
+          <End Role="GARANTIAS" Type="Self.GARANTIAS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="GARANTIAS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MAT_PROV">
+          <End Role="PROVEEDORES" Type="Self.PROVEEDORES" Multiplicity="1" />
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PROVEEDORES">
+              <PropertyRef Name="ID_PROVEEDOR" />
+            </Principal>
+            <Dependent Role="MATERIALES">
+              <PropertyRef Name="ID_PROVEEDOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MI_MAT">
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="1" />
+          <End Role="MOVIMIENTOS_INVENTARIO" Type="Self.MOVIMIENTOS_INVENTARIO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MATERIALES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Principal>
+            <Dependent Role="MOVIMIENTOS_INVENTARIO">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PM_MAT">
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="1" />
+          <End Role="PRODUCTO_MATERIAL" Type="Self.PRODUCTO_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MATERIALES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Principal>
+            <Dependent Role="PRODUCTO_MATERIAL">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RC_MAT">
+          <End Role="MATERIALES" Type="Self.MATERIALES" Multiplicity="1" />
+          <End Role="REGISTRO_CORTES" Type="Self.REGISTRO_CORTES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MATERIALES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Principal>
+            <Dependent Role="REGISTRO_CORTES">
+              <PropertyRef Name="ID_MATERIAL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PM_PROD">
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="1" />
+          <End Role="PRODUCTO_MATERIAL" Type="Self.PRODUCTO_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="PRODUCTO_MATERIAL">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USU_ROL">
+          <End Role="ROLES" Type="Self.ROLES" Multiplicity="1" />
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ROLES">
+              <PropertyRef Name="ID_ROL" />
+            </Principal>
+            <Dependent Role="USUARIOS">
+              <PropertyRef Name="ID_ROL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ROLES_PERMISOS">
+          <End Role="PERMISOS" Type="Self.PERMISOS" Multiplicity="*" />
+          <End Role="ROLES" Type="Self.ROLES" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="DBGRUPO5Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BITACORA" EntityType="Self.BITACORA" />
+          <EntitySet Name="CATEGORIAS" EntityType="Self.CATEGORIAS" />
+          <EntitySet Name="CLIENTES" EntityType="Self.CLIENTES" />
+          <EntitySet Name="CORTES" EntityType="Self.CORTES" />
+          <EntitySet Name="DESPERDICIOS_MATERIAL" EntityType="Self.DESPERDICIOS_MATERIAL" />
+          <EntitySet Name="DETALLES_VENTAS" EntityType="Self.DETALLES_VENTAS" />
+          <EntitySet Name="DEVOLUCIONES" EntityType="Self.DEVOLUCIONES" />
+          <EntitySet Name="ESTADO" EntityType="Self.ESTADO" />
+          <EntitySet Name="GARANTIAS" EntityType="Self.GARANTIAS" />
+          <EntitySet Name="MATERIALES" EntityType="Self.MATERIALES" />
+          <EntitySet Name="MOVIMIENTOS_INVENTARIO" EntityType="Self.MOVIMIENTOS_INVENTARIO" />
+          <EntitySet Name="PERMISOS" EntityType="Self.PERMISOS" />
+          <EntitySet Name="PRODUCTO_MATERIAL" EntityType="Self.PRODUCTO_MATERIAL" />
+          <EntitySet Name="PRODUCTOS" EntityType="Self.PRODUCTOS" />
+          <EntitySet Name="PROVEEDORES" EntityType="Self.PROVEEDORES" />
+          <EntitySet Name="REGISTRO_CORTES" EntityType="Self.REGISTRO_CORTES" />
+          <EntitySet Name="ROLES" EntityType="Self.ROLES" />
+          <EntitySet Name="USUARIOS" EntityType="Self.USUARIOS" />
+          <EntitySet Name="VENTAS" EntityType="Self.VENTAS" />
+          <AssociationSet Name="FK_BIT_USU" Association="Self.FK_BIT_USU">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="BITACORA" EntitySet="BITACORA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CATEGORIAS_ESTADO" Association="Self.FK_CATEGORIAS_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="CATEGORIAS" EntitySet="CATEGORIAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROD_CAT" Association="Self.FK_PROD_CAT">
+            <End Role="CATEGORIAS" EntitySet="CATEGORIAS" />
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CLIENTES_ESTADO" Association="Self.FK_CLIENTES_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="CLIENTES" EntitySet="CLIENTES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VEN_CLI" Association="Self.FK_VEN_CLI">
+            <End Role="CLIENTES" EntitySet="CLIENTES" />
+            <End Role="VENTAS" EntitySet="VENTAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CORTES_ESTADO" Association="Self.FK_CORTES_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="CORTES" EntitySet="CORTES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RC_CORTE" Association="Self.FK_RC_CORTE">
+            <End Role="CORTES" EntitySet="CORTES" />
+            <End Role="REGISTRO_CORTES" EntitySet="REGISTRO_CORTES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DM_MAT" Association="Self.FK_DM_MAT">
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+            <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DM_USU" Association="Self.FK_DM_USU">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DV_PROD" Association="Self.FK_DV_PROD">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="DETALLES_VENTAS" EntitySet="DETALLES_VENTAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DV_VENTA" Association="Self.FK_DV_VENTA">
+            <End Role="VENTAS" EntitySet="VENTAS" />
+            <End Role="DETALLES_VENTAS" EntitySet="DETALLES_VENTAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DEV_VEN" Association="Self.FK_DEV_VEN">
+            <End Role="VENTAS" EntitySet="VENTAS" />
+            <End Role="DEVOLUCIONES" EntitySet="DEVOLUCIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MAT_ESTADO" Association="Self.FK_MAT_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROD_ESTADO" Association="Self.FK_PROD_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROVEEDORES_ESTADO" Association="Self.FK_PROVEEDORES_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="PROVEEDORES" EntitySet="PROVEEDORES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ROLES_ESTADO" Association="Self.FK_ROLES_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="ROLES" EntitySet="ROLES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USU_ESTADO" Association="Self.FK_USU_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VEN_ESTADO" Association="Self.FK_VEN_ESTADO">
+            <End Role="ESTADO" EntitySet="ESTADO" />
+            <End Role="VENTAS" EntitySet="VENTAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GAR_PROD" Association="Self.FK_GAR_PROD">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="GARANTIAS" EntitySet="GARANTIAS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MAT_PROV" Association="Self.FK_MAT_PROV">
+            <End Role="PROVEEDORES" EntitySet="PROVEEDORES" />
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MI_MAT" Association="Self.FK_MI_MAT">
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+            <End Role="MOVIMIENTOS_INVENTARIO" EntitySet="MOVIMIENTOS_INVENTARIO" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PM_MAT" Association="Self.FK_PM_MAT">
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+            <End Role="PRODUCTO_MATERIAL" EntitySet="PRODUCTO_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RC_MAT" Association="Self.FK_RC_MAT">
+            <End Role="MATERIALES" EntitySet="MATERIALES" />
+            <End Role="REGISTRO_CORTES" EntitySet="REGISTRO_CORTES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PM_PROD" Association="Self.FK_PM_PROD">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="PRODUCTO_MATERIAL" EntitySet="PRODUCTO_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USU_ROL" Association="Self.FK_USU_ROL">
+            <End Role="ROLES" EntitySet="ROLES" />
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+          </AssociationSet>
+          <AssociationSet Name="ROLES_PERMISOS" Association="Self.ROLES_PERMISOS">
+            <End Role="PERMISOS" EntitySet="PERMISOS" />
+            <End Role="ROLES" EntitySet="ROLES" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Model1StoreContainer" CdmEntityContainer="DBGRUPO5Entities">
+          <EntitySetMapping Name="BITACORA">
+            <EntityTypeMapping TypeName="Model1.BITACORA">
+              <MappingFragment StoreEntitySet="BITACORA">
+                <ScalarProperty Name="ID_BITACORA" ColumnName="ID_BITACORA" />
+                <ScalarProperty Name="ID_USUARIO" ColumnName="ID_USUARIO" />
+                <ScalarProperty Name="ACCION" ColumnName="ACCION" />
+                <ScalarProperty Name="DESCRIPCION" ColumnName="DESCRIPCION" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CATEGORIAS">
+            <EntityTypeMapping TypeName="Model1.CATEGORIAS">
+              <MappingFragment StoreEntitySet="CATEGORIAS">
+                <ScalarProperty Name="ID_CATEGORIA" ColumnName="ID_CATEGORIA" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="DESCRIPCION" ColumnName="DESCRIPCION" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CLIENTES">
+            <EntityTypeMapping TypeName="Model1.CLIENTES">
+              <MappingFragment StoreEntitySet="CLIENTES">
+                <ScalarProperty Name="ID_CLIENTE" ColumnName="ID_CLIENTE" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="TELEFONO" ColumnName="TELEFONO" />
+                <ScalarProperty Name="CORREO" ColumnName="CORREO" />
+                <ScalarProperty Name="DIRECCION" ColumnName="DIRECCION" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CORTES">
+            <EntityTypeMapping TypeName="Model1.CORTES">
+              <MappingFragment StoreEntitySet="CORTES">
+                <ScalarProperty Name="ID_CORTE" ColumnName="ID_CORTE" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="DESCRIPCION" ColumnName="DESCRIPCION" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DESPERDICIOS_MATERIAL">
+            <EntityTypeMapping TypeName="Model1.DESPERDICIOS_MATERIAL">
+              <MappingFragment StoreEntitySet="DESPERDICIOS_MATERIAL">
+                <ScalarProperty Name="ID_DESPERDICIO" ColumnName="ID_DESPERDICIO" />
+                <ScalarProperty Name="ID_MATERIAL" ColumnName="ID_MATERIAL" />
+                <ScalarProperty Name="CANTIDAD_DESPERDICIADA" ColumnName="CANTIDAD_DESPERDICIADA" />
+                <ScalarProperty Name="REUTILIZABLE" ColumnName="REUTILIZABLE" />
+                <ScalarProperty Name="CANTIDAD_REUTILIZADA" ColumnName="CANTIDAD_REUTILIZADA" />
+                <ScalarProperty Name="MOTIVO" ColumnName="MOTIVO" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="ID_USUARIO" ColumnName="ID_USUARIO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DETALLES_VENTAS">
+            <EntityTypeMapping TypeName="Model1.DETALLES_VENTAS">
+              <MappingFragment StoreEntitySet="DETALLES_VENTAS">
+                <ScalarProperty Name="ID_DETALLE" ColumnName="ID_DETALLE" />
+                <ScalarProperty Name="ID_VENTA" ColumnName="ID_VENTA" />
+                <ScalarProperty Name="ID_PRODUCTO" ColumnName="ID_PRODUCTO" />
+                <ScalarProperty Name="CANTIDAD" ColumnName="CANTIDAD" />
+                <ScalarProperty Name="PRECIO_UNITARIO" ColumnName="PRECIO_UNITARIO" />
+                <ScalarProperty Name="SUBTOTAL" ColumnName="SUBTOTAL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DEVOLUCIONES">
+            <EntityTypeMapping TypeName="Model1.DEVOLUCIONES">
+              <MappingFragment StoreEntitySet="DEVOLUCIONES">
+                <ScalarProperty Name="ID_DEVOLUCION" ColumnName="ID_DEVOLUCION" />
+                <ScalarProperty Name="ID_VENTA" ColumnName="ID_VENTA" />
+                <ScalarProperty Name="MOTIVO" ColumnName="MOTIVO" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ESTADO">
+            <EntityTypeMapping TypeName="Model1.ESTADO">
+              <MappingFragment StoreEntitySet="ESTADO">
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GARANTIAS">
+            <EntityTypeMapping TypeName="Model1.GARANTIAS">
+              <MappingFragment StoreEntitySet="GARANTIAS">
+                <ScalarProperty Name="ID_GARANTIA" ColumnName="ID_GARANTIA" />
+                <ScalarProperty Name="ID_PRODUCTO" ColumnName="ID_PRODUCTO" />
+                <ScalarProperty Name="DESCRIPCION" ColumnName="DESCRIPCION" />
+                <ScalarProperty Name="DURACION_MESES" ColumnName="DURACION_MESES" />
+                <ScalarProperty Name="CONDICIONES" ColumnName="CONDICIONES" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MATERIALES">
+            <EntityTypeMapping TypeName="Model1.MATERIALES">
+              <MappingFragment StoreEntitySet="MATERIALES">
+                <ScalarProperty Name="ID_MATERIAL" ColumnName="ID_MATERIAL" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="TIPO" ColumnName="TIPO" />
+                <ScalarProperty Name="STOCK" ColumnName="STOCK" />
+                <ScalarProperty Name="COSTO_UNITARIO" ColumnName="COSTO_UNITARIO" />
+                <ScalarProperty Name="ID_PROVEEDOR" ColumnName="ID_PROVEEDOR" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MOVIMIENTOS_INVENTARIO">
+            <EntityTypeMapping TypeName="Model1.MOVIMIENTOS_INVENTARIO">
+              <MappingFragment StoreEntitySet="MOVIMIENTOS_INVENTARIO">
+                <ScalarProperty Name="ID_MOVIMIENTO" ColumnName="ID_MOVIMIENTO" />
+                <ScalarProperty Name="ID_MATERIAL" ColumnName="ID_MATERIAL" />
+                <ScalarProperty Name="TIPO_MOVIMIENTO" ColumnName="TIPO_MOVIMIENTO" />
+                <ScalarProperty Name="CANTIDAD" ColumnName="CANTIDAD" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="OBSERVACION" ColumnName="OBSERVACION" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PERMISOS">
+            <EntityTypeMapping TypeName="Model1.PERMISOS">
+              <MappingFragment StoreEntitySet="PERMISOS">
+                <ScalarProperty Name="ID_PERMISO" ColumnName="ID_PERMISO" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="DESCRIPCION" ColumnName="DESCRIPCION" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PRODUCTO_MATERIAL">
+            <EntityTypeMapping TypeName="Model1.PRODUCTO_MATERIAL">
+              <MappingFragment StoreEntitySet="PRODUCTO_MATERIAL">
+                <ScalarProperty Name="ID_PRODUCTO" ColumnName="ID_PRODUCTO" />
+                <ScalarProperty Name="ID_MATERIAL" ColumnName="ID_MATERIAL" />
+                <ScalarProperty Name="CANTIDAD_USADA" ColumnName="CANTIDAD_USADA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PRODUCTOS">
+            <EntityTypeMapping TypeName="Model1.PRODUCTOS">
+              <MappingFragment StoreEntitySet="PRODUCTOS">
+                <ScalarProperty Name="ID_PRODUCTO" ColumnName="ID_PRODUCTO" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="PRECIO_VENTA" ColumnName="PRECIO_VENTA" />
+                <ScalarProperty Name="ID_CATEGORIA" ColumnName="ID_CATEGORIA" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PROVEEDORES">
+            <EntityTypeMapping TypeName="Model1.PROVEEDORES">
+              <MappingFragment StoreEntitySet="PROVEEDORES">
+                <ScalarProperty Name="ID_PROVEEDOR" ColumnName="ID_PROVEEDOR" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="CONTACTO" ColumnName="CONTACTO" />
+                <ScalarProperty Name="TELEFONO" ColumnName="TELEFONO" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="REGISTRO_CORTES">
+            <EntityTypeMapping TypeName="Model1.REGISTRO_CORTES">
+              <MappingFragment StoreEntitySet="REGISTRO_CORTES">
+                <ScalarProperty Name="ID_REGISTRO_CORTE" ColumnName="ID_REGISTRO_CORTE" />
+                <ScalarProperty Name="ID_CORTE" ColumnName="ID_CORTE" />
+                <ScalarProperty Name="ID_MATERIAL" ColumnName="ID_MATERIAL" />
+                <ScalarProperty Name="CANTIDAD" ColumnName="CANTIDAD" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ROLES">
+            <EntityTypeMapping TypeName="Model1.ROLES">
+              <MappingFragment StoreEntitySet="ROLES">
+                <ScalarProperty Name="ID_ROL" ColumnName="ID_ROL" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="DESCRIPCION" ColumnName="DESCRIPCION" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="USUARIOS">
+            <EntityTypeMapping TypeName="Model1.USUARIOS">
+              <MappingFragment StoreEntitySet="USUARIOS">
+                <ScalarProperty Name="ID_USUARIO" ColumnName="ID_USUARIO" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="CORREO" ColumnName="CORREO" />
+                <ScalarProperty Name="CONTRASENA" ColumnName="CONTRASENA" />
+                <ScalarProperty Name="ID_ROL" ColumnName="ID_ROL" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VENTAS">
+            <EntityTypeMapping TypeName="Model1.VENTAS">
+              <MappingFragment StoreEntitySet="VENTAS">
+                <ScalarProperty Name="ID_VENTA" ColumnName="ID_VENTA" />
+                <ScalarProperty Name="ID_CLIENTE" ColumnName="ID_CLIENTE" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="TOTAL" ColumnName="TOTAL" />
+                <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="ROLES_PERMISOS" TypeName="Model1.ROLES_PERMISOS" StoreEntitySet="ROLES_PERMISOS">
+            <EndProperty Name="PERMISOS">
+              <ScalarProperty Name="ID_PERMISO" ColumnName="ID_PERMISO" />
+            </EndProperty>
+            <EndProperty Name="ROLES">
+              <ScalarProperty Name="ID_ROL" ColumnName="ID_ROL" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

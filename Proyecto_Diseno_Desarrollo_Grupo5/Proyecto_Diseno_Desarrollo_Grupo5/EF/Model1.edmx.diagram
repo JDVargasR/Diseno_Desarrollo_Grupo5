@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="32428c512cbb4a04aa6c7464b41561cb" Name="Diagram1" ZoomLevel="56">
+        <EntityTypeShape EntityType="Model1.BITACORA" Width="1.5" PointX="12.5" PointY="25.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.CATEGORIAS" Width="1.5" PointX="3" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.CLIENTES" Width="1.5" PointX="3" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.CORTES" Width="1.5" PointX="3" PointY="16.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.DESPERDICIOS_MATERIAL" Width="1.5" PointX="12.5" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.DETALLES_VENTAS" Width="1.5" PointX="10.5" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.DEVOLUCIONES" Width="1.5" PointX="7.5" PointY="20.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.ESTADO" Width="1.5" PointX="0.75" PointY="14.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.GARANTIAS" Width="1.5" PointX="7.5" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.MATERIALES" Width="1.5" PointX="5.25" PointY="20.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.MOVIMIENTOS_INVENTARIO" Width="1.5" PointX="7.5" PointY="25.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PERMISOS" Width="1.5" PointX="0.75" PointY="20.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PRODUCTO_MATERIAL" Width="1.5" PointX="10.5" PointY="18.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PRODUCTOS" Width="1.5" PointX="5.25" PointY="12.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PROVEEDORES" Width="1.5" PointX="3" PointY="24.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.REGISTRO_CORTES" Width="1.5" PointX="8.25" PointY="16.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.ROLES" Width="1.5" PointX="3" PointY="20.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.USUARIOS" Width="1.5" PointX="10.25" PointY="22.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.VENTAS" Width="1.5" PointX="5.25" PointY="17.5" IsExpanded="true" />
+        <AssociationConnector Association="Model1.FK_BIT_USU" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_CATEGORIAS_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_PROD_CAT" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_CLIENTES_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_VEN_CLI" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_CORTES_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_RC_CORTE" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_DM_MAT" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_DM_USU" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_DV_PROD" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_DV_VENTA" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_DEV_VEN" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_MAT_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_PROD_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_PROVEEDORES_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_ROLES_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_USU_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_VEN_ESTADO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_GAR_PROD" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_MAT_PROV" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_MI_MAT" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_PM_MAT" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_RC_MAT" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_PM_PROD" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_USU_ROL" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.ROLES_PERMISOS" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
