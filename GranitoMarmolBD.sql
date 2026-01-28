@@ -4,9 +4,6 @@
 ========================================================= 
 */
 
--------------------------
--- LIMPIEZA Y CREACIÓN
--------------------------
 IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DBGRUPO5')
 BEGIN
     ALTER DATABASE DBGRUPO5 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
@@ -19,11 +16,6 @@ GO
 
 USE DBGRUPO5;
 GO
-
--------------------------
--- MONTAJE 
--------------------------
-
 
 /*
 =========================================================

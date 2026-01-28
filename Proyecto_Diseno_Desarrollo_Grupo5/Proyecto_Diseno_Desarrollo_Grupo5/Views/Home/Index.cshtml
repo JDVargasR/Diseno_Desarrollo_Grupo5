@@ -1,33 +1,220 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Inicio";
+
+    // IMPORTANTE:
+    // Para que el dashboard no se rompa, usá este layout "limpio".
+    // Si estás usando _LayoutAdministrador o _LayoutVendedor, te va a mezclar navbar/containers.
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+
+    var nombre = (Session["NombreUsuario"] ?? "Usuario").ToString();
+    var rol = (Session["Rol"] ?? "CLIENTE").ToString();
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+@section styles {
+    <link rel="stylesheet" href="~/StaticFiles/css/Index.css" />
+}
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<div class="lp-nav">
+    <div class="lp-nav__inner">
+        <div class="lp-brand">
+            <img src="~/StaticFiles/img/AlphaStockLogo.png" alt="AlphaStock" />
+            <div class="lp-brand__text">
+                <b>AlphaStock</b>
+                <span>Sistema de Inventarios · Granito & Mármol</span>
+            </div>
+        </div>
+
+        <nav class="lp-menu">
+            <div class="lp-dd">
+                <a class="lp-dd__btn" href="javascript:void(0)">Inventario <span class="caret"></span></a>
+                <div class="lp-dd__menu">
+                    <a class="lp-dd__item" href="#"><b>Materiales</b><span>Catálogo y costos</span></a>
+                    <a class="lp-dd__item" href="#"><b>Movimientos</b><span>Entradas / salidas</span></a>
+                    <a class="lp-dd__item" href="#"><b>Cortes</b><span>Registro de cortes</span></a>
+                </div>
+            </div>
+
+            <div class="lp-dd">
+                <a class="lp-dd__btn" href="javascript:void(0)">Ventas <span class="caret"></span></a>
+                <div class="lp-dd__menu">
+                    <a class="lp-dd__item" href="#"><b>Nueva venta</b><span>Factura y detalle</span></a>
+                    <a class="lp-dd__item" href="#"><b>Devoluciones</b><span>Gestión y motivo</span></a>
+                    <a class="lp-dd__item" href="#"><b>Clientes</b><span>Consulta rápida</span></a>
+                </div>
+            </div>
+
+            <div class="lp-dd">
+                <a class="lp-dd__btn" href="javascript:void(0)">Reportes <span class="caret"></span></a>
+                <div class="lp-dd__menu">
+                    <a class="lp-dd__item" href="#"><b>Mensual</b><span>Ventas por período</span></a>
+                    <a class="lp-dd__item" href="#"><b>Inventario</b><span>Existencias y alertas</span></a>
+                    <a class="lp-dd__item" href="#"><b>Cortes</b><span>Resumen de producción</span></a>
+                </div>
+            </div>
+
+            @if (rol == "ADMINISTRADOR")
+            {
+                <div class="lp-dd">
+                    <a class="lp-dd__btn" href="javascript:void(0)">Administración <span class="caret"></span></a>
+                    <div class="lp-dd__menu">
+                        <a class="lp-dd__item" href="#"><b>Usuarios</b><span>Roles y estado</span></a>
+                        <a class="lp-dd__item" href="#"><b>Parámetros</b><span>Configuración general</span></a>
+                        <a class="lp-dd__item" href="#"><b>Bitácora</b><span>Auditoría del sistema</span></a>
+                    </div>
+                </div>
+            }
+        </nav>
+
+        <div class="lp-nav__right">
+            <span class="lp-pill">Hola, @nombre</span>
+            <a class="lp-btn" href="@Url.Action("Logout","Autenticacion")">Salir</a>
+        </div>
     </div>
-</main>
+</div>
+
+<section class="lp-hero">
+    <div class="lp-wrap">
+        <div class="hero">
+            <div class="hero__left">
+                <span class="hero__kicker">Panel de control</span>
+                <h1>Todo lo importante, a un vistazo.</h1>
+                <p>
+                    Accesos rápidos, métricas clave y últimas actividades para mantener
+                    inventario, cortes y ventas bajo control.
+                </p>
+
+                <div class="hero__cta">
+                    <a class="lp-btn" href="#">Ir a Inventario</a>
+                    <a class="btn2" href="#">Ver Reportes</a>
+                </div>
+            </div>
+
+            <div class="hero__right">
+                <div class="stats">
+                    <div class="stat">
+                        <b>Stock en alerta</b>
+                        <span>—</span>
+                    </div>
+                    <div class="stat">
+                        <b>Ventas del mes</b>
+                        <span>—</span>
+                    </div>
+                    <div class="stat">
+                        <b>Cortes hoy</b>
+                        <span>—</span>
+                    </div>
+                    <div class="stat">
+                        <b>Devoluciones</b>
+                        <span>—</span>
+                    </div>
+                </div>
+                <div class="hero__hint">
+                    Estos números se conectan cuando existan listas en módulos.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="lp-section">
+    <div class="lp-wrap">
+        <div class="cards">
+            <div class="card">
+                <div class="card__top">
+                    <span class="chip">Materiales</span>
+                </div>
+                <b>Catálogo</b>
+                <p>Consultá existencias, costos y categorías.</p>
+                <a class="card__link" href="#">Abrir →</a>
+            </div>
+
+            <div class="card">
+                <div class="card__top">
+                    <span class="chip">Movimientos</span>
+                </div>
+                <b>Entradas / Salidas</b>
+                <p>Registro ordenado y control trazabilidad.</p>
+                <a class="card__link" href="#">Abrir →</a>
+            </div>
+
+            <div class="card">
+                <div class="card__top">
+                    <span class="chip">Cortes</span>
+                </div>
+                <b>Producción</b>
+                <p>Registro y control de cortes por material.</p>
+                <a class="card__link" href="#">Abrir →</a>
+            </div>
+
+            <div class="card">
+                <div class="card__top">
+                    <span class="chip">Reportes</span>
+                </div>
+                <b>Por período</b>
+                <p>Indicadores para decisiones rápidas.</p>
+                <a class="card__link" href="#">Abrir →</a>
+            </div>
+        </div>
+
+        <div class="grid2">
+            <div class="panel">
+                <div class="panel__head">
+                    <b>Actividad reciente</b>
+                    <span class="muted">Últimos movimientos (demo)</span>
+                </div>
+
+                <div class="activity">
+                    <div class="row">
+                        <div class="dot"></div>
+                        <div>
+                            <b>Salida de material</b>
+                            <div class="muted">Pieza “Mármol Blanco” · 2 unidades</div>
+                        </div>
+                        <span class="badge">Hoy</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="dot"></div>
+                        <div>
+                            <b>Venta registrada</b>
+                            <div class="muted">Cliente Constructora CR · Factura —</div>
+                        </div>
+                        <span class="badge">Ayer</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="dot"></div>
+                        <div>
+                            <b>Corte aprobado</b>
+                            <div class="muted">Encimera cocina · Proyecto —</div>
+                        </div>
+                        <span class="badge">Esta semana</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel__head">
+                    <b>Accesos rápidos</b>
+                    <span class="muted">Tareas frecuentes</span>
+                </div>
+
+                <div class="quick">
+                    <a class="quick__item" href="#">Agregar material</a>
+                    <a class="quick__item" href="#">Entrada inventario</a>
+                    <a class="quick__item" href="#">Salida inventario</a>
+                    <a class="quick__item" href="#">Crear factura</a>
+                    <a class="quick__item" href="#">Ver reportes</a>
+                    <a class="quick__item" href="#">Soporte</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="lp-footer">
+    <div class="lp-wrap footer">
+        <div>© @DateTime.Now.Year AlphaStock</div>
+        <div class="lp-muted">info@alphastock.com · +506 8888-8888</div>
+    </div>
+</footer>

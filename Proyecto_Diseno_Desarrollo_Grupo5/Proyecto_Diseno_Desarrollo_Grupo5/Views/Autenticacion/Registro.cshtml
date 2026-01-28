@@ -35,7 +35,7 @@
                 <label>Nombre</label>
                 <div class="field__wrap">
                     <i class='bx bx-user field__icon'></i>
-                    @Html.TextBoxFor(m => m.Nombre, new { @class = "input", placeholder = "Tu nombre" })
+                    @Html.TextBoxFor(m => m.Nombre, new { @class = "input", placeholder = "Su nombre" })
                 </div>
                 @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "error" })
             </div>
@@ -44,7 +44,7 @@
                 <label>Correo</label>
                 <div class="field__wrap">
                     <i class='bx bx-envelope field__icon'></i>
-                    @Html.TextBoxFor(m => m.Correo, new { @class = "input", type = "email", placeholder = "correo@ejemplo.com" })
+                    @Html.TextBoxFor(m => m.Correo, new { @class = "input", type = "email", placeholder = "Correo@Email.com" })
                 </div>
                 @Html.ValidationMessageFor(m => m.Correo, "", new { @class = "error" })
             </div>
