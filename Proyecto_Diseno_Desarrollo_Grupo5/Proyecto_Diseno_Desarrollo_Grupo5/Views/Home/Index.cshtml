@@ -60,6 +60,7 @@
                         <a class="lp-dd__item" href="#"><b>Usuarios</b><span>Roles y estado</span></a>
                         <a class="lp-dd__item" href="#"><b>Parámetros</b><span>Configuración general</span></a>
                         <a class="lp-dd__item" href="#"><b>Bitácora</b><span>Auditoría del sistema</span></a>
+                        <a class="lp-dd__item" href="@Url.Action("Index","Categorias")"><b>Categorías</b><span>Crear y administrar categorías</span></a>
                     </div>
                 </div>
             }
@@ -153,6 +154,15 @@
                 <b>Por período</b>
                 <p>Indicadores para decisiones rápidas.</p>
                 <a class="card__link" href="#">Abrir →</a>
+            </div>
+
+            <div class="card">
+                <div class="card__top">
+                    <span class="chip">Administración</span>
+                </div>
+                <b>Categorías</b>
+                <p>Crear y administrar categorías de productos.</p>
+                <a class="card__link" href="@Url.Action("Index","Categorias")">Abrir →</a>
             </div>
         </div>
 
