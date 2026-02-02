@@ -132,6 +132,7 @@
     <Compile Include="Controllers\AutenticacionController.cs" />
     <Compile Include="Controllers\CategoriasController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProductosController.cs" />
     <Compile Include="EF\BITACORA.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -210,6 +211,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ProductoCrudVM.cs" />
     <Compile Include="Models\AutenticacionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -267,6 +269,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="StaticFiles\css\Productos.css" />
     <Content Include="StaticFiles\css\Index.css" />
     <Content Include="StaticFiles\css\jquery.mCustomScrollbar.css" />
     <Content Include="StaticFiles\css\material-design-iconic-font.min.css" />
@@ -301,6 +304,7 @@
     <Content Include="Views\Categorias\Index.cshtml" />
     <Content Include="Views\Categorias\Create.cshtml" />
     <Content Include="Views\Categorias\Edit.cshtml" />
+    <Content Include="Views\Productos\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

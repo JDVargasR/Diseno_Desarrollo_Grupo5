@@ -1,0 +1,205 @@
+﻿@model Proyecto_Diseno_Desarrollo_Grupo5.Models.ProductoCrudVM
+@{
+    ViewBag.Title = "Productos";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/StaticFiles/css/Index.css" />
+    <link rel="stylesheet" href="~/StaticFiles/css/Productos.css" />
+}
+
+<section class="lp-hero">
+    <div class="lp-wrap">
+        <div class="hero" style="grid-template-columns: 1fr;">
+            <div class="hero__left" style="padding: 34px 34px;">
+                <span class="hero__kicker">Módulo</span>
+                <h1>Productos</h1>
+                <p>
+                    Registrar, editar, eliminar y buscar productos rápidamente.
+                    Seleccioná una fila para editar o eliminar.
+                </p>
+
+                <div class="hero__cta">
+                    <a class="lp-btn" href="@Url.Action("Index","Home")">Volver al inicio</a>
+                    <a class="btn2" href="#panel-form">Ir al formulario</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="lp-section">
+    <div class="lp-wrap">
+
+        <div class="panel p-panel" id="panel-form">
+            <div class="p-head">
+                <div class="p-title">
+                    <h2>Registro y mantenimiento</h2>
+                    <span class="muted">Click en una fila para cargar datos y editar.</span>
+                </div>
+                <span class="p-chip">CRUD</span>
+            </div>
+
+            <div class="p-search">
+                <input id="txtBuscar" placeholder="Buscar por ID (código), nombre o categoría..." />
+            </div>
+
+            @using (Html.BeginForm("Create", "Productos", FormMethod.Post, new { id = "frmProducto" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" id="ID_PRODUCTO" name="ID_PRODUCTO" value="0" />
+
+                <div class="p-form">
+                    <div class="p-field">
+                        <label>Nombre</label>
+                        <input id="NOMBRE" name="NOMBRE" required />
+                    </div>
+
+                    <div class="p-field">
+                        <label>Precio Venta</label>
+                        <input id="PRECIO_VENTA" name="PRECIO_VENTA" type="number" step="0.01" min="0" required />
+                    </div>
+
+                    <div class="p-field">
+                        <label>Categoría</label>
+                        <select id="ID_CATEGORIA" name="ID_CATEGORIA" required>
+                            <option value="">-- Seleccione --</option>
+                            @foreach (var c in Model.Categorias)
+                            {
+                                <option value="@c.Value">@c.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="p-field">
+                        <label>Estado</label>
+                        <select id="ID_ESTADO" name="ID_ESTADO" required>
+                            @foreach (var e in Model.Estados)
+                            {
+                                <option value="@e.Value">@e.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-actions">
+                    <button type="submit" id="btnGuardar" class="lp-btn">Guardar</button>
+                    <button type="button" id="btnCancelar" class="btn2">Cancelar</button>
+                    <button type="button" id="btnEliminar" class="lp-btn p-danger" disabled>Eliminar</button>
+                </div>
+            }
+        </div>
+
+        <div class="panel p-panel" style="margin-top:12px;">
+            <div class="p-head">
+                <div class="p-title">
+                    <h2>Lista general</h2>
+                    <span class="muted">Se actualiza cuando guardás, editás o eliminás.</span>
+                </div>
+                <span class="p-chip">@Model.Productos.Count registros</span>
+            </div>
+
+            <div class="p-tableWrap">
+                <table id="tblProductos" class="p-table">
+                    <thead>
+                        <tr>
+                            <th>ID (Código)</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Categoría</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Productos)
+                        {
+                            <tr class="rowProd"
+                                data-id="@p.ID_PRODUCTO"
+                                data-nombre="@p.NOMBRE"
+                                data-precio="@p.PRECIO_VENTA"
+                                data-categoria="@p.ID_CATEGORIA"
+                                data-estado="@p.ID_ESTADO">
+
+                                <td class="colId">@p.ID_PRODUCTO</td>
+                                <td class="colNombre">@p.NOMBRE</td>
+                                <td>@p.PRECIO_VENTA</td>
+                                <td class="colCategoria">@p.CATEGORIA</td>
+                                <td>@p.ESTADO</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @using (Html.BeginForm("Delete", "Productos", FormMethod.Post, new { id = "frmDelete" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="deleteId" name="id" value="0" />
+            }
+        </div>
+
+    </div>
+</section>
+
+<script>
+    const txtBuscar = document.getElementById("txtBuscar");
+    const filas = () => document.querySelectorAll("#tblProductos tbody tr");
+
+    txtBuscar.addEventListener("keyup", function () {
+        const q = txtBuscar.value.toLowerCase().trim();
+
+        filas().forEach(tr => {
+            const id = (tr.querySelector(".colId")?.innerText || "").toLowerCase();
+            const nombre = (tr.querySelector(".colNombre")?.innerText || "").toLowerCase();
+            const categoria = (tr.querySelector(".colCategoria")?.innerText || "").toLowerCase();
+
+            tr.style.display = (id.includes(q) || nombre.includes(q) || categoria.includes(q)) ? "" : "none";
+        });
+    });
+
+    const frm = document.getElementById("frmProducto");
+    const btnEliminar = document.getElementById("btnEliminar");
+
+    function limpiar() {
+        document.getElementById("ID_PRODUCTO").value = 0;
+        document.getElementById("NOMBRE").value = "";
+        document.getElementById("PRECIO_VENTA").value = "";
+        document.getElementById("ID_CATEGORIA").value = "";
+        document.getElementById("ID_ESTADO").value = "1";
+
+        frm.action = "@Url.Action("Create", "Productos")";
+        btnEliminar.disabled = true;
+
+        filas().forEach(x => x.classList.remove("p-selected"));
+    }
+
+    document.getElementById("btnCancelar").addEventListener("click", limpiar);
+
+    filas().forEach(tr => {
+        tr.addEventListener("click", function () {
+            filas().forEach(x => x.classList.remove("p-selected"));
+            tr.classList.add("p-selected");
+
+            document.getElementById("ID_PRODUCTO").value = tr.dataset.id;
+            document.getElementById("NOMBRE").value = tr.dataset.nombre;
+            document.getElementById("PRECIO_VENTA").value = tr.dataset.precio;
+            document.getElementById("ID_CATEGORIA").value = tr.dataset.categoria;
+            document.getElementById("ID_ESTADO").value = tr.dataset.estado;
+
+            frm.action = "@Url.Action("Edit", "Productos")";
+            btnEliminar.disabled = false;
+        });
+    });
+
+    btnEliminar.addEventListener("click", function () {
+        const id = document.getElementById("ID_PRODUCTO").value;
+        if (id == 0) return;
+
+        if (confirm("¿Seguro que deseas eliminar este producto?")) {
+            document.getElementById("deleteId").value = id;
+            document.getElementById("frmDelete").submit();
+        }
+    });
+</script>
