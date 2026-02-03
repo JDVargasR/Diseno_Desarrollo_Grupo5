@@ -129,6 +129,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\AutenticacionController.cs" />
     <Compile Include="Controllers\CategoriasController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -211,6 +212,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\RolesModel.cs" />
     <Compile Include="Models\ProductoCrudVM.cs" />
     <Compile Include="Models\AutenticacionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -277,12 +279,14 @@
     <Content Include="StaticFiles\css\normalize.css" />
     <Content Include="StaticFiles\css\normalize2.css" />
     <Content Include="StaticFiles\css\Autenticacion.css" />
+    <Content Include="StaticFiles\css\Roles.css" />
     <Content Include="StaticFiles\img\AlphaStockLogo.png" />
     <Content Include="StaticFiles\js\Autenticacion.js" />
     <Content Include="StaticFiles\js\customScrollReveal.js" />
     <Content Include="StaticFiles\js\Index.js" />
     <Content Include="StaticFiles\js\jquery-1.11.2.min.js" />
     <Content Include="StaticFiles\js\jquery.mCustomScrollbar.concat.min.js" />
+    <Content Include="StaticFiles\js\Roles.js" />
     <Content Include="StaticFiles\js\scrollReveal.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -305,6 +309,7 @@
     <Content Include="Views\Categorias\Create.cshtml" />
     <Content Include="Views\Categorias\Edit.cshtml" />
     <Content Include="Views\Productos\Index.cshtml" />
+    <Content Include="Views\Roles\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

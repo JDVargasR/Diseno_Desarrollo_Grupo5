@@ -1,0 +1,41 @@
+﻿.roles-page {
+    min-height: calc(100vh - 220px); /* Ajustar el Header y el Footer */
+}
+
+.roles-card {
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+    .roles-card .card-header {
+        border-bottom: 1px solid rgba(0,0,0,.06);
+        background: rgba(255,255,255,.75);
+        backdrop-filter: blur(6px);
+    }
+
+.roles-table thead th {
+    white-space: nowrap;
+}
+
+.badge-estado {
+    font-weight: 600;
+    letter-spacing: .2px;
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.modal .form-text {
+    color: rgba(0,0,0,.55);
+}
+
+@media (max-width: 576px) {
+    .roles-actions {
+        display: grid;
+        gap: .5rem;
+    }
+}
