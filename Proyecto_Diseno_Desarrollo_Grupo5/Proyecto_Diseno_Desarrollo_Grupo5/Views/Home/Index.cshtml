@@ -1,235 +1,153 @@
 ﻿@{
     ViewBag.Title = "Inicio";
-
-    // IMPORTANTE:
-    // Para que el dashboard no se rompa, usá este layout "limpio".
-    // Si estás usando _LayoutAdministrador o _LayoutVendedor, te va a mezclar navbar/containers.
     Layout = "~/Views/Shared/_LayoutCliente.cshtml";
-
     var nombre = (Session["NombreUsuario"] ?? "Usuario").ToString();
-    var rol = (Session["Rol"] ?? "CLIENTE").ToString();
 }
 
 @section styles {
     <link rel="stylesheet" href="~/StaticFiles/css/Index.css" />
 }
 
-<div class="lp-nav">
-    <div class="lp-nav__inner">
-        <div class="lp-brand">
+<header class="lp-header" id="top">
+    <div class="lp-container lp-header__inner">
+
+        <a class="lp-brand" href="@Url.Action("Index", "Home")" aria-label="AlphaStock">
             <img src="~/StaticFiles/img/AlphaStockLogo.png" alt="AlphaStock" />
             <div class="lp-brand__text">
-                <b>AlphaStock</b>
-                <span>Sistema de Inventarios · Granito & Mármol</span>
+                <strong>AlphaStock</strong>
+                <span>Sistema de inventarios</span>
             </div>
-        </div>
+        </a>
 
-        <nav class="lp-menu">
+        <input class="lp-navcheck" type="checkbox" id="navcheck" />
+        <label class="lp-burger" for="navcheck" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </label>
+
+        <nav class="lp-nav" aria-label="Menú principal" id="mainNav">
             <div class="lp-dd">
-                <a class="lp-dd__btn" href="javascript:void(0)">Inventario <span class="caret"></span></a>
+                <button class="lp-dd__btn" type="button">
+                    Inicio <span class="lp-caret"></span>
+                </button>
                 <div class="lp-dd__menu">
-                    <a class="lp-dd__item" href="#"><b>Materiales</b><span>Catálogo y costos</span></a>
-                    <a class="lp-dd__item" href="#"><b>Movimientos</b><span>Entradas / salidas</span></a>
-                    <a class="lp-dd__item" href="#"><b>Cortes</b><span>Registro de cortes</span></a>
+                    <a href="@Url.Action("Index","Productos")" class="lp-dd__item">Productos</a>
+                    <a href="#" class="lp-dd__item">Clientes</a>
+                    <a href="#" class="lp-dd__item">Proveedores</a>
+                    <a href="#" class="lp-dd__item">Ventas</a>
+                    <a href="#" class="lp-dd__item">Materiales</a>
+                    <a href="#" class="lp-dd__item">Roles</a>
+                    <a href="@Url.Action("Index","Categorias")" class="lp-dd__item">Categorías</a>
                 </div>
             </div>
 
             <div class="lp-dd">
-                <a class="lp-dd__btn" href="javascript:void(0)">Ventas <span class="caret"></span></a>
+                <button class="lp-dd__btn" type="button">
+                    Servicios <span class="lp-caret"></span>
+                </button>
                 <div class="lp-dd__menu">
-                    <a class="lp-dd__item" href="#"><b>Nueva venta</b><span>Factura y detalle</span></a>
-                    <a class="lp-dd__item" href="#"><b>Devoluciones</b><span>Gestión y motivo</span></a>
-                    <a class="lp-dd__item" href="#"><b>Clientes</b><span>Consulta rápida</span></a>
+                    <a href="#" class="lp-dd__item">Bitácora / Auditoría</a>
+                    <a href="#" class="lp-dd__item">Garantías</a>
+                    <a href="#" class="lp-dd__item">Devoluciones</a>
                 </div>
             </div>
 
             <div class="lp-dd">
-                <a class="lp-dd__btn" href="javascript:void(0)">Reportes <span class="caret"></span></a>
+                <button class="lp-dd__btn" type="button">
+                    Otros <span class="lp-caret"></span>
+                </button>
                 <div class="lp-dd__menu">
-                    <a class="lp-dd__item" href="#"><b>Mensual</b><span>Ventas por período</span></a>
-                    <a class="lp-dd__item" href="#"><b>Inventario</b><span>Existencias y alertas</span></a>
-                    <a class="lp-dd__item" href="#"><b>Cortes</b><span>Resumen de producción</span></a>
+                    <a href="#" class="lp-dd__item">Automatización</a>
+                    <a href="#" class="lp-dd__item">Análisis Predictivo</a>
+                    <a href="#" class="lp-dd__item">Reportes</a>
+                    <a href="#" class="lp-dd__item">Control Usuarios</a>
                 </div>
             </div>
-
-            <div class="lp-dd">
-                <a class="lp-dd__btn" href="@Url.Action("Index","Productos")">Productos</a>
-            </div>
-
-
-            @if (rol == "ADMINISTRADOR")
-            {
-                <div class="lp-dd">
-                    <a class="lp-dd__btn" href="javascript:void(0)">Administración <span class="caret"></span></a>
-                    <div class="lp-dd__menu">
-                        <a class="lp-dd__item" href="#"><b>Usuarios</b><span>Roles y estado</span></a>
-                        <a class="lp-dd__item" href="#"><b>Parámetros</b><span>Configuración general</span></a>
-                        <a class="lp-dd__item" href="#"><b>Bitácora</b><span>Auditoría del sistema</span></a>
-                        <a class="lp-dd__item" href="@Url.Action("Index","Categorias")"><b>Categorías</b><span>Crear y administrar categorías</span></a>
-                    </div>
-                </div>
-            }
         </nav>
 
-        <div class="lp-nav__right">
-            <span class="lp-pill">Hola, @nombre</span>
-            <a class="lp-btn" href="@Url.Action("Logout","Autenticacion")">Salir</a>
+        <div class="lp-user">
+            <div class="lp-user__dd">
+                <button class="lp-user__btn" type="button" aria-label="Menú de usuario">
+                    <span class="lp-user__name">@nombre</span>
+                    <span class="lp-caret"></span>
+                </button>
+                <div class="lp-user__menu">
+                    <a class="lp-user__item" href="@Url.Action("Perfil", "Autenticacion")">Mi cuenta / Ver perfil</a>
+                    <a class="lp-user__item danger" href="@Url.Action("Logout", "Autenticacion")">Cerrar sesión</a>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<section class="lp-hero">
-    <div class="lp-wrap">
-        <div class="hero">
-            <div class="hero__left">
-                <span class="hero__kicker">Panel de control</span>
-                <h1>Todo lo importante, a un vistazo.</h1>
-                <p>
-                    Accesos rápidos, métricas clave y últimas actividades para mantener
-                    inventario, cortes y ventas bajo control.
+    </div>
+</header>
+
+<main class="lp-main">
+    <section class="lp-hero">
+        <div class="lp-container hero">
+
+            <div class="hero__text">
+                <p class="hero__kicker">BIENVENIDO</p>
+
+                <h1>
+                    Hola, <span class="hero__name">@nombre</span>
+                </h1>
+
+                <p class="hero__desc">
+                    Estás en <b>AlphaStock</b>. Usá el menú superior para navegar por los distintos módulos del sistema.
                 </p>
+            </div>
 
-                <div class="hero__cta">
-                    <a class="lp-btn" href="#">Ir a Inventario</a>
-                    <a class="btn2" href="#">Ver Reportes</a>
+            <div class="hero__logo" aria-hidden="true">
+                <div class="logoRing">
+                    <div class="logoRing__inner">
+                        <img src="~/StaticFiles/img/AlphaStockLogo.png" alt="" />
+                    </div>
                 </div>
             </div>
 
-            <div class="hero__right">
-                <div class="stats">
-                    <div class="stat">
-                        <b>Stock en alerta</b>
-                        <span>—</span>
-                    </div>
-                    <div class="stat">
-                        <b>Ventas del mes</b>
-                        <span>—</span>
-                    </div>
-                    <div class="stat">
-                        <b>Cortes hoy</b>
-                        <span>—</span>
-                    </div>
-                    <div class="stat">
-                        <b>Devoluciones</b>
-                        <span>—</span>
-                    </div>
-                </div>
-                <div class="hero__hint">
-                    Estos números se conectan cuando existan listas en módulos.
-                </div>
+        </div>
+    </section>
+</main>
+
+<footer class="lp-footer" id="lpFooter">
+    <div class="lp-container lp-footer__inner">
+
+        <div class="f-col f-brand">
+            <img class="f-logo" src="~/StaticFiles/img/AlphaStockLogo.png" alt="AlphaStock" />
+            <div>
+                <b>AlphaStock</b>
+                <span>Inventarios · Granito & Mármol</span>
             </div>
         </div>
+
+        <div class="f-col f-links">
+            <b>Acerca de AlphaStock</b>
+            <a href="#top">Nuestra historia</a>
+        </div>
+
+        <div class="f-col f-social">
+            <b>Síguenos:</b>
+            <div class="socials">
+                <a href="#" aria-label="Instagram">IG</a>
+                <a href="#" aria-label="X">X</a>
+                <a href="#" aria-label="WhatsApp">WA</a>
+            </div>
+        </div>
+
+        <div class="f-col f-contact">
+            <b>Contacto</b>
+            <span>+506 8888-8888</span>
+            <span>info@alphastock.com</span>
+        </div>
+
     </div>
-</section>
 
-<section class="lp-section">
-    <div class="lp-wrap">
-        <div class="cards">
-            <div class="card">
-                <div class="card__top">
-                    <span class="chip">Materiales</span>
-                </div>
-                <b>Catálogo</b>
-                <p>Consultá existencias, costos y categorías.</p>
-                <a class="card__link" href="#">Abrir →</a>
-            </div>
-
-            <div class="card">
-                <div class="card__top">
-                    <span class="chip">Movimientos</span>
-                </div>
-                <b>Entradas / Salidas</b>
-                <p>Registro ordenado y control trazabilidad.</p>
-                <a class="card__link" href="#">Abrir →</a>
-            </div>
-
-            <div class="card">
-                <div class="card__top">
-                    <span class="chip">Cortes</span>
-                </div>
-                <b>Producción</b>
-                <p>Registro y control de cortes por material.</p>
-                <a class="card__link" href="#">Abrir →</a>
-            </div>
-
-            <div class="card">
-                <div class="card__top">
-                    <span class="chip">Reportes</span>
-                </div>
-                <b>Por período</b>
-                <p>Indicadores para decisiones rápidas.</p>
-                <a class="card__link" href="#">Abrir →</a>
-            </div>
-
-            <div class="card">
-                <div class="card__top">
-                    <span class="chip">Administración</span>
-                </div>
-                <b>Categorías</b>
-                <p>Crear y administrar categorías de productos.</p>
-                <a class="card__link" href="@Url.Action("Index","Categorias")">Abrir →</a>
-            </div>
+    <div class="lp-footer__bottom">
+        <div class="lp-container">
+            AlphaStock. © @DateTime.Now.Year. All Rights Reserved
         </div>
-
-        <div class="grid2">
-            <div class="panel">
-                <div class="panel__head">
-                    <b>Actividad reciente</b>
-                    <span class="muted">Últimos movimientos (demo)</span>
-                </div>
-
-                <div class="activity">
-                    <div class="row">
-                        <div class="dot"></div>
-                        <div>
-                            <b>Salida de material</b>
-                            <div class="muted">Pieza “Mármol Blanco” · 2 unidades</div>
-                        </div>
-                        <span class="badge">Hoy</span>
-                    </div>
-
-                    <div class="row">
-                        <div class="dot"></div>
-                        <div>
-                            <b>Venta registrada</b>
-                            <div class="muted">Cliente Constructora CR · Factura —</div>
-                        </div>
-                        <span class="badge">Ayer</span>
-                    </div>
-
-                    <div class="row">
-                        <div class="dot"></div>
-                        <div>
-                            <b>Corte aprobado</b>
-                            <div class="muted">Encimera cocina · Proyecto —</div>
-                        </div>
-                        <span class="badge">Esta semana</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="panel__head">
-                    <b>Accesos rápidos</b>
-                    <span class="muted">Tareas frecuentes</span>
-                </div>
-
-                <div class="quick">
-                    <a class="quick__item" href="#">Agregar material</a>
-                    <a class="quick__item" href="#">Entrada inventario</a>
-                    <a class="quick__item" href="#">Salida inventario</a>
-                    <a class="quick__item" href="#">Crear factura</a>
-                    <a class="quick__item" href="#">Ver reportes</a>
-                    <a class="quick__item" href="#">Soporte</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<footer class="lp-footer">
-    <div class="lp-wrap footer">
-        <div>© @DateTime.Now.Year AlphaStock</div>
-        <div class="lp-muted">info@alphastock.com · +506 8888-8888</div>
     </div>
 </footer>
+
+@section scripts {
+    <script src="~/StaticFiles/js/Index.js"></script>
+}
