@@ -22,19 +22,26 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             {
                 var roles = context.ROLES.AsQueryable();
 
+                // Buscar por nombre o descripción (descripción puede venir null)
                 if (!string.IsNullOrEmpty(q))
                 {
-                    roles = roles.Where(r => r.NOMBRE.Contains(q) || r.DESCRIPCION.Contains(q));
+                    roles = roles.Where(r =>
+                        r.NOMBRE.Contains(q) ||
+                        (r.DESCRIPCION != null && r.DESCRIPCION.Contains(q))
+                    );
                 }
 
+                // Estado: 0 = todos, 1 = activo, 2 = inactivo
                 if (estado == 1 || estado == 2)
                 {
                     roles = roles.Where(r => r.ID_ESTADO == estado);
                 }
 
-                var lista = roles.OrderBy(r => r.ID_ROL).ToList();
+                var lista = roles
+                    .OrderBy(r => r.ID_ROL)
+                    .ToList();
 
-                // Para mantener filtros en la vista
+                // Mantener filtros en la vista
                 ViewBag.Q = q;
                 ViewBag.Estado = estado;
 
@@ -55,12 +62,20 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 return RedirectToAction("Index");
             }
 
-            var estado = model.IdEstado ?? 1;
+            var nombre = (model.Nombre ?? "").Trim().ToUpper();
+            var descripcion = (model.Descripcion ?? "").Trim();
+            var idEstado = (model.IdEstado == 2 ? 2 : 1);
+
+            if (nombre.Length < 2)
+            {
+                TempData["Mensaje"] = "El nombre del rol debe tener al menos 2 caracteres.";
+                return RedirectToAction("Index");
+            }
 
             using (var context = new DBGRUPO5Entities())
             {
-                // Validación no duplicar nombre
-                var existe = context.ROLES.Any(r => r.NOMBRE == model.Nombre);
+                // Evitar duplicados por nombre (ignorando mayúsculas/minúsculas)
+                var existe = context.ROLES.Any(r => r.NOMBRE.ToUpper() == nombre);
                 if (existe)
                 {
                     TempData["Mensaje"] = "Ya existe un rol con ese nombre.";
@@ -69,9 +84,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
                 var rol = new ROLES
                 {
-                    NOMBRE = model.Nombre.Trim(),
-                    DESCRIPCION = (model.Descripcion ?? "").Trim(),
-                    ID_ESTADO = (estado == 2 ? 2 : 1)
+                    NOMBRE = nombre,
+                    DESCRIPCION = descripcion,
+                    ID_ESTADO = idEstado
                 };
 
                 context.ROLES.Add(rol);
@@ -95,6 +110,22 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 return RedirectToAction("Index");
             }
 
+            if (model.IdRol == null || model.IdRol <= 0)
+            {
+                TempData["Mensaje"] = "ID de rol inválido.";
+                return RedirectToAction("Index");
+            }
+
+            var nombre = (model.Nombre ?? "").Trim().ToUpper();
+            var descripcion = (model.Descripcion ?? "").Trim();
+            var idEstado = (model.IdEstado == 2 ? 2 : 1);
+
+            if (nombre.Length < 2)
+            {
+                TempData["Mensaje"] = "El nombre del rol debe tener al menos 2 caracteres.";
+                return RedirectToAction("Index");
+            }
+
             using (var context = new DBGRUPO5Entities())
             {
                 var rol = context.ROLES.FirstOrDefault(r => r.ID_ROL == model.IdRol);
@@ -104,17 +135,21 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // Validación evitar duplicado de nombre en otro rol
-                var existe = context.ROLES.Any(r => r.NOMBRE == model.Nombre && r.ID_ROL != model.IdRol);
+                // Evitar duplicado de nombre en otro rol
+                var existe = context.ROLES.Any(r =>
+                    r.ID_ROL != model.IdRol &&
+                    r.NOMBRE.ToUpper() == nombre
+                );
+
                 if (existe)
                 {
                     TempData["Mensaje"] = "Ya existe otro rol con ese nombre.";
                     return RedirectToAction("Index");
                 }
 
-                rol.NOMBRE = model.Nombre.Trim();
-                rol.DESCRIPCION = (model.Descripcion ?? "").Trim();
-                rol.ID_ESTADO = (model.IdEstado == 2 ? 2 : 1);
+                rol.NOMBRE = nombre;
+                rol.DESCRIPCION = descripcion;
+                rol.ID_ESTADO = idEstado;
 
                 context.SaveChanges();
 
@@ -125,7 +160,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         #endregion
 
 
-        #region Deactivate (Borrado lógico)
+        #region Deactivate (Borrado lógico -> INACTIVO)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Deactivate(int id)
@@ -139,10 +174,34 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     return RedirectToAction("Index");
                 }
 
-                rol.ID_ESTADO = 2;
+                rol.ID_ESTADO = 2; // INACTIVO
                 context.SaveChanges();
 
                 TempData["OK"] = "Rol inactivado correctamente.";
+                return RedirectToAction("Index");
+            }
+        }
+        #endregion
+
+
+        #region Activate (Volver a ACTIVO)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Activate(int id)
+        {
+            using (var context = new DBGRUPO5Entities())
+            {
+                var rol = context.ROLES.FirstOrDefault(r => r.ID_ROL == id);
+                if (rol == null)
+                {
+                    TempData["Mensaje"] = "No se encontró el rol para activar.";
+                    return RedirectToAction("Index");
+                }
+
+                rol.ID_ESTADO = 1; // ACTIVO
+                context.SaveChanges();
+
+                TempData["OK"] = "Rol activado correctamente.";
                 return RedirectToAction("Index");
             }
         }

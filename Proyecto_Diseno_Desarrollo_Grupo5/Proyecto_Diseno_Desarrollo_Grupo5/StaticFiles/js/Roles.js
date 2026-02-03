@@ -15,7 +15,7 @@
     const modalEl = $("modalRol");
     let modalInstance = null;
 
-    // ===== Filtros (Tiempo real) =====
+    // ===== Filtros =====
     const frmFiltroRoles = $("frmFiltroRoles");
     const txtBuscar = $("txtBuscar");
     const selEstado = $("selEstado");
@@ -30,31 +30,35 @@
         showServerSweetAlert();
 
         // 3) Nuevo rol
-        btnNuevoRol?.addEventListener("click", () => openCreateModal());
+        btnNuevoRol?.addEventListener("click", openCreateModal);
 
-        // 4) Click en Editar (botones en tabla)
+        // 4) Click en Editar
         document.querySelectorAll("[data-action='edit']").forEach((btn) => {
             btn.addEventListener("click", () => openEditModal(btn));
         });
 
-        // 5) Click en Inactivar (borrado lógico)
+        // 5) Click en Inactivar
         document.querySelectorAll("[data-action='deactivate']").forEach((btn) => {
             btn.addEventListener("click", () => confirmDeactivate(btn));
         });
 
-        // 6) Guardar (submit del modal)
+        // 6) Click en Activar (NUEVO)
+        document.querySelectorAll("[data-action='activate']").forEach((btn) => {
+            btn.addEventListener("click", () => confirmActivate(btn));
+        });
+
+        // 7) Guardar (submit del modal)
         formRol?.addEventListener("submit", (e) => {
             e.preventDefault();
             confirmSave();
         });
 
-        // 7) Filtros en tiempo real (sin botón Filtrar)
+        // 8) Filtros 
         initLiveFilters();
     });
 
-    // ===== SweetAlert desde servidor =====
+    // ===== SweetAlert =====
     function showServerSweetAlert() {
-
         const el = $("swalMsg");
         if (!el || !window.Swal) return;
 
@@ -71,7 +75,7 @@
         }
     }
 
-    // ===== Filtros (Se actializan solitos) ====
+    // ===== Filtros =====
     function initLiveFilters() {
         if (!frmFiltroRoles) return;
 
@@ -92,6 +96,7 @@
             }
         });
 
+        // Cambio de Estado 
         selEstado?.addEventListener("change", () => {
             clearTimeout(t);
             frmFiltroRoles.submit();
@@ -100,21 +105,25 @@
 
     // ===== Modal =====
     function openCreateModal() {
+        if (!formRol) return;
+
         modalTitulo.textContent = "Nuevo Rol";
         rolId.value = "0";
         rolNombre.value = "";
         rolDescripcion.value = "";
         rolEstado.value = "1";
 
-        if (formRol?.dataset?.createUrl) {
+        if (formRol.dataset?.createUrl) {
             formRol.action = formRol.dataset.createUrl;
         }
 
         modalInstance?.show();
-        setTimeout(() => rolNombre.focus(), 150);
+        setTimeout(() => rolNombre?.focus(), 150);
     }
 
     function openEditModal(btn) {
+        if (!formRol) return;
+
         const id = btn.dataset.id || "0";
         const nombre = btn.dataset.nombre || "";
         const descripcion = btn.dataset.descripcion || "";
@@ -126,12 +135,12 @@
         rolDescripcion.value = descripcion;
         rolEstado.value = estado;
 
-        if (formRol?.dataset?.updateUrl) {
+        if (formRol.dataset?.updateUrl) {
             formRol.action = formRol.dataset.updateUrl;
         }
 
         modalInstance?.show();
-        setTimeout(() => rolNombre.focus(), 150);
+        setTimeout(() => rolNombre?.focus(), 150);
     }
 
     // ===== Guardar =====
@@ -167,7 +176,7 @@
 
     // ===== Inactivar =====
     async function confirmDeactivate(btn) {
-        const formId = btn.dataset.form; // Id del form oculto
+        const formId = btn.dataset.form;
         const nombre = btn.dataset.nombre || "";
 
         const res = await Swal.fire({
@@ -186,7 +195,27 @@
         if (f) f.submit();
     }
 
-    // ===== Utils =====
+    // ===== Activar =====
+    async function confirmActivate(btn) {
+        const formId = btn.dataset.form;
+        const nombre = btn.dataset.nombre || "";
+
+        const res = await Swal.fire({
+            icon: "question",
+            title: "¿Activar rol?",
+            html: `Se marcará como <b>ACTIVO</b>:<br><b>${escapeHtml(nombre)}</b>`,
+            showCancelButton: true,
+            confirmButtonText: "Sí, activar",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#198754",
+        });
+
+        if (!res.isConfirmed) return;
+
+        const f = document.getElementById(formId);
+        if (f) f.submit();
+    }
+
     function escapeHtml(str) {
         return String(str)
             .replaceAll("&", "&amp;")
