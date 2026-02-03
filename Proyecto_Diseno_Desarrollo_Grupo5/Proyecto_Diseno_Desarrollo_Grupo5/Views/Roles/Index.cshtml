@@ -21,7 +21,7 @@
             </div>
 
             <button id="btnNuevoRol" class="btn btn-primary btn-icon" type="button">
-                <i class="zmdi zmdi-plus"></i> Nuevo Rol
+                <i class="bi bi-plus-lg me-1"></i> Nuevo Rol
             </button>
         </div>
 
@@ -51,15 +51,9 @@
                         <select id="selEstado"
                                 name="estado"
                                 class="form-select">
-                            <option value="0" @(estado == 0 ? "selected" : "")>
-                                Todos
-                            </option>
-                            <option value="1" @(estado == 1 ? "selected" : "")>
-                                Activo
-                            </option>
-                            <option value="2" @(estado == 2 ? "selected" : "")>
-                                Inactivo
-                            </option>
+                            <option value="0" @(estado == 0 ? "selected" : "")>Todos</option>
+                            <option value="1" @(estado == 1 ? "selected" : "")>Activo</option>
+                            <option value="2" @(estado == 2 ? "selected" : "")>Inactivo</option>
                         </select>
                     </div>
 
@@ -67,7 +61,7 @@
                     <div class="col-12 col-md-3 d-grid">
                         <a class="btn btn-outline-light text-dark btn-icon"
                            href="@Url.Action("Index","Roles")">
-                            Limpiar
+                            <i class="bi bi-arrow-clockwise me-1"></i> Limpiar
                         </a>
                     </div>
 
@@ -127,7 +121,7 @@
                                                     data-nombre="@r.NOMBRE"
                                                     data-descripcion="@r.DESCRIPCION"
                                                     data-estado="@r.ID_ESTADO">
-                                                <i class="zmdi zmdi-edit"></i> Editar
+                                                <i class="bi bi-pencil-square me-1"></i> Editar
                                             </button>
 
                                             @using (Html.BeginForm("Deactivate", "Roles", FormMethod.Post, new { id = "frmDel_" + r.ID_ROL, style = "display:none;" }))
@@ -142,7 +136,7 @@
                                                     data-form="frmDel_@r.ID_ROL"
                                                     data-nombre="@r.NOMBRE"
                                                     @(esInactivo ? "disabled" : "")>
-                                                <i class="zmdi zmdi-block"></i> Inactivar
+                                                <i class="bi bi-slash-circle me-1"></i> Inactivar
                                             </button>
 
                                         </td>
@@ -216,7 +210,7 @@
                             Cancelar
                         </button>
                         <button type="submit" class="btn btn-primary btn-icon">
-                            <i class="zmdi zmdi-save"></i> Guardar
+                            <i class="bi bi-save2 me-1"></i> Guardar
                         </button>
                     </div>
                 }
