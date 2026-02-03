@@ -162,3 +162,22 @@
     background: rgba(182,128,68,.10);
     border: 1px solid rgba(182,128,68,.18);
 }
+
+.page-hero {
+    padding: 42px 0 18px;
+}
+
+    .page-hero .lp-wrap {
+        width: min(1180px, 92vw);
+        margin: 0 auto;
+    }
+
+    .page-hero .hero {
+        min-height: auto;
+        display: block;
+    }
+
+body {
+    padding-bottom: 180px;
+}
+

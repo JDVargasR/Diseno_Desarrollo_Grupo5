@@ -1,10 +1,16 @@
 ﻿@{
-    ViewBag.Title = "Inicio";
+    ViewBag.Title = "Nuestra Historia";
     Layout = "~/Views/Shared/_LayoutCliente.cshtml";
     var nombre = (Session["NombreUsuario"] ?? "Usuario").ToString();
 }
 
+@section styles {
+    <link rel="stylesheet" href="~/StaticFiles/css/NuestraHistoria.css" />
+}
+
 <main class="lp-main">
+
+    <!-- 1) HERO IGUAL AL INDEX -->
     <section class="lp-hero">
         <div class="lp-container hero">
 
@@ -18,16 +24,226 @@
                 <p class="hero__desc">
                     Estás en <b>AlphaStock</b>. Usá el menú superior para navegar por los distintos módulos del sistema.
                 </p>
+
+                <!-- Botón para bajar a la historia -->
+                <a class="hs-btn hs-btn--primary" href="#historia" style="margin-top:14px; display:inline-flex;">
+                    Ver nuestra historia
+                </a>
             </div>
 
             <div class="hero__logo" aria-hidden="true">
                 <div class="logoRing">
                     <div class="logoRing__inner">
-                        <img src="~/StaticFiles/img/AlphaStockLogo.png" alt="" />
+                        <img src="~/StaticFiles/img/AlphaStockLogo.png" alt="AlphaStock" />
                     </div>
                 </div>
             </div>
 
         </div>
     </section>
+
+
+    <section id="historia">
+
+        <section class="hs-hero" id="top">
+            <div class="lp-container hs-hero__grid">
+
+                <div class="hs-hero__text">
+                    <span class="hs-kicker">ALPHASTOCK · GRANITO & MÁRMOL</span>
+
+                    <h1>
+                        Nuestra historia se construye con
+                        <span class="hs-grad">orden</span>,
+                        <span class="hs-grad">control</span>
+                        y <span class="hs-grad">precisión</span>.
+                    </h1>
+
+                    <p class="hs-desc">
+                        AlphaStock nace para resolver un problema real: inventarios de piedra con alta rotación,
+                        control manual y errores frecuentes. Diseñamos una solución clara, moderna y rápida para
+                        que el inventario sea una ventaja, no una preocupación.
+                    </p>
+
+                    <div class="hs-actions">
+                        <a class="hs-btn hs-btn--primary" href="#timeline">Ver evolución</a>
+                        <a class="hs-btn hs-btn--ghost" href="#valores">Nuestros valores</a>
+                    </div>
+
+                    <div class="hs-miniGrid">
+                        <div class="hs-mini">
+                            <b>Inventario claro</b>
+                            <span>Entradas · salidas · alertas</span>
+                        </div>
+                        <div class="hs-mini">
+                            <b>Reportes útiles</b>
+                            <span>Para decisiones rápidas</span>
+                        </div>
+                        <div class="hs-mini">
+                            <b>Diseño moderno</b>
+                            <span>Fácil de usar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hs-hero__visual" aria-hidden="true">
+                    <div class="hs-panel">
+                        <div class="hs-panel__top">
+                            <div class="hs-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="hs-panel__tag">Dashboard</span>
+                        </div>
+
+                        <div class="hs-panel__body">
+                            <div class="hs-kpi">
+                                <span class="hs-kpi__label">Stock disponible</span>
+                                <b class="hs-kpi__value">1,248</b>
+                                <span class="hs-kpi__hint">Movimientos hoy: 36</span>
+                            </div>
+
+                            <div class="hs-bars">
+                                <div class="hs-bar">
+                                    <span>Granito</span>
+                                    <div class="hs-track"><i style="width:78%"></i></div>
+                                </div>
+                                <div class="hs-bar">
+                                    <span>Mármol</span>
+                                    <div class="hs-track"><i style="width:56%"></i></div>
+                                </div>
+                                <div class="hs-bar">
+                                    <span>Cuarzo</span>
+                                    <div class="hs-track"><i style="width:42%"></i></div>
+                                </div>
+                            </div>
+
+                            <div class="hs-pills">
+                                <span>Entradas</span>
+                                <span>Salidas</span>
+                                <span>Alertas</span>
+                                <span>Reportes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hs-float hs-float--a">
+                        <b>Alerta</b>
+                        <span>Bajo stock: 3 items</span>
+                    </div>
+
+                    <div class="hs-float hs-float--b">
+                        <b>Tip</b>
+                        <span>Revisa el reporte semanal</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="hs-stats">
+            <div class="lp-container hs-stats__grid">
+                <div class="hs-stat">
+                    <b>Menos errores</b>
+                    <span>Control más confiable</span>
+                </div>
+                <div class="hs-stat">
+                    <b>Más rapidez</b>
+                    <span>Operación diaria ágil</span>
+                </div>
+                <div class="hs-stat">
+                    <b>Más claridad</b>
+                    <span>Decisiones con datos</span>
+                </div>
+                <div class="hs-stat">
+                    <b>Más orden</b>
+                    <span>Inventario estructurado</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="hs-section" id="timeline">
+            <div class="lp-container">
+                <div class="hs-head">
+                    <h2>Evolución</h2>
+                    <p>Así fue creciendo AlphaStock, paso a paso, enfocado en necesidades reales.</p>
+                </div>
+
+                <div class="hs-timeline">
+                    <article class="hs-step">
+                        <div class="hs-step__n">1</div>
+                        <div class="hs-step__c">
+                            <h3>La idea</h3>
+                            <p>Identificamos pérdidas por faltantes y registros manuales poco confiables.</p>
+                            <span class="hs-meta">Inicio</span>
+                        </div>
+                    </article>
+
+                    <article class="hs-step">
+                        <div class="hs-step__n">2</div>
+                        <div class="hs-step__c">
+                            <h3>Primer prototipo</h3>
+                            <p>Inventario, entradas/salidas, y alertas para evitar quedarte sin material.</p>
+                            <span class="hs-meta">Prototipo</span>
+                        </div>
+                    </article>
+
+                    <article class="hs-step">
+                        <div class="hs-step__n">3</div>
+                        <div class="hs-step__c">
+                            <h3>Reportes y filtros</h3>
+                            <p>Datos claros para responder rápido: qué entra, qué sale y qué falta.</p>
+                            <span class="hs-meta">Crecimiento</span>
+                        </div>
+                    </article>
+
+                    <article class="hs-step">
+                        <div class="hs-step__n">4</div>
+                        <div class="hs-step__c">
+                            <h3>Experiencia moderna</h3>
+                            <p>Interfaz limpia y consistente, alineada a procesos reales de bodega.</p>
+                            <span class="hs-meta">Hoy</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="hs-section" id="valores">
+            <div class="lp-container">
+                <div class="hs-head">
+                    <h2>Nuestros valores</h2>
+                    <p>Lo que guía el producto y el trabajo del equipo.</p>
+                </div>
+
+                <div class="hs-cards">
+                    <div class="hs-card">
+                        <div class="hs-ico">✓</div>
+                        <h3>Precisión</h3>
+                        <p>Inventarios claros y consistentes para operar sin dudas.</p>
+                    </div>
+
+                    <div class="hs-card">
+                        <div class="hs-ico">⚡</div>
+                        <h3>Agilidad</h3>
+                        <p>Procesos simples y rápidos para el día a día.</p>
+                    </div>
+
+                    <div class="hs-card">
+                        <div class="hs-ico">🛡️</div>
+                        <h3>Confianza</h3>
+                        <p>Menos errores, más control, mejores resultados.</p>
+                    </div>
+
+                    <div class="hs-card">
+                        <div class="hs-ico">📈</div>
+                        <h3>Mejora continua</h3>
+                        <p>Siempre iterando con base en necesidades reales.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="hs-cta">
+
+        </section>
+
 </main>

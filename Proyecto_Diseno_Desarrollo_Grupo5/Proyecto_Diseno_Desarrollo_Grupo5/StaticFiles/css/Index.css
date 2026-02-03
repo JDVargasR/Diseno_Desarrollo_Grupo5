@@ -519,4 +519,10 @@ body {
         width: 135px;
         height: 135px;
     }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+
 }
