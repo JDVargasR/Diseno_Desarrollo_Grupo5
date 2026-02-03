@@ -52,10 +52,9 @@
         initLiveFilters();
     });
 
-    // ===== SweetAlert desde servidor (TempData -> data-attrs) =====
+    // ===== SweetAlert desde servidor =====
     function showServerSweetAlert() {
-        // En la vista debe existir:
-        // <div id="swalMsg" data-ok="..." data-error="..." style="display:none"></div>
+
         const el = $("swalMsg");
         if (!el || !window.Swal) return;
 
@@ -72,14 +71,12 @@
         }
     }
 
-    // ===== Filtros en vivo (GET submit) =====
+    // ===== Filtros (Se actializan solitos) ====
     function initLiveFilters() {
         if (!frmFiltroRoles) return;
 
-        // Debounce para no spammear submits mientras escribe
         let t = null;
 
-        // Escribir en buscar -> submit con pausa
         txtBuscar?.addEventListener("input", () => {
             clearTimeout(t);
             t = setTimeout(() => {
@@ -87,7 +84,6 @@
             }, 450);
         });
 
-        // Enter en buscar -> submit inmediato
         txtBuscar?.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
@@ -96,7 +92,6 @@
             }
         });
 
-        // Cambiar estado -> submit inmediato
         selEstado?.addEventListener("change", () => {
             clearTimeout(t);
             frmFiltroRoles.submit();
@@ -111,7 +106,6 @@
         rolDescripcion.value = "";
         rolEstado.value = "1";
 
-        // En el form debe venir: data-create-url y data-update-url
         if (formRol?.dataset?.createUrl) {
             formRol.action = formRol.dataset.createUrl;
         }

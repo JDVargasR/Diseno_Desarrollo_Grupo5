@@ -11,7 +11,6 @@
     --footerH: 150px;
 }
 
-/* reset mínimo */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -40,7 +39,7 @@ body {
     background: radial-gradient(1200px 650px at 12% 18%, rgba(182,128,68,.10), transparent 60%), radial-gradient(1000px 560px at 88% 84%, rgba(215,176,122,.12), transparent 60%), linear-gradient(180deg,var(--bg1),var(--bg2));
     min-height: 100vh;
     padding-bottom: var(--footerH);
-    overflow-x: hidden; /* evita que algo se corra raro */
+    overflow-x: hidden; 
 }
 
 .lp-container {
@@ -92,7 +91,6 @@ body {
     font-size: 12.5px;
 }
 
-/* burger (mobile) */
 .lp-navcheck {
     display: none;
 }
@@ -130,7 +128,6 @@ body {
             width: 16px;
         }
 
-/* nav dropdowns */
 .lp-nav {
     display: flex;
     align-items: center;
@@ -200,7 +197,7 @@ body {
         border-color: rgba(182,128,68,.18);
     }
 
-/* user dropdown */
+/* DropDown */
 .lp-user__dd {
     position: relative;
 }
@@ -265,20 +262,17 @@ body {
             border-color: rgba(122,31,31,.16);
         }
 
-/* ================= HERO (CENTRADO REAL) ================= */
 .lp-main {
     padding-top: 0;
 }
 
-/* Centra vertical en el viewport (menos header) */
 .lp-hero {
     padding: 0;
     min-height: calc(100vh - 78px);
     display: flex;
-    align-items: center; /* CENTRADO vertical real */
+    align-items: center; 
 }
 
-/* OJO: aquí NO ponemos width:100% para no romper lp-container */
 .hero {
     display: grid;
     grid-template-columns: 1.15fr .85fr;
@@ -286,7 +280,6 @@ body {
     align-items: center;
 }
 
-/* texto */
 .hero__text {
     max-width: 620px;
 }
@@ -321,7 +314,6 @@ body {
     line-height: 1.65;
 }
 
-/* logo ring */
 .hero__logo {
     display: flex;
     justify-content: flex-end;
@@ -357,7 +349,6 @@ body {
         opacity: .98;
     }
 
-/* ================= FOOTER auto-hide ================= */
 .lp-footer {
     position: fixed;
     left: 0;
@@ -438,7 +429,6 @@ body {
     text-align: center;
 }
 
-/* ================= RESPONSIVE ================= */
 @media (max-width: 1060px) {
     .hero {
         grid-template-columns: 1fr;

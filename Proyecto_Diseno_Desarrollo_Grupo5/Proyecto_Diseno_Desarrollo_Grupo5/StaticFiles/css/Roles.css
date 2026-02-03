@@ -1,5 +1,5 @@
 ﻿.roles-page {
-    min-height: calc(100vh - 220px); /* Ajustar el Header y el Footer */
+    min-height: calc(100vh - 220px);
 }
 
 .roles-card {
