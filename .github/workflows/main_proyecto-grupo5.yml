@@ -23,13 +23,13 @@ jobs:
         uses: microsoft/setup-msbuild@v1.3.1
 
       - name: Restore NuGet packages
-        run: nuget restore ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.sln
+        run: nuget restore ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj
 
-      - name: Clean solution
-        run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.sln /t:Clean /p:Configuration=Release /p:Platform=AnyCPU
+      - name: Clean project
+        run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /t:Clean /p:Configuration=Release /p:Platform=AnyCPU
 
-      - name: Build solution
-        run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.sln /p:Configuration=Release /p:Platform=AnyCPU
+      - name: Build project
+        run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /p:Configuration=Release /p:Platform=AnyCPU
 
       - name: Publish project
         run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:PublishUrl="${{ github.workspace }}\publish"
