@@ -35,13 +35,19 @@ jobs:
         run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /p:Configuration=Release /p:Platform=AnyCPU
 
       - name: Publish project
-        run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishUrl="${{ github.workspace }}\publish"
+        run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=true /p:publishUrl="${{ github.workspace }}\publish"
+
+      - name: Verify publish folder
+        run: |
+          echo "Contenido de publish:"
+          dir "${{ github.workspace }}\publish" /s
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: app
           path: ${{ github.workspace }}\publish
+          if-no-files-found: error
 
   deploy:
     runs-on: windows-latest
@@ -52,11 +58,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app
+          path: downloaded-app
+
+      - name: Verify downloaded artifact
+        run: |
+          echo "Contenido descargado:"
+          dir downloaded-app /s
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'proyecto-grupo5'
           slot-name: 'Production'
-          package: .
+          package: downloaded-app
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_420C1814127A4FEFB6BA2E370D10EB83 }}
