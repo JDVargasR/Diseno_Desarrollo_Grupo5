@@ -58,10 +58,6 @@
     }
 
 
-/* ===============================
-   Tabla Ventas (igual a Productos)
-   Usamos las clases p-tableWrap / p-table
-================================= */
 .p-tableWrap {
     margin-top: 10px;
     overflow: auto;
@@ -98,7 +94,6 @@
     background: rgba(16,185,129,.06);
 }
 
-/* Evitar reglas viejas de .table/.table-wrap dentro de Ventas */
 .table-wrap,
 .table,
 .table thead th,

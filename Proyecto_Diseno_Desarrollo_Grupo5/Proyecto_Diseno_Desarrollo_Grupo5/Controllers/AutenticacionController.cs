@@ -1,5 +1,6 @@
 ﻿using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -170,20 +171,34 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             using (var context = new DBGRUPO5Entities())
             {
-                var okParam = new System.Data.Entity.Core.Objects.ObjectParameter("OK", typeof(bool));
-                var msgParam = new System.Data.Entity.Core.Objects.ObjectParameter("MSG", typeof(string));
+                var idParam = new System.Data.SqlClient.SqlParameter("@ID_USUARIO", idUsuario);
+                var nombreParam = new System.Data.SqlClient.SqlParameter("@NOMBRE", (object)model.Nombre ?? System.DBNull.Value);
+                var correoParam = new System.Data.SqlClient.SqlParameter("@CORREO", (object)model.Correo ?? System.DBNull.Value);
+                var passActualParam = new System.Data.SqlClient.SqlParameter("@CONTRASENA_ACTUAL", (object)model.ContrasenaActual ?? (object)System.DBNull.Value);
+                var passNuevaParam = new System.Data.SqlClient.SqlParameter("@CONTRASENA_NUEVA", (object)model.ContrasenaNueva ?? (object)System.DBNull.Value);
 
-                context.SP_USUARIO_PERFIL_ACTUALIZAR(
-                    idUsuario,
-                    model.Nombre,
-                    model.Correo,
-                    model.ContrasenaActual,
-                    model.ContrasenaNueva,
+                var okParam = new System.Data.SqlClient.SqlParameter("@OK", System.Data.SqlDbType.Bit)
+                {
+                    Direction = System.Data.ParameterDirection.Output
+                };
+
+                var msgParam = new System.Data.SqlClient.SqlParameter("@MSG", System.Data.SqlDbType.NVarChar, 200)
+                {
+                    Direction = System.Data.ParameterDirection.Output
+                };
+
+                context.Database.ExecuteSqlCommand(
+                    "EXEC dbo.SP_USUARIO_PERFIL_ACTUALIZAR @ID_USUARIO, @NOMBRE, @CORREO, @CONTRASENA_ACTUAL, @CONTRASENA_NUEVA, @OK OUTPUT, @MSG OUTPUT",
+                    idParam,
+                    nombreParam,
+                    correoParam,
+                    passActualParam,
+                    passNuevaParam,
                     okParam,
                     msgParam
                 );
 
-                bool ok = okParam.Value != null && (bool)okParam.Value;
+                bool ok = okParam.Value != System.DBNull.Value && okParam.Value != null && (bool)okParam.Value;
                 string msg = (msgParam.Value ?? "").ToString();
 
                 if (ok)
