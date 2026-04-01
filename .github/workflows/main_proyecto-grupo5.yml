@@ -38,7 +38,8 @@ jobs:
         run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /t:Package /p:Configuration=Release /p:Platform=AnyCPU /p:PackageAsSingleFile=true /p:PackageLocation="${{ github.workspace }}\package\site.zip"
 
       - name: Verify package
-        run: dir "${{ github.workspace }}\package" /s
+        shell: powershell
+        run: Get-ChildItem -Path "${{ github.workspace }}\package" -Recurse
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
@@ -59,7 +60,8 @@ jobs:
           path: downloaded-package
 
       - name: Verify downloaded artifact
-        run: dir downloaded-package /s
+        shell: powershell
+        run: Get-ChildItem -Path "downloaded-package" -Recurse
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
