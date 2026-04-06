@@ -1,6 +1,6 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
- 
+
 name: Build and deploy ASP.Net app to Azure Web App - proyecto-grupo5
 
 on:
@@ -22,8 +22,11 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.3.1
 
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
       - name: Restore NuGet packages
-        run: nuget restore ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj
+        run: nuget restore ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj -PackagesDirectory ./Proyecto_Diseno_Desarrollo_Grupo5/packages
 
       - name: Clean project
         run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /t:Clean /p:Configuration=Release /p:Platform=AnyCPU
@@ -31,14 +34,19 @@ jobs:
       - name: Build project
         run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /p:Configuration=Release /p:Platform=AnyCPU
 
-      - name: Publish project
-        run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /p:Configuration=Release /p:Platform=AnyCPU /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:PublishUrl="${{ github.workspace }}\publish"
+      - name: Package project
+        run: msbuild ./Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5/Proyecto_Diseno_Desarrollo_Grupo5.csproj /t:Package /p:Configuration=Release /p:Platform=AnyCPU /p:PackageAsSingleFile=true /p:PackageLocation="${{ github.workspace }}\package\site.zip"
+
+      - name: Verify package
+        shell: powershell
+        run: Get-ChildItem -Path "${{ github.workspace }}\package" -Recurse
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: app
-          path: ${{ github.workspace }}\publish
+          name: app-package
+          path: ${{ github.workspace }}\package\site.zip
+          if-no-files-found: error
 
   deploy:
     runs-on: windows-latest
@@ -48,12 +56,17 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: app
+          name: app-package
+          path: downloaded-package
+
+      - name: Verify downloaded artifact
+        shell: powershell
+        run: Get-ChildItem -Path "downloaded-package" -Recurse
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'proyecto-grupo5'
           slot-name: 'Production'
-          package: .
+          package: downloaded-package/site.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_420C1814127A4FEFB6BA2E370D10EB83 }}
