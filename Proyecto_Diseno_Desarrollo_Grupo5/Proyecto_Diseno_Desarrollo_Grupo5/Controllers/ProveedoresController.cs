@@ -137,8 +137,6 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 db.SaveChanges();
             }
 
-            RegistrarBitacora("CREAR_PROVEEDOR", "Proveedor registrado: " + prov.NOMBRE + " (ID: " + prov.ID_PROVEEDOR + ")");
-
             TempData["OK"] = "Proveedor registrado correctamente.";
             return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
         }
@@ -184,8 +182,6 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             db.SaveChanges();
 
-            RegistrarBitacora("EDITAR_PROVEEDOR", "Proveedor editado: " + prov.NOMBRE + " (ID: " + prov.ID_PROVEEDOR + ")");
-
             TempData["OK"] = "Proveedor actualizado correctamente.";
             return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
         }
@@ -216,8 +212,6 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             db.SaveChanges();
 
-            RegistrarBitacora("DESACTIVAR_PROVEEDOR", "Proveedor desactivado: " + prov.NOMBRE + " (ID: " + id + "). Materiales exclusivos tambi?n desactivados: " + materialesExclusivos.Count);
-
             TempData["OK"] = "Proveedor desactivado correctamente. " + materialesExclusivos.Count + " material(es) exclusivo(s) tambi?n desactivado(s).";
             return RedirectToAction("Index", new { page, q });
         }
@@ -230,27 +224,6 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 .ToList();
 
             return Json(materiales, JsonRequestBehavior.AllowGet);
-        }
-
-        private void RegistrarBitacora(string accion, string descripcion)
-        {
-            try
-            {
-                var idUsuario = Session["IdUsuario"] != null ? (int)Session["IdUsuario"] : 1;
-                var bitacora = new BITACORA
-                {
-                    ID_USUARIO = idUsuario,
-                    ACCION = accion,
-                    DESCRIPCION = descripcion,
-                    FECHA = DateTime.Now
-                };
-                db.BITACORA.Add(bitacora);
-                db.SaveChanges();
-            }
-            catch
-            {
-                // No bloquear operaci?n si falla la bit?cora
-            }
         }
 
         protected override void Dispose(bool disposing)

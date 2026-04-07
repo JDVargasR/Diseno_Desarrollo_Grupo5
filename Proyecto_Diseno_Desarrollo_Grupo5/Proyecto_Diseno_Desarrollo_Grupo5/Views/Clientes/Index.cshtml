@@ -119,6 +119,7 @@
                                 <input type="hidden" name="page" value="@Model.Page" />
 
                                 var esActivo = (c.ID_ESTADO == 1);
+                                <input type="hidden" name="accionBitacora" value="@(esActivo ? "DESACTIVAR" : "ACTIVAR")" />
 
                                 <button type="submit"
                                         class="btn btn-outline-danger btn-sm"

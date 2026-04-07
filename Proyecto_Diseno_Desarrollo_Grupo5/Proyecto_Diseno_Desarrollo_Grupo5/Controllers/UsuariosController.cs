@@ -124,7 +124,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         // TOGGLE ESTADO (SP_USUARIOS_TOGGLE_ESTADO)
         // ============================================
         [HttpPost]
-        public ActionResult ToggleEstado(int id)
+        public ActionResult ToggleEstado(int id, string accionBitacora = null)
         {
             var okParam = new SqlParameter("@OK", SqlDbType.Bit)
             {

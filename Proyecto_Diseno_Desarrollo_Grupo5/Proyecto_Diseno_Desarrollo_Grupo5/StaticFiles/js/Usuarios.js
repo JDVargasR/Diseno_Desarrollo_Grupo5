@@ -135,6 +135,7 @@
             const id = parseInt(btn.dataset.id || "0", 10);
             const estado = parseInt(btn.dataset.estado || "1", 10);
             const accion = estado === 1 ? "inactivar" : "activar";
+            const accionBitacora = estado === 1 ? "DESACTIVAR" : "ACTIVAR";
 
             const confirm = await Swal.fire({
                 title: "Confirmación",
@@ -151,7 +152,7 @@
                 const resp = await fetch("/Usuarios/ToggleEstado", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `id=${encodeURIComponent(id)}`
+                    body: `id=${encodeURIComponent(id)}&accionBitacora=${encodeURIComponent(accionBitacora)}`
                 });
 
                 const data = await resp.json();

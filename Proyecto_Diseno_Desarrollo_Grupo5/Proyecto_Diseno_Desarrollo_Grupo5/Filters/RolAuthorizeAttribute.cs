@@ -52,13 +52,16 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Filters
     public class BitacoraAuditAttribute : ActionFilterAttribute
     {
         private const string BitacoraIdKey = "Bitacora.IdAfectado";
+        private const string BitacoraAccionKey = "Bitacora.AccionForzada";
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var idAfectado = ExtraerIdAfectado(filterContext?.ActionParameters);
+            var accionForzada = ExtraerAccionBitacora(filterContext?.ActionParameters);
             if (filterContext?.HttpContext != null)
             {
                 filterContext.HttpContext.Items[BitacoraIdKey] = idAfectado;
+                filterContext.HttpContext.Items[BitacoraAccionKey] = accionForzada;
             }
 
             base.OnActionExecuting(filterContext);
@@ -90,8 +93,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Filters
 
             var accion = MapearAccion(action, method);
             var idAfectado = filterContext.HttpContext.Items[BitacoraIdKey] as string;
+            var accionForzada = filterContext.HttpContext.Items[BitacoraAccionKey] as string;
 
-            var descripcion = "Accion ejecutada: " + action;
+            if (!string.IsNullOrWhiteSpace(accionForzada))
+                accion = accionForzada.Trim().ToUpperInvariant();
+
+            var descripcion = "Accion ejecutada: " + NormalizarDescripcionAccion(action, accionForzada);
 
             BitacoraHelper.Registrar(idUsuario, accion, descripcion, controller, idAfectado, "OK");
         }
@@ -113,12 +120,50 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Filters
         {
             var a = (action ?? string.Empty).ToLowerInvariant();
 
+            if (a.Contains("deactivate") || a.Contains("inactivar") || a.Contains("toggle") || a.Contains("estado")) return "DESACTIVAR";
+            if (a.Contains("activate") || a.Contains("activar")) return "ACTIVAR";
             if (a.Contains("create") || a.Contains("insert") || a.Contains("registr")) return "CREAR";
             if (a.Contains("edit") || a.Contains("update")) return "EDITAR";
-            if (a.Contains("delete") || a.Contains("remove") || a.Contains("deactivate")) return "ELIMINAR";
-            if (a.Contains("toggle") || a.Contains("estado")) return "CAMBIAR_ESTADO";
+            if (a.Contains("delete") || a.Contains("remove")) return "ELIMINAR";
 
             return method == "POST" ? "ACCION" : method;
+        }
+
+        private string NormalizarDescripcionAccion(string action, string accionForzada)
+        {
+            if (!string.IsNullOrWhiteSpace(accionForzada))
+            {
+                var forced = accionForzada.Trim().ToUpperInvariant();
+                if (forced == "ACTIVAR") return "Activar";
+                if (forced == "DESACTIVAR") return "Desactivar";
+            }
+
+            var a = (action ?? string.Empty).Trim().ToLowerInvariant();
+
+            if (a.Contains("deactivate") || a.Contains("inactivar") || a.Contains("toggle") || a.Contains("estado")) return "Desactivar";
+            if (a.Contains("activate") || a.Contains("activar")) return "Activar";
+            if (a.Contains("create") || a.Contains("insert") || a.Contains("registr")) return "Crear";
+            if (a.Contains("edit") || a.Contains("update")) return "Editar";
+            if (a.Contains("delete") || a.Contains("remove")) return "Eliminar";
+            if (a.Contains("login")) return "Login";
+            if (a.Contains("logout")) return "Logout";
+
+            return action;
+        }
+
+        private string ExtraerAccionBitacora(System.Collections.Generic.IDictionary<string, object> parametros)
+        {
+            if (parametros == null || parametros.Count == 0)
+                return null;
+
+            object raw;
+            if (parametros.TryGetValue("accionBitacora", out raw) && raw != null)
+            {
+                var v = raw.ToString().Trim().ToUpperInvariant();
+                if (v == "ACTIVAR" || v == "DESACTIVAR") return v;
+            }
+
+            return null;
         }
 
         private string ExtraerIdAfectado(System.Collections.Generic.IDictionary<string, object> parametros)

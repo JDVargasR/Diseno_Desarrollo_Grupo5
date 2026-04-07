@@ -26,6 +26,32 @@
             : "<i class='bi bi-sort-down sort-icon active'></i>");
     };
 
+    Func<string, string, string> accionClass = (a, d) =>
+    {
+        var val = (a ?? "").Trim().ToUpper();
+        var desc = (d ?? "").Trim().ToUpper();
+
+        if (val == "ELIMINAR" && desc.Contains("DESACTIVAR")) val = "DESACTIVAR";
+        if (val == "ELIMINAR" && desc.Contains("ACTIVAR")) val = "ACTIVAR";
+
+        if (val == "CREAR") return "badge-accion badge-accion--crear";
+        if (val == "ACTIVAR") return "badge-accion badge-accion--activar";
+        if (val == "EDITAR") return "badge-accion badge-accion--editar";
+        if (val == "ELIMINAR" || val == "DESACTIVAR" || val == "CAMBIAR_ESTADO") return "badge-accion badge-accion--eliminar";
+        return "badge-accion badge-accion--default";
+    };
+
+    Func<string, string, string> accionTexto = (a, d) =>
+    {
+        var val = (a ?? "").Trim().ToUpper();
+        var desc = (d ?? "").Trim().ToUpper();
+
+        if (val == "ELIMINAR" && desc.Contains("DESACTIVAR")) return "DESACTIVAR";
+        if (val == "ELIMINAR" && desc.Contains("ACTIVAR")) return "ACTIVAR";
+        if (val == "CAMBIAR_ESTADO") return "DESACTIVAR";
+        return val;
+    };
+
 }
 
 @section styles{
@@ -148,7 +174,7 @@
                                     <td>@b.ID_BITACORA</td>
                                     <td>@(string.IsNullOrWhiteSpace(b.MODULO) ? "-" : b.MODULO)</td>
                                     <td>@(string.IsNullOrWhiteSpace(b.USUARIO_NOMBRE) ? ("Usuario #" + b.ID_USUARIO) : b.USUARIO_NOMBRE)</td>
-                                    <td><span class="badge bg-info text-dark">@b.ACCION</span></td>
+                                    <td><span class="@accionClass(b.ACCION, b.DESCRIPCION)">@accionTexto(b.ACCION, b.DESCRIPCION)</span></td>
                                     <td>
                                         <span class="badge @(string.Equals(b.RESULTADO, "ERROR", StringComparison.OrdinalIgnoreCase) ? "bg-danger" : "bg-success")">
                                             @(string.IsNullOrWhiteSpace(b.RESULTADO) ? "OK" : b.RESULTADO)

@@ -132,7 +132,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ToggleEstado(int id, string q = null, string sortOrder = null, int page = 1)
+        public ActionResult ToggleEstado(int id, string q = null, string sortOrder = null, int page = 1, string accionBitacora = null)
         {
             var c = db.CLIENTES.Find(id);
             if (c == null)
