@@ -8,9 +8,11 @@ using System.Web.UI;
 using System.IO;
 using System.Web;
 using System.Globalization;
+using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 {
+    [RolAuthorize(1,2)]
     public class VentasController : Controller
     {
         private DBGRUPO5Entities db = new DBGRUPO5Entities();

@@ -1,107 +1,15 @@
-﻿:root {
-    --accent: #10b981;
-    --accent2: #6ee7b7;
-    --line: #e5e7eb;
-    --text: #0f172a;
-    --muted: #6b7280;
-}
+﻿/*
+  Ventas.css
+  Se simplificó para no sobrescribir el estilo global (Cliente.css).
+  Mantener aquí únicamente ajustes específicos del módulo de ventas.
+*/
 
-.ventas-wrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 28px 18px;
-}
-
-
-.page-title {
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: -.3px;
-}
-
-.page-subtitle {
-    color: var(--muted);
-    font-size: 14px;
-    margin-top: 4px;
-}
-
-
-.page-section {
-    background: rgba(24, 30, 48, .78);
-    border-radius: 16px;
-    padding: 18px;
-    border: 1px solid rgba(255,255,255,.08);
-    box-shadow: 0 14px 26px rgba(0,0,0,.18);
-    backdrop-filter: blur(6px);
-}
-
-
-.form-control,
-.form-select {
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.10);
-    height: 44px;
-    background: rgba(255,255,255,.06);
-    color: #f8fafc;
-}
-
-    .form-control::placeholder {
-        color: rgba(241,245,249,.45);
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-        background: rgba(255,255,255,.08);
-        color: #fff;
-        border-color: rgba(16,185,129,.35);
-        box-shadow: 0 0 0 .2rem rgba(16,185,129,.10);
-    }
-
-
-.p-tableWrap {
-    margin-top: 10px;
-    overflow: auto;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: rgba(26,29,40,.40);
-}
-
-.p-table {
+/* Evita overflow en tablas anchas dentro de cardx */
+#tablaVentas {
     width: 100%;
-    border-collapse: collapse;
-    min-width: 780px;
 }
 
-.p-table thead th {
-    text-align: left;
-    font-size: 13px;
-    font-weight: 950;
-    color: var(--muted);
-    padding: 12px 12px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(26,29,40,.60);
-}
-
-.p-table tbody td {
-    padding: 12px 12px;
-    border-bottom: 1px solid var(--border);
-    font-weight: 750;
-    font-size: 14px;
-    color: var(--text);
-}
-
-.p-table tbody tr:hover {
-    background: rgba(16,185,129,.06);
-}
-
-.table-wrap,
-.table,
-.table thead th,
-.table tbody td {
-    all: unset;
-}
-
-
+/* Asegura badges consistentes con otros módulos (si Cliente.css no los incluye) */
 .badge-pill {
     padding: 6px 10px;
     border-radius: 999px;
@@ -120,106 +28,17 @@
     color: #fff;
 }
 
-
-.btn-soft {
-    border-radius: 12px;
-    padding: 8px 12px;
-    font-weight: 800;
-    font-size: 13px;
-    border: 1px solid transparent;
-    background: #fff;
-    transition: .15s ease;
-}
-
-.btn-soft-primary {
-    border-color: rgba(13,110,253,.35);
-    color: #0d6efd;
-    background: rgba(13,110,253,.06);
-}
-
-    .btn-soft-primary:hover {
-        background: rgba(13,110,253,.12);
-        transform: translateY(-2px);
-    }
-
-.btn-soft-danger {
-    border-color: rgba(220,53,69,.35);
-    color: #dc3545;
-    background: rgba(220,53,69,.06);
-}
-
-    .btn-soft-danger:hover {
-        background: rgba(220,53,69,.12);
-        transform: translateY(-2px);
-    }
-
-
-.actions {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-}
-
-
-.modal-content {
-    border-radius: 16px;
-}
-
-
-.modal-header {
-    border-bottom: 1px solid var(--line);
-}
-
-.modal-footer {
-    border-top: 1px solid var(--line);
-}
-
-label.form-label {
-    color: rgba(241,245,249,.82);
-}
-
-.page-title {
-    color: #f8fafc;
-}
-
-.page-subtitle {
-    color: rgba(241,245,249,.60);
-}
-
-.text-muted {
-    color: rgba(241,245,249,.55) !important;
-}
-.lp-brand__text strong {
-    color: #ffffff !important;
-}
-
-.lp-brand__text span {
-    color: rgba(255,255,255,.75) !important;
-}
-
-.lp-nav a,
-.lp-dd__btn {
-    color: #ffffff !important;
-}
-
-.lp-user__name {
-    color: #ffffff !important;
-}
-
-.lp-user__btn {
-    color: #ffffff !important;
-}
+/* Autocomplete de clientes (lista estilo módulos claros) */
 .cliente-resultados {
     position: absolute;
-    top: calc(100% - 2px);
-    left: 12px;
-    right: 12px;
-    background: rgba(24, 30, 48, .98);
-    border: 1px solid rgba(255,255,255,.08);
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, .10);
     border-radius: 12px;
-    box-shadow: 0 14px 28px rgba(0,0,0,.22);
-    z-index: 50;
+    box-shadow: 0 14px 26px rgba(15, 23, 42, .14);
+    z-index: 1050;
     overflow: hidden;
     max-height: 280px;
     overflow-y: auto;
@@ -228,180 +47,28 @@ label.form-label {
 .cliente-item {
     padding: 10px 12px;
     cursor: pointer;
-    border-top: 1px solid rgba(255,255,255,.05);
+    border-top: 1px solid rgba(15, 23, 42, .06);
     transition: background .15s ease;
 }
 
-    .cliente-item:first-child {
-        border-top: 0;
-    }
-
-    .cliente-item:hover {
-        background: rgba(255,255,255,.06);
-    }
-
-    .cliente-item b {
-        display: block;
-        color: #f8fafc;
-        font-size: 14px;
-    }
-
-    .cliente-item span {
-        display: block;
-        color: rgba(241,245,249,.65);
-        font-size: 12px;
-        margin-top: 2px;
-    }
-
-
-.total-box span {
-    color: #e5e7eb;
-    font-weight: 700;
+.cliente-item:first-child {
+    border-top: 0;
 }
 
-.total-box b {
-    color: #ffffff;
-    font-size: 22px;
-    font-weight: 900;
+.cliente-item:hover {
+    background: rgba(13, 110, 253, .06);
 }
 
-.page-section label {
-    color: #e5e7eb;
+.cliente-item b {
+    display: block;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 800;
 }
 
-.page-section .btn-dark {
-    color: #ffffff;
-    font-weight: 900;
-}
-
-.page-section .btn-primary {
-    color: #ffffff;
-    font-weight: 900;
-}
-
-.form-select {
-    background-color: rgba(255,255,255,.06);
-    color: #f8fafc;
-    border: 1px solid rgba(255,255,255,.10);
-}
-
-    .form-select option {
-        background: #1b2236;
-        color: #f8fafc;
-    }
-
-        .form-select option[value=""] {
-            color: #cbd5e1;
-        }
-
-.modal-dialog {
-    max-width: 460px;
-}
-
-.modal-content {
-    background: rgba(24, 30, 48, .98) !important;
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 16px;
-    color: #f8fafc;
-    overflow: hidden;
-}
-
-.modal-header,
-.modal-footer {
-    border-color: rgba(255,255,255,.10) !important;
-}
-
-.modal-body {
-    max-height: 65vh;
-    overflow-y: auto;
-}
-
-.modal-backdrop.show {
-    opacity: 0.6;
-}
-
-.btn-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    border: 1px solid transparent;
-    background: transparent;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all .2s ease;
-}
-
-.btn-pagar {
-    border-color: rgba(16,185,129,.4);
-    color: #10b981;
-    background: rgba(16,185,129,.08);
-}
-
-    .btn-pagar:hover {
-        background: rgba(16,185,129,.18);
-        transform: translateY(-2px);
-        box-shadow: 0 0 10px rgba(16,185,129,.4);
-    }
-
-.btn-cancelar {
-    border-color: rgba(239,68,68,.4);
-    color: #ef4444;
-    background: rgba(239,68,68,.08);
-}
-
-    .btn-cancelar:hover {
-        background: rgba(239,68,68,.18);
-        transform: translateY(-2px);
-        box-shadow: 0 0 10px rgba(239,68,68,.4);
-    }
-
-.pagination {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    padding-left: 0;
-    margin: 0;
-    list-style: none;
-}
-
-    .pagination .page-item {
-        display: inline-block;
-    }
-
-    .pagination .page-link {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 44px;
-        height: 38px;
-        padding: 6px 10px;
-        border-radius: 10px;
-        color: #f8fafc;
-        background: rgba(255,255,255,.04);
-        border: 1px solid rgba(255,255,255,.06);
-        font-weight: 700;
-        text-decoration: none;
-    }
-
-    .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        color: #0f172a;
-        border-color: rgba(16,185,129,.25);
-        box-shadow: 0 8px 20px rgba(16,185,129,.08);
-    }
-
-    .pagination .page-item.disabled .page-link {
-        opacity: 0.45;
-        pointer-events: none;
-    }
-
-@media (max-width: 480px) {
-    .pagination .page-link {
-        min-width: 36px;
-        height: 34px;
-        padding: 4px 8px;
-        font-size: 13px;
-    }
+.cliente-item span {
+    display: block;
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: 2px;
 }

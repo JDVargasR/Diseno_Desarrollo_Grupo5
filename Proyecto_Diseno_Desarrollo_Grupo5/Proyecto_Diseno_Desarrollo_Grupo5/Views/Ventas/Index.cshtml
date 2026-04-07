@@ -1,10 +1,15 @@
 ﻿@model System.Collections.Generic.List<Proyecto_Diseno_Desarrollo_Grupo5.Models.VentaFilaVM>
-
-@section styles{
-    <link rel="stylesheet" href="~/StaticFiles/css/Ventas.css" />
+@{
+    ViewBag.Title = "Ventas";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
 }
 
-<div class="ventas-wrap">
+@section styles{
+    <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+   
+}
+
+<div class="container" style="max-width:1100px; padding-top:30px;">
 
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
@@ -17,18 +22,18 @@
 
     @if (TempData["OK"] != null)
     {
-        <div class="alert alert-success">@TempData["OK"]</div>
+        <div class="alert alert-success cardx" style="padding:12px 14px;">@TempData["OK"]</div>
     }
 
     @if (TempData["ERR"] != null)
     {
-        <div class="alert alert-danger">@TempData["ERR"]</div>
+        <div class="alert alert-danger cardx" style="padding:12px 14px;">@TempData["ERR"]</div>
     }
 
     <div class="page-section mb-3">
         <div class="row g-2 align-items-end">
             <div class="col-md-12">
-                <label class="form-label" style="font-weight:700;">Buscar</label>
+                <label class="form-label" style="font-weight:600;">Buscar</label>
                 <input id="busquedaVentas"
                        class="form-control"
                        type="text"
@@ -37,9 +42,9 @@
         </div>
     </div>
 
-    <div class="page-section">
-        <div class="p-tableWrap">
-            <table class="p-table" id="tablaVentas">
+    <div class="page-section mt-3">
+        <div class="cardx table-wrap">
+            <table class="table" id="tablaVentas">
                 <thead>
                     <tr>
                         <th>Cliente</th>
@@ -60,31 +65,26 @@
                         <tr>
                             <td>@v.Cliente</td>
                             <td>@v.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@v.Total</td>
-                            <td>@v.Pagado</td>
-                            <td>@v.Saldo</td>
+                            <td>₡@v.Total.ToString("N2")</td>
+                            <td>₡@v.Pagado.ToString("N2")</td>
+                            <td>₡@v.Saldo.ToString("N2")</td>
                             <td>
-                                @if (isActiva)
-                                {
-                                    <span class="badge-pill badge-ok">ACTIVA</span>
-                                }
-                                else
-                                {
-                                    <span class="badge-pill badge-off">CANCELADA</span>
-                                }
+                                <span class="badge-pill @(isActiva ? "badge-ok" : "badge-off")">
+                                    @(isActiva ? "ACTIVA" : "CANCELADA")
+                                </span>
                             </td>
-                            <td style="text-align:right;">
+                            <td class="text-end">
                                 <div class="d-flex gap-2 justify-content-end flex-wrap">
 
                                     @if (isActiva && tieneSaldo)
                                     {
                                         <button type="button"
-                                                class="btn-icon btn-pagar"
+                                                class="btn btn-outline-success btn-sm"
                                                 title="Pagar"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#modalPago"
                                                 onclick="cargarPago('@v.IdVenta','@v.Saldo')">
-                                            💳
+                                            <i class="bi bi-credit-card"></i>
                                         </button>
                                     }
 
@@ -95,10 +95,10 @@
                                             <input type="hidden" name="id" value="@v.IdVenta" />
 
                                             <button type="submit"
-                                                    class="btn-icon btn-cancelar"
+                                                    class="btn btn-outline-danger btn-sm"
                                                     title="Cancelar venta"
                                                     onclick="return confirm('¿Cancelar la venta #@v.IdVenta?')">
-                                                ❌
+                                                <i class="bi bi-x-circle"></i>
                                             </button>
                                         </form>
                                     }
@@ -115,7 +115,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         @{
             var current = (int)(ViewBag.Page ?? 1);
             var total = (int)(ViewBag.TotalPages ?? 1);
@@ -209,9 +208,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" style="border-radius:12px; font-weight:900;">
-                        Guardar pago
-                    </button>
+                    <button type="submit" class="btn btn-primary btn-primary-pill">Guardar pago</button>
                 </div>
             }
 
@@ -219,58 +216,58 @@
     </div>
 </div>
 
-            @section scripts{
-                <script>
-                    function toggleComprobanteSinpe() {
-                        const metodo = document.getElementById("pago_Metodo").value;
-                        const bloque = document.getElementById("bloqueComprobanteSinpe");
-                        const input = document.getElementById("comprobanteSinpe");
+@section scripts{
+    <script>
+        function toggleComprobanteSinpe() {
+            const metodo = document.getElementById("pago_Metodo").value;
+            const bloque = document.getElementById("bloqueComprobanteSinpe");
+            const input = document.getElementById("comprobanteSinpe");
 
-                        if (metodo === "Sinpe") {
-                            bloque.classList.remove("d-none");
-                            input.required = true;
-                        } else {
-                            bloque.classList.add("d-none");
-                            input.required = false;
-                            input.value = "";
-                        }
-                    }
-
-                    function cargarPago(idVenta, saldo) {
-                        document.getElementById("pago_IdVenta").value = idVenta;
-                        document.getElementById("pago_SaldoTxt").innerText = saldo;
-                        document.getElementById("pago_Monto").value = saldo;
-
-                        const metodo = document.getElementById("pago_Metodo");
-                        if (metodo) {
-                            metodo.value = "Efectivo";
-                            toggleComprobanteSinpe();
-                        }
-                    }
-
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const input = document.getElementById("busquedaVentas");
-                        const filas = document.querySelectorAll("#tablaVentas tbody tr");
-
-                        input.addEventListener("keyup", function () {
-                            const filtro = input.value.toLowerCase().trim();
-
-                            filas.forEach(function (fila) {
-                                const textoFila = fila.innerText.toLowerCase();
-
-                                if (textoFila.includes(filtro)) {
-                                    fila.style.display = "";
-                                } else {
-                                    fila.style.display = "none";
-                                }
-                            });
-                        });
-
-                        const metodo = document.getElementById("pago_Metodo");
-                        if (metodo) {
-                            metodo.addEventListener("change", toggleComprobanteSinpe);
-                            toggleComprobanteSinpe();
-                        }
-                    });
-                </script>
+            if (metodo === "Sinpe") {
+                bloque.classList.remove("d-none");
+                input.required = true;
+            } else {
+                bloque.classList.add("d-none");
+                input.required = false;
+                input.value = "";
             }
+        }
+
+        function cargarPago(idVenta, saldo) {
+            document.getElementById("pago_IdVenta").value = idVenta;
+            document.getElementById("pago_SaldoTxt").innerText = saldo;
+            document.getElementById("pago_Monto").value = saldo;
+
+            const metodo = document.getElementById("pago_Metodo");
+            if (metodo) {
+                metodo.value = "Efectivo";
+                toggleComprobanteSinpe();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const input = document.getElementById("busquedaVentas");
+            const filas = document.querySelectorAll("#tablaVentas tbody tr");
+
+            input.addEventListener("keyup", function () {
+                const filtro = input.value.toLowerCase().trim();
+
+                filas.forEach(function (fila) {
+                    const textoFila = fila.innerText.toLowerCase();
+
+                    if (textoFila.includes(filtro)) {
+                        fila.style.display = "";
+                    } else {
+                        fila.style.display = "none";
+                    }
+                });
+            });
+
+            const metodo = document.getElementById("pago_Metodo");
+            if (metodo) {
+                metodo.addEventListener("change", toggleComprobanteSinpe);
+                toggleComprobanteSinpe();
+            }
+        });
+    </script>
+}
