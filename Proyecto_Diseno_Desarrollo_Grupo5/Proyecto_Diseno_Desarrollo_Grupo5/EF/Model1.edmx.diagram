@@ -4,26 +4,28 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="180387324d44446ab245b11277e29f64" Name="Diagram1" ZoomLevel="92">
-        <EntityTypeShape EntityType="Model1.BITACORA" Width="1.5" PointX="12.5" PointY="25.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.CATEGORIAS" Width="1.5" PointX="3" PointY="10.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.CLIENTES" Width="1.5" PointX="3" PointY="13.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.CORTES" Width="1.5" PointX="3" PointY="16.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.DESPERDICIOS_MATERIAL" Width="1.5" PointX="12.5" PointY="21.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.DETALLES_VENTAS" Width="1.5" PointX="10.5" PointY="15.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.DEVOLUCIONES" Width="1.5" PointX="7.5" PointY="20.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.ESTADO" Width="1.5" PointX="0.75" PointY="14.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.GARANTIAS" Width="1.5" PointX="7.5" PointY="13.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.MATERIALES" Width="1.5" PointX="5.25" PointY="20.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.MOVIMIENTOS_INVENTARIO" Width="1.5" PointX="7.5" PointY="25.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.PERMISOS" Width="1.5" PointX="0.75" PointY="20.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.PRODUCTO_MATERIAL" Width="1.5" PointX="10.5" PointY="18.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.PRODUCTOS" Width="1.5" PointX="5.25" PointY="12.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.PROVEEDORES" Width="1.5" PointX="3" PointY="24.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.REGISTRO_CORTES" Width="1.5" PointX="8.25" PointY="16.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.ROLES" Width="1.5" PointX="3" PointY="20.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.USUARIOS" Width="1.5" PointX="10.25" PointY="22.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model1.VENTAS" Width="1.5" PointX="5.25" PointY="17.5" IsExpanded="true" />
+      <Diagram DiagramId="3bc0e531ba054280bd3afaa0431ec5bc" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="Model1.BITACORA" Width="1.5" PointX="12.5" PointY="13" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.CATEGORIAS" Width="1.5" PointX="3" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.CLIENTES" Width="1.5" PointX="3" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.CORTES" Width="1.5" PointX="3" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.DESPERDICIOS_MATERIAL" Width="1.5" PointX="13.5" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.DETALLES_VENTAS" Width="1.5" PointX="10.5" PointY="16.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.DEVOLUCIONES" Width="1.5" PointX="7.5" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.ESTADO" Width="1.5" PointX="0.75" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.GARANTIAS" Width="1.5" PointX="7.5" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.MATERIALES" Width="1.5" PointX="5.25" PointY="23.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.MOVIMIENTOS_INVENTARIO" Width="1.5" PointX="7.5" PointY="27.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PAGOS" Width="1.5" PointX="10.5" PointY="24.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PERMISOS" Width="1.5" PointX="0.75" PointY="22.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PRODUCTO_MATERIAL" Width="1.5" PointX="10.5" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PRODUCTOS" Width="1.5" PointX="5.25" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PROVEEDORES" Width="1.5" PointX="3" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.REGISTRO_CORTES" Width="1.5" PointX="8.25" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.ROLES" Width="1.5" PointX="3" PointY="21.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.USUARIOS" Width="1.5" PointX="10.25" PointY="12.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.VENTAS" Width="1.5" PointX="5.25" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.database_firewall_rules" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="Model1.FK_BIT_USU" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.FK_CATEGORIAS_ESTADO" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.FK_PROD_CAT" ManuallyRouted="false" />
@@ -47,14 +49,12 @@
         <AssociationConnector Association="Model1.FK_MI_MAT" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.FK_PM_MAT" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.FK_RC_MAT" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_PAGOS_USUARIO" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK_PAGOS_VENTA" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.FK_PM_PROD" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.FK_USU_ROL" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.ROLES_PERMISOS" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="Model1.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="Model1.PAGOS" Width="1.5" PointX="13.5" PointY="18.125" />
-        <AssociationConnector Association="Model1.FK_PAGOS_USUARIO" />
-        <AssociationConnector Association="Model1.FK_PAGOS_VENTA" />
-        </Diagram>
+      </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

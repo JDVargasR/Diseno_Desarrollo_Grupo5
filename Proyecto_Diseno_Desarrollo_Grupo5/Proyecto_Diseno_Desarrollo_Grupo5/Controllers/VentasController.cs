@@ -294,10 +294,11 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 ID_VENTA = vm.IdVenta,
                 MONTO = montoParseado,
                 METODO = metodo,
-                REFERENCIA = (vm.Referencia ?? "").Trim(),
+                REFERENCIA = string.IsNullOrWhiteSpace(rutaImagen)
+                    ? (vm.Referencia ?? "").Trim()
+                    : (((vm.Referencia ?? "").Trim()) + " | IMG:" + rutaImagen).Trim(' ', '|'),
                 FECHA = DateTime.Now,
-                ID_USUARIO = idUsuario,
-                COMPROBANTE_IMG = rutaImagen
+                ID_USUARIO = idUsuario
             });
 
             db.SaveChanges();

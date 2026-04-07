@@ -13,12 +13,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
     
     public partial class SP_USUARIOS_LISTAR_Result
     {
-        public int ID_USUARIO { get; set; }
-        public string NOMBRE { get; set; }
-        public string CORREO { get; set; }
-        public int ID_ROL { get; set; }
+        public int IdUsuario { get; set; }
+        public string Nombre { get; set; }
+        public string Correo { get; set; }
+        public int IdRol { get; set; }
+        public int IdEstado { get; set; }
         public string ROL_NOMBRE { get; set; }
-        public int ID_ESTADO { get; set; }
         public string ESTADO_NOMBRE { get; set; }
     }
 }

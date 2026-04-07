@@ -38,6 +38,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public virtual DbSet<GARANTIAS> GARANTIAS { get; set; }
         public virtual DbSet<MATERIALES> MATERIALES { get; set; }
         public virtual DbSet<MOVIMIENTOS_INVENTARIO> MOVIMIENTOS_INVENTARIO { get; set; }
+        public virtual DbSet<PAGOS> PAGOS { get; set; }
         public virtual DbSet<PERMISOS> PERMISOS { get; set; }
         public virtual DbSet<PRODUCTO_MATERIAL> PRODUCTO_MATERIAL { get; set; }
         public virtual DbSet<PRODUCTOS> PRODUCTOS { get; set; }
@@ -46,161 +47,40 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public virtual DbSet<ROLES> ROLES { get; set; }
         public virtual DbSet<USUARIOS> USUARIOS { get; set; }
         public virtual DbSet<VENTAS> VENTAS { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
-        public virtual DbSet<PAGOS> PAGOS { get; set; }
+        public virtual DbSet<database_firewall_rules> database_firewall_rules { get; set; }
     
-        public virtual ObjectResult<USUARIO_LOGIN_SP_Result> USUARIO_LOGIN_SP(string correo, string contrasena)
+        public virtual int SP_USUARIO_PERFIL_ACTUALIZAR(Nullable<int> iD_USUARIO, string nOMBRE, string cORREO, string cONTRASENA_ACTUAL, string cONTRASENA_NUEVA, ObjectParameter oK, ObjectParameter mSG)
         {
-            var correoParameter = correo != null ?
-                new ObjectParameter("Correo", correo) :
-                new ObjectParameter("Correo", typeof(string));
+            var iD_USUARIOParameter = iD_USUARIO.HasValue ?
+                new ObjectParameter("ID_USUARIO", iD_USUARIO) :
+                new ObjectParameter("ID_USUARIO", typeof(int));
     
-            var contrasenaParameter = contrasena != null ?
-                new ObjectParameter("Contrasena", contrasena) :
-                new ObjectParameter("Contrasena", typeof(string));
+            var nOMBREParameter = nOMBRE != null ?
+                new ObjectParameter("NOMBRE", nOMBRE) :
+                new ObjectParameter("NOMBRE", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USUARIO_LOGIN_SP_Result>("USUARIO_LOGIN_SP", correoParameter, contrasenaParameter);
+            var cORREOParameter = cORREO != null ?
+                new ObjectParameter("CORREO", cORREO) :
+                new ObjectParameter("CORREO", typeof(string));
+    
+            var cONTRASENA_ACTUALParameter = cONTRASENA_ACTUAL != null ?
+                new ObjectParameter("CONTRASENA_ACTUAL", cONTRASENA_ACTUAL) :
+                new ObjectParameter("CONTRASENA_ACTUAL", typeof(string));
+    
+            var cONTRASENA_NUEVAParameter = cONTRASENA_NUEVA != null ?
+                new ObjectParameter("CONTRASENA_NUEVA", cONTRASENA_NUEVA) :
+                new ObjectParameter("CONTRASENA_NUEVA", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USUARIO_PERFIL_ACTUALIZAR", iD_USUARIOParameter, nOMBREParameter, cORREOParameter, cONTRASENA_ACTUALParameter, cONTRASENA_NUEVAParameter, oK, mSG);
         }
     
-        public virtual int USUARIO_RECUPERARCONTRASENA_SP(string correo, string nuevaContrasena)
+        public virtual ObjectResult<SP_USUARIO_PERFIL_OBTENER_Result> SP_USUARIO_PERFIL_OBTENER(Nullable<int> iD_USUARIO)
         {
-            var correoParameter = correo != null ?
-                new ObjectParameter("Correo", correo) :
-                new ObjectParameter("Correo", typeof(string));
+            var iD_USUARIOParameter = iD_USUARIO.HasValue ?
+                new ObjectParameter("ID_USUARIO", iD_USUARIO) :
+                new ObjectParameter("ID_USUARIO", typeof(int));
     
-            var nuevaContrasenaParameter = nuevaContrasena != null ?
-                new ObjectParameter("NuevaContrasena", nuevaContrasena) :
-                new ObjectParameter("NuevaContrasena", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USUARIO_RECUPERARCONTRASENA_SP", correoParameter, nuevaContrasenaParameter);
-        }
-    
-        public virtual int USUARIO_REGISTRAR_SP(string nombre, string correo, string contrasena, Nullable<int> iD_ROL, Nullable<int> iD_ESTADO, ObjectParameter resultado)
-        {
-            var nombreParameter = nombre != null ?
-                new ObjectParameter("Nombre", nombre) :
-                new ObjectParameter("Nombre", typeof(string));
-    
-            var correoParameter = correo != null ?
-                new ObjectParameter("Correo", correo) :
-                new ObjectParameter("Correo", typeof(string));
-    
-            var contrasenaParameter = contrasena != null ?
-                new ObjectParameter("Contrasena", contrasena) :
-                new ObjectParameter("Contrasena", typeof(string));
-    
-            var iD_ROLParameter = iD_ROL.HasValue ?
-                new ObjectParameter("ID_ROL", iD_ROL) :
-                new ObjectParameter("ID_ROL", typeof(int));
-    
-            var iD_ESTADOParameter = iD_ESTADO.HasValue ?
-                new ObjectParameter("ID_ESTADO", iD_ESTADO) :
-                new ObjectParameter("ID_ESTADO", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USUARIO_REGISTRAR_SP", nombreParameter, correoParameter, contrasenaParameter, iD_ROLParameter, iD_ESTADOParameter, resultado);
-        }
-    
-        public virtual int sp_alterdiagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
-        {
-            var diagramnameParameter = diagramname != null ?
-                new ObjectParameter("diagramname", diagramname) :
-                new ObjectParameter("diagramname", typeof(string));
-    
-            var owner_idParameter = owner_id.HasValue ?
-                new ObjectParameter("owner_id", owner_id) :
-                new ObjectParameter("owner_id", typeof(int));
-    
-            var versionParameter = version.HasValue ?
-                new ObjectParameter("version", version) :
-                new ObjectParameter("version", typeof(int));
-    
-            var definitionParameter = definition != null ?
-                new ObjectParameter("definition", definition) :
-                new ObjectParameter("definition", typeof(byte[]));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_alterdiagram", diagramnameParameter, owner_idParameter, versionParameter, definitionParameter);
-        }
-    
-        public virtual int sp_creatediagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
-        {
-            var diagramnameParameter = diagramname != null ?
-                new ObjectParameter("diagramname", diagramname) :
-                new ObjectParameter("diagramname", typeof(string));
-    
-            var owner_idParameter = owner_id.HasValue ?
-                new ObjectParameter("owner_id", owner_id) :
-                new ObjectParameter("owner_id", typeof(int));
-    
-            var versionParameter = version.HasValue ?
-                new ObjectParameter("version", version) :
-                new ObjectParameter("version", typeof(int));
-    
-            var definitionParameter = definition != null ?
-                new ObjectParameter("definition", definition) :
-                new ObjectParameter("definition", typeof(byte[]));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_creatediagram", diagramnameParameter, owner_idParameter, versionParameter, definitionParameter);
-        }
-    
-        public virtual int sp_dropdiagram(string diagramname, Nullable<int> owner_id)
-        {
-            var diagramnameParameter = diagramname != null ?
-                new ObjectParameter("diagramname", diagramname) :
-                new ObjectParameter("diagramname", typeof(string));
-    
-            var owner_idParameter = owner_id.HasValue ?
-                new ObjectParameter("owner_id", owner_id) :
-                new ObjectParameter("owner_id", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_dropdiagram", diagramnameParameter, owner_idParameter);
-        }
-    
-        public virtual ObjectResult<sp_helpdiagramdefinition_Result> sp_helpdiagramdefinition(string diagramname, Nullable<int> owner_id)
-        {
-            var diagramnameParameter = diagramname != null ?
-                new ObjectParameter("diagramname", diagramname) :
-                new ObjectParameter("diagramname", typeof(string));
-    
-            var owner_idParameter = owner_id.HasValue ?
-                new ObjectParameter("owner_id", owner_id) :
-                new ObjectParameter("owner_id", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_helpdiagramdefinition_Result>("sp_helpdiagramdefinition", diagramnameParameter, owner_idParameter);
-        }
-    
-        public virtual ObjectResult<sp_helpdiagrams_Result> sp_helpdiagrams(string diagramname, Nullable<int> owner_id)
-        {
-            var diagramnameParameter = diagramname != null ?
-                new ObjectParameter("diagramname", diagramname) :
-                new ObjectParameter("diagramname", typeof(string));
-    
-            var owner_idParameter = owner_id.HasValue ?
-                new ObjectParameter("owner_id", owner_id) :
-                new ObjectParameter("owner_id", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_helpdiagrams_Result>("sp_helpdiagrams", diagramnameParameter, owner_idParameter);
-        }
-    
-        public virtual int sp_renamediagram(string diagramname, Nullable<int> owner_id, string new_diagramname)
-        {
-            var diagramnameParameter = diagramname != null ?
-                new ObjectParameter("diagramname", diagramname) :
-                new ObjectParameter("diagramname", typeof(string));
-    
-            var owner_idParameter = owner_id.HasValue ?
-                new ObjectParameter("owner_id", owner_id) :
-                new ObjectParameter("owner_id", typeof(int));
-    
-            var new_diagramnameParameter = new_diagramname != null ?
-                new ObjectParameter("new_diagramname", new_diagramname) :
-                new ObjectParameter("new_diagramname", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_renamediagram", diagramnameParameter, owner_idParameter, new_diagramnameParameter);
-        }
-    
-        public virtual int sp_upgraddiagrams()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_upgraddiagrams");
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_USUARIO_PERFIL_OBTENER_Result>("SP_USUARIO_PERFIL_OBTENER", iD_USUARIOParameter);
         }
     
         public virtual int SP_USUARIOS_ACTUALIZAR(Nullable<int> iD_USUARIO, string nOMBRE, string cORREO, Nullable<int> iD_ROL, string cONTRASENA, ObjectParameter oK, ObjectParameter mSG)
@@ -275,63 +155,55 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USUARIOS_TOGGLE_ESTADO", iD_USUARIOParameter, oK, mSG);
         }
     
-        public virtual ObjectResult<SP_USUARIO_PERFIL_OBTENER1_Result> sp_renamediagram1(string diagramname, Nullable<int> owner_id, string new_diagramname)
+        public virtual ObjectResult<USUARIO_LOGIN_SP_Result> USUARIO_LOGIN_SP(string correo, string contrasena)
         {
-            var diagramnameParameter = diagramname != null ?
-                new ObjectParameter("diagramname", diagramname) :
-                new ObjectParameter("diagramname", typeof(string));
+            var correoParameter = correo != null ?
+                new ObjectParameter("Correo", correo) :
+                new ObjectParameter("Correo", typeof(string));
     
-            var owner_idParameter = owner_id.HasValue ?
-                new ObjectParameter("owner_id", owner_id) :
-                new ObjectParameter("owner_id", typeof(int));
+            var contrasenaParameter = contrasena != null ?
+                new ObjectParameter("Contrasena", contrasena) :
+                new ObjectParameter("Contrasena", typeof(string));
     
-            var new_diagramnameParameter = new_diagramname != null ?
-                new ObjectParameter("new_diagramname", new_diagramname) :
-                new ObjectParameter("new_diagramname", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_USUARIO_PERFIL_OBTENER1_Result>("sp_renamediagram1", diagramnameParameter, owner_idParameter, new_diagramnameParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USUARIO_LOGIN_SP_Result>("USUARIO_LOGIN_SP", correoParameter, contrasenaParameter);
         }
     
-        public virtual ObjectResult<SP_USUARIO_PERFIL_OBTENER1_Result> SP_USUARIO_PERFIL_OBTENER(Nullable<int> iD_USUARIO)
+        public virtual int USUARIO_RECUPERARCONTRASENA_SP(string correo, string nuevaContrasena)
         {
-            var iD_USUARIOParameter = iD_USUARIO.HasValue ?
-                new ObjectParameter("ID_USUARIO", iD_USUARIO) :
-                new ObjectParameter("ID_USUARIO", typeof(int));
+            var correoParameter = correo != null ?
+                new ObjectParameter("Correo", correo) :
+                new ObjectParameter("Correo", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_USUARIO_PERFIL_OBTENER1_Result>("SP_USUARIO_PERFIL_OBTENER", iD_USUARIOParameter);
+            var nuevaContrasenaParameter = nuevaContrasena != null ?
+                new ObjectParameter("NuevaContrasena", nuevaContrasena) :
+                new ObjectParameter("NuevaContrasena", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USUARIO_RECUPERARCONTRASENA_SP", correoParameter, nuevaContrasenaParameter);
         }
     
-        public virtual int SP_USUARIO_PERFIL_ACTUALIZAR(Nullable<int> iD_USUARIO, string nOMBRE, string cORREO, string cONTRASENA_ACTUAL, string cONTRASENA_NUEVA, ObjectParameter oK, ObjectParameter mSG)
+        public virtual int USUARIO_REGISTRAR_SP(string nombre, string correo, string contrasena, Nullable<int> iD_ROL, Nullable<int> iD_ESTADO, ObjectParameter resultado)
         {
-            var iD_USUARIOParameter = iD_USUARIO.HasValue ?
-                new ObjectParameter("ID_USUARIO", iD_USUARIO) :
-                new ObjectParameter("ID_USUARIO", typeof(int));
+            var nombreParameter = nombre != null ?
+                new ObjectParameter("Nombre", nombre) :
+                new ObjectParameter("Nombre", typeof(string));
     
-            var nOMBREParameter = nOMBRE != null ?
-                new ObjectParameter("NOMBRE", nOMBRE) :
-                new ObjectParameter("NOMBRE", typeof(string));
+            var correoParameter = correo != null ?
+                new ObjectParameter("Correo", correo) :
+                new ObjectParameter("Correo", typeof(string));
     
-            var cORREOParameter = cORREO != null ?
-                new ObjectParameter("CORREO", cORREO) :
-                new ObjectParameter("CORREO", typeof(string));
+            var contrasenaParameter = contrasena != null ?
+                new ObjectParameter("Contrasena", contrasena) :
+                new ObjectParameter("Contrasena", typeof(string));
     
-            var cONTRASENA_ACTUALParameter = cONTRASENA_ACTUAL != null ?
-                new ObjectParameter("CONTRASENA_ACTUAL", cONTRASENA_ACTUAL) :
-                new ObjectParameter("CONTRASENA_ACTUAL", typeof(string));
+            var iD_ROLParameter = iD_ROL.HasValue ?
+                new ObjectParameter("ID_ROL", iD_ROL) :
+                new ObjectParameter("ID_ROL", typeof(int));
     
-            var cONTRASENA_NUEVAParameter = cONTRASENA_NUEVA != null ?
-                new ObjectParameter("CONTRASENA_NUEVA", cONTRASENA_NUEVA) :
-                new ObjectParameter("CONTRASENA_NUEVA", typeof(string));
+            var iD_ESTADOParameter = iD_ESTADO.HasValue ?
+                new ObjectParameter("ID_ESTADO", iD_ESTADO) :
+                new ObjectParameter("ID_ESTADO", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction(
-                "SP_USUARIO_PERFIL_ACTUALIZAR",
-                iD_USUARIOParameter,
-                nOMBREParameter,
-                cORREOParameter,
-                cONTRASENA_ACTUALParameter,
-                cONTRASENA_NUEVAParameter,
-                oK,
-                mSG);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USUARIO_REGISTRAR_SP", nombreParameter, correoParameter, contrasenaParameter, iD_ROLParameter, iD_ESTADOParameter, resultado);
         }
     }
 }
