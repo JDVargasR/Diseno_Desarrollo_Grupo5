@@ -1,4 +1,4 @@
-@model System.Collections.Generic.List<Proyecto_Diseno_Desarrollo_Grupo5.EF.BITACORA>
+@model System.Collections.Generic.List<Proyecto_Diseno_Desarrollo_Grupo5.Models.BitacoraItemVM>
 
 @{
     ViewBag.Title = "Bitacora / Auditoria";
@@ -6,10 +6,13 @@
 
     var q = (ViewBag.Q ?? "").ToString();
     var accion = (ViewBag.Accion ?? "").ToString();
+    var modulo = (ViewBag.Modulo ?? "").ToString();
+    var resultado = (ViewBag.Resultado ?? "").ToString();
     var sort = (ViewBag.Sort ?? "fecha").ToString().ToLower();
     var dir = (ViewBag.Dir ?? "desc").ToString().ToLower();
 
     var acciones = ViewBag.Acciones as System.Collections.Generic.List<string>;
+    var modulos = ViewBag.Modulos as System.Collections.Generic.List<string>;
 
     var current = (int)(ViewBag.Page ?? 1);
     var totalPages = (int)(ViewBag.TotalPages ?? 1);
@@ -22,6 +25,7 @@
             ? "<i class='bi bi-sort-up sort-icon active'></i>"
             : "<i class='bi bi-sort-down sort-icon active'></i>");
     };
+
 }
 
 @section styles{
@@ -34,20 +38,20 @@
 
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
             <div>
-                <h2 class="mb-0">Bitácora / Auditoría</h2>
+                <h2 class="mb-0">Bitacora / Auditoria</h2>
                 <small class="text-muted">Registro de acciones realizadas en el sistema</small>
             </div>
         </div>
 
         <form method="get" class="usuarios-filtros card p-3 mb-3">
             <div class="row g-2 align-items-end">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-4">
                     <label class="form-label">Buscar</label>
-                    <input type="text" name="q" class="form-control" value="@q" placeholder="Accion o descripcion..." />
+                    <input type="text" name="q" class="form-control" value="@q" placeholder="Acci&oacute;n, m&oacute;dulo o descripci&oacute;n..." />
                 </div>
 
-                <div class="col-12 col-md-3">
-                    <label class="form-label">Acción</label>
+                <div class="col-12 col-md-2">
+                    <label class="form-label">Acci&oacute;n</label>
                     <select class="form-select" name="accion">
                         <option value="">Todas</option>
                         @if (acciones != null)
@@ -60,13 +64,36 @@
                     </select>
                 </div>
 
-                <div class="col-6 col-md-2 d-grid">
+                <div class="col-12 col-md-2">
+                    <label class="form-label">M&oacute;dulo</label>
+                    <select class="form-select" name="modulo">
+                        <option value="">Todos</option>
+                        @if (modulos != null)
+                        {
+                            foreach (var m in modulos)
+                            {
+                                <option value="@m" @(modulo == m ? "selected" : "")>@m</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-2">
+                    <label class="form-label">Resultado</label>
+                    <select class="form-select" name="resultado">
+                        <option value="">Todos</option>
+                        <option value="OK" @(resultado == "OK" ? "selected" : "")>OK</option>
+                        <option value="ERROR" @(resultado == "ERROR" ? "selected" : "")>ERROR</option>
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-1 d-grid">
                     <button class="btn btn-dark" type="submit">
                         <i class="bi bi-search me-1"></i> Filtrar
                     </button>
                 </div>
 
-                <div class="col-6 col-md-2 d-grid">
+                <div class="col-6 col-md-1 d-grid">
                     <a class="btn btn-outline-secondary" href="@Url.Action("Bitacora")">
                         Limpiar
                     </a>
@@ -80,23 +107,34 @@
                     <thead class="table-light">
                         <tr>
                             <th style="width: 110px;">#</th>
+                            <th style="width: 160px;">
+                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = "modulo", dir = nextDir("modulo"), page = 1 })">
+                                    M&oacute;dulo @icon("modulo")
+                                </a>
+                            </th>
                             <th>
-                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, sort = "usuario", dir = nextDir("usuario"), page = 1 })">
+                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = "usuario", dir = nextDir("usuario"), page = 1 })">
                                     Usuario @icon("usuario")
                                 </a>
                             </th>
                             <th style="width: 180px;">
-                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, sort = "accion", dir = nextDir("accion"), page = 1 })">
-                                    Acción @icon("accion")
+                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = "accion", dir = nextDir("accion"), page = 1 })">
+                                    Acci&oacute;n @icon("accion")
                                 </a>
                             </th>
+                            <th style="width: 130px;">
+                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = "resultado", dir = nextDir("resultado"), page = 1 })">
+                                    Resultado @icon("resultado")
+                                </a>
+                            </th>
+                            <th style="width: 150px;">Registro</th>
                             <th>
-                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, sort = "descripcion", dir = nextDir("descripcion"), page = 1 })">
+                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = "descripcion", dir = nextDir("descripcion"), page = 1 })">
                                     Descripción @icon("descripcion")
                                 </a>
                             </th>
                             <th style="width: 190px;">
-                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, sort = "fecha", dir = nextDir("fecha"), page = 1 })">
+                                <a class="sort-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = "fecha", dir = nextDir("fecha"), page = 1 })">
                                     Fecha @icon("fecha")
                                 </a>
                             </th>
@@ -109,8 +147,15 @@
                             {
                                 <tr>
                                     <td>@b.ID_BITACORA</td>
-                                    <td>@(b.USUARIOS != null ? b.USUARIOS.NOMBRE : ("Usuario #" + b.ID_USUARIO))</td>
+                                    <td>@(string.IsNullOrWhiteSpace(b.MODULO) ? "-" : b.MODULO)</td>
+                                    <td>@(string.IsNullOrWhiteSpace(b.USUARIO_NOMBRE) ? ("Usuario #" + b.ID_USUARIO) : b.USUARIO_NOMBRE)</td>
                                     <td><span class="badge bg-info text-dark">@b.ACCION</span></td>
+                                    <td>
+                                        <span class="badge @(string.Equals(b.RESULTADO, "ERROR", StringComparison.OrdinalIgnoreCase) ? "bg-danger" : "bg-success")">
+                                            @(string.IsNullOrWhiteSpace(b.RESULTADO) ? "OK" : b.RESULTADO)
+                                        </span>
+                                    </td>
+                                    <td>@(string.IsNullOrWhiteSpace(b.ID_REGISTRO_AFECTADO) ? "-" : b.ID_REGISTRO_AFECTADO)</td>
                                     <td>@b.DESCRIPCION</td>
                                     <td>@b.FECHA.ToString("dd/MM/yyyy HH:mm:ss")</td>
                                 </tr>
@@ -119,7 +164,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center py-4 text-muted">No hay registros de bitácora para mostrar.</td>
+                                <td colspan="8" class="text-center py-4 text-muted">No hay registros de bit&aacute;cora para mostrar.</td>
                             </tr>
                         }
                     </tbody>
@@ -135,18 +180,18 @@
         <nav aria-label="Paginación" class="mt-3">
             <ul class="pagination">
                 <li class="page-item @(current == 1 ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, sort = sort, dir = dir, page = current - 1 })">Anterior</a>
+                    <a class="page-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = sort, dir = dir, page = current - 1 })">Anterior</a>
                 </li>
 
                 @for (int i = start; i <= end; i++)
                 {
                     <li class="page-item @(i == current ? "active" : "")">
-                        <a class="page-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, sort = sort, dir = dir, page = i })">@i</a>
+                        <a class="page-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = sort, dir = dir, page = i })">@i</a>
                     </li>
                 }
 
                 <li class="page-item @(current >= totalPages ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, sort = sort, dir = dir, page = current + 1 })">Siguiente</a>
+                    <a class="page-link" href="@Url.Action("Bitacora", new { q = q, accion = accion, modulo = modulo, resultado = resultado, sort = sort, dir = dir, page = current + 1 })">Siguiente</a>
                 </li>
             </ul>
         </nav>

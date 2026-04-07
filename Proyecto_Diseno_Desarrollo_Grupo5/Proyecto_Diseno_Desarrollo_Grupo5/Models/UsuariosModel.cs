@@ -29,4 +29,17 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         public string ContrasenaActual { get; set; }
         public string ConfirmarContrasena { get; set; }
     }
+
+    public class BitacoraItemVM
+    {
+        public int ID_BITACORA { get; set; }
+        public int ID_USUARIO { get; set; }
+        public string USUARIO_NOMBRE { get; set; }
+        public string ACCION { get; set; }
+        public string DESCRIPCION { get; set; }
+        public System.DateTime FECHA { get; set; }
+        public string MODULO { get; set; }
+        public string ID_REGISTRO_AFECTADO { get; set; }
+        public string RESULTADO { get; set; }
+    }
 }
