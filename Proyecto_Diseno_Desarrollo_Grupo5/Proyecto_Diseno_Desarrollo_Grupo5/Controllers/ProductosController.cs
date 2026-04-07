@@ -79,12 +79,15 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             if (string.IsNullOrWhiteSpace(vm.NOMBRE))
                 return RedirectToAction("Index");
 
+            var estadoActivo = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Activo");
+            var activoId = estadoActivo != null ? estadoActivo.ID_ESTADO : 1;
+
             var p = new PRODUCTOS
             {
                 NOMBRE = vm.NOMBRE.Trim(),
                 PRECIO_VENTA = vm.PRECIO_VENTA,
                 ID_CATEGORIA = vm.ID_CATEGORIA,
-                ID_ESTADO = vm.ID_ESTADO
+                ID_ESTADO = (vm.ID_ESTADO > 0 ? vm.ID_ESTADO : activoId)
             };
 
             db.PRODUCTOS.Add(p);
@@ -103,7 +106,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             p.NOMBRE = (vm.NOMBRE ?? "").Trim();
             p.PRECIO_VENTA = vm.PRECIO_VENTA;
             p.ID_CATEGORIA = vm.ID_CATEGORIA;
-            p.ID_ESTADO = vm.ID_ESTADO;
+
+            // NOTA: el estado se gestiona desde ToggleActive (activar/inactivar) y no desde Edit.
 
             db.SaveChanges();
             return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
@@ -112,13 +116,49 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         [RolAuthorize(1)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, int page = 1, string q = null)
+        public ActionResult ToggleActive(int id, int page = 1, string q = null)
         {
             var p = db.PRODUCTOS.Find(id);
             if (p == null) return RedirectToAction("Index", new { page, q });
 
-            db.PRODUCTOS.Remove(p);
+            var estadoActivo = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Activo");
+            var activoId = estadoActivo != null ? estadoActivo.ID_ESTADO : 1;
+
+            var estadoInactivo = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Inactivo");
+            var inactivoId = estadoInactivo != null ? estadoInactivo.ID_ESTADO : 2;
+
+            bool activar = p.ID_ESTADO == inactivoId;
+            p.ID_ESTADO = activar ? activoId : inactivoId;
+
             db.SaveChanges();
+            TempData["OK"] = activar ? "Producto activado correctamente." : "Producto inactivado correctamente.";
+            return RedirectToAction("Index", new { page, q });
+        }
+
+        [RolAuthorize(1)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, int page = 1, string q = null)
+        {
+            // Antes se eliminaba físicamente, pero falla si existen referencias (ej: DETALLES_VENTAS).
+            // Se cambia por inactivación para mantener integridad referencial.
+            var p = db.PRODUCTOS.Find(id);
+            if (p == null) return RedirectToAction("Index", new { page, q });
+
+            var estadoInactivo = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Inactivo");
+            var inactivoId = estadoInactivo != null ? estadoInactivo.ID_ESTADO : 2;
+
+            if (p.ID_ESTADO != inactivoId)
+            {
+                p.ID_ESTADO = inactivoId;
+                db.SaveChanges();
+                TempData["OK"] = "Producto inactivado correctamente.";
+            }
+            else
+            {
+                TempData["Mensaje"] = "El producto ya está inactivo.";
+            }
+
             return RedirectToAction("Index", new { page, q });
         }
     }

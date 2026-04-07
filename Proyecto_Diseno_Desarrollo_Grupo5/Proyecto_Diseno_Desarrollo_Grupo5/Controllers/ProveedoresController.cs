@@ -157,7 +157,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             prov.NOMBRE = vm.NOMBRE.Trim();
             prov.CONTACTO = vm.CONTACTO.Trim();
             prov.TELEFONO = vm.TELEFONO.Trim();
-            prov.ID_ESTADO = vm.ID_ESTADO;
+
+            // NOTA: el estado ya no se puede cambiar desde Edit; se maneja desde la acción Activar/Inactivar.
 
             // Actualizar materiales asociados
             if (!string.IsNullOrWhiteSpace(vm.PRODUCTOS_ASOCIADOS))
@@ -184,6 +185,41 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             TempData["OK"] = "Proveedor actualizado correctamente.";
             return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ToggleActive(int id, int page = 1, string q = null)
+        {
+            var prov = db.PROVEEDORES.Find(id);
+            if (prov == null) return RedirectToAction("Index", new { page, q });
+
+            var estadoActivo = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Activo");
+            var activoId = estadoActivo != null ? estadoActivo.ID_ESTADO : 1;
+
+            var estadoInactivo = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Inactivo");
+            var inactivoId = estadoInactivo != null ? estadoInactivo.ID_ESTADO : 2;
+
+            bool activar = prov.ID_ESTADO == inactivoId;
+            prov.ID_ESTADO = activar ? activoId : inactivoId;
+
+            // Si se inactiva, también inactivar materiales asociados.
+            if (!activar)
+            {
+                var materiales = db.MATERIALES.Where(m => m.ID_PROVEEDOR == id).ToList();
+                foreach (var mat in materiales)
+                    mat.ID_ESTADO = inactivoId;
+
+                db.SaveChanges();
+                TempData["OK"] = $"Proveedor inactivado correctamente. {materiales.Count} material(es) asociado(s) también inactivado(s).";
+            }
+            else
+            {
+                db.SaveChanges();
+                TempData["OK"] = "Proveedor activado correctamente.";
+            }
+
+            return RedirectToAction("Index", new { page, q });
         }
 
         [HttpPost]

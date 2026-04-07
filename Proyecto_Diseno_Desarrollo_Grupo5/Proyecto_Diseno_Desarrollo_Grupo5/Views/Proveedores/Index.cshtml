@@ -75,19 +75,28 @@
                                 <button class="btn btn-outline-primary btn-sm me-1"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalEditar"
-                                        onclick="cargarProveedorEditar('@p.ID_PROVEEDOR', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.CONTACTO ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.TELEFONO ?? ""))', '@p.ID_ESTADO')">
+                                        onclick="cargarProveedorEditar('@p.ID_PROVEEDOR', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.CONTACTO ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.TELEFONO ?? ""))')">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
 
-                                @using (Html.BeginForm("Deactivate", "Proveedores", FormMethod.Post, new { style = "display:inline;" }))
+                                @using (Html.BeginForm("ToggleActive", "Proveedores", FormMethod.Post, new { style = "display:inline;" }))
                                 {
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@p.ID_PROVEEDOR" />
                                     <input type="hidden" name="page" value="@Model.Page" />
                                     <input type="hidden" name="q" value="@Model.Q" />
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Inactivar este proveedor?');">
-                                        <i class="bi bi-x-circle"></i>
-                                    </button>
+                                    if (p.ID_ESTADO == 1)
+                                    {
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Inactivar este proveedor?');" title="Inactivar">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('¿Activar este proveedor?');" title="Activar">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    }
                                 }
                             </td>
                         </tr>
@@ -185,15 +194,6 @@
                         <label class="form-label">Teléfono</label>
                         <input class="form-control" name="TELEFONO" id="edit_TELEFONO" required />
                     </div>
-                    <div class="mb-2">
-                        <label class="form-label">Estado</label>
-                        <select class="form-select" name="ID_ESTADO" id="edit_ID_ESTADO" required>
-                            @foreach (var e in Model.Estados)
-                            {
-                                <option value="@e.Value">@e.Text</option>
-                            }
-                        </select>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
@@ -205,11 +205,10 @@
 </div>
 
 <script>
-    function cargarProveedorEditar(id, nombre, contacto, telefono, idEstado) {
+    function cargarProveedorEditar(id, nombre, contacto, telefono) {
         document.getElementById("edit_ID_PROVEEDOR").value = id;
         document.getElementById("edit_NOMBRE").value = nombre;
         document.getElementById("edit_CONTACTO").value = contacto;
         document.getElementById("edit_TELEFONO").value = telefono;
-        document.getElementById("edit_ID_ESTADO").value = idEstado;
     }
 </script>

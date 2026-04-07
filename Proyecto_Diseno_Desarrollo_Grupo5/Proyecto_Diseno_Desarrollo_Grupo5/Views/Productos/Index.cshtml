@@ -64,24 +64,38 @@
                             <td>@p.NOMBRE</td>
                             <td>₡@p.PRECIO_VENTA.ToString("N2")</td>
                             <td>@p.CATEGORIA</td>
-                            <td>@p.ESTADO</td>
+                            <td>
+                                <span class="badge-pill @(p.ID_ESTADO == 1 ? "badge-ok" : "badge-off")">
+                                    @(p.ID_ESTADO == 1 ? "ACTIVO" : "INACTIVO")
+                                </span>
+                            </td>
                             <td class="text-end">
                                 <button class="btn btn-outline-primary btn-sm me-1"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalEditar"
-                                        onclick="cargarProductoEditar('@p.ID_PRODUCTO', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@p.PRECIO_VENTA', '@p.ID_CATEGORIA', '@p.ID_ESTADO')">
+                                        onclick="cargarProductoEditar('@p.ID_PRODUCTO', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@p.PRECIO_VENTA', '@p.ID_CATEGORIA')">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
 
-                                @using (Html.BeginForm("Delete", "Productos", FormMethod.Post, new { style = "display:inline;" }))
+                                @using (Html.BeginForm("ToggleActive", "Productos", FormMethod.Post, new { style = "display:inline;" }))
                                 {
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@p.ID_PRODUCTO" />
                                     <input type="hidden" name="page" value="@Model.Page" />
                                     <input type="hidden" name="q" value="@Model.Q" />
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar este producto?');">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+
+                                    if (p.ID_ESTADO == 1)
+                                    {
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Inactivar este producto?');" title="Inactivar">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('¿Activar este producto?');" title="Activar">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    }
                                 }
                             </td>
                         </tr>
@@ -149,15 +163,6 @@
                             }
                         </select>
                     </div>
-                    <div class="mb-2">
-                        <label class="form-label">Estado</label>
-                        <select class="form-select" name="ID_ESTADO" required>
-                            @foreach (var e in Model.Estados)
-                            {
-                                <option value="@e.Value">@e.Text</option>
-                            }
-                        </select>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
@@ -199,15 +204,6 @@
                             }
                         </select>
                     </div>
-                    <div class="mb-2">
-                        <label class="form-label">Estado</label>
-                        <select class="form-select" name="ID_ESTADO" id="edit_ID_ESTADO" required>
-                            @foreach (var e in Model.Estados)
-                            {
-                                <option value="@e.Value">@e.Text</option>
-                            }
-                        </select>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
@@ -219,11 +215,10 @@
 </div>
 
 <script>
-    function cargarProductoEditar(id, nombre, precio, idCategoria, idEstado) {
+    function cargarProductoEditar(id, nombre, precio, idCategoria) {
         document.getElementById("edit_ID_PRODUCTO").value = id;
         document.getElementById("edit_NOMBRE").value = nombre;
         document.getElementById("edit_PRECIO_VENTA").value = precio;
         document.getElementById("edit_ID_CATEGORIA").value = idCategoria;
-        document.getElementById("edit_ID_ESTADO").value = idEstado;
     }
 </script>

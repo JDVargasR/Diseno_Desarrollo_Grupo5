@@ -19,6 +19,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public string ACCION { get; set; }
         public string DESCRIPCION { get; set; }
         public System.DateTime FECHA { get; set; }
+        public string MODULO { get; set; }
+        public string ID_REGISTRO_AFECTADO { get; set; }
+        public string RESULTADO { get; set; }
     
         public virtual USUARIOS USUARIOS { get; set; }
     }
