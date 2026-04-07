@@ -91,9 +91,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Filters
             var accion = MapearAccion(action, method);
             var idAfectado = filterContext.HttpContext.Items[BitacoraIdKey] as string;
 
-            var descripcion = "Acción ejecutada: " + action;
-            if (!string.IsNullOrWhiteSpace(idAfectado))
-                descripcion += " | Registro: " + idAfectado;
+            var descripcion = "Accion ejecutada: " + action;
 
             BitacoraHelper.Registrar(idUsuario, accion, descripcion, controller, idAfectado, "OK");
         }
