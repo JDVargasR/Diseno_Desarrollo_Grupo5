@@ -308,6 +308,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="StaticFiles\css\Bitacora.css" />
     <Content Include="StaticFiles\css\Cliente.css" />
     <Content Include="StaticFiles\css\Footer.css" />
     <Content Include="StaticFiles\css\NuestraHistoria.css" />
@@ -365,6 +366,7 @@
     <Content Include="Views\Clientes\Index.cshtml" />
     <Content Include="Views\Ventas\Create.cshtml" />
     <Content Include="Views\Ventas\Index.cshtml" />
+    <Content Include="Views\Home\Bitacora.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -445,6 +447,3 @@
   </Target>
   <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
 </Project>
-
-
-

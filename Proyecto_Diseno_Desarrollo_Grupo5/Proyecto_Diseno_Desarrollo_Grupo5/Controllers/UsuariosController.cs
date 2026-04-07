@@ -1,6 +1,7 @@
 ﻿using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
+using Proyecto_Diseno_Desarrollo_Grupo5;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -72,9 +73,16 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 msgParam
             );
 
+            var ok = okParam.Value != DBNull.Value && okParam.Value != null && (bool)okParam.Value;
+            if (ok)
+            {
+                int? idActor = Session["IdUsuario"] as int?;
+                BitacoraHelper.Registrar(idActor, "USUARIO_INSERTAR", "Creó un usuario: " + model.Correo);
+            }
+
             return Json(new
             {
-                ok = (bool)okParam.Value,
+                ok = ok,
                 msg = msgParam.Value.ToString()
             });
         }
@@ -109,9 +117,16 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 msgParam
             );
 
+            var ok = okParam.Value != DBNull.Value && okParam.Value != null && (bool)okParam.Value;
+            if (ok)
+            {
+                int? idActor = Session["IdUsuario"] as int?;
+                BitacoraHelper.Registrar(idActor, "USUARIO_ACTUALIZAR", "Actualizó usuario ID: " + model.IdUsuario);
+            }
+
             return Json(new
             {
-                ok = (bool)okParam.Value,
+                ok = ok,
                 msg = msgParam.Value.ToString()
             });
         }
@@ -139,9 +154,16 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 msgParam
             );
 
+            var ok = okParam.Value != DBNull.Value && okParam.Value != null && (bool)okParam.Value;
+            if (ok)
+            {
+                int? idActor = Session["IdUsuario"] as int?;
+                BitacoraHelper.Registrar(idActor, "USUARIO_TOGGLE_ESTADO", "Cambió estado del usuario ID: " + id);
+            }
+
             return Json(new
             {
-                ok = (bool)okParam.Value,
+                ok = ok,
                 msg = msgParam.Value.ToString()
             });
         }

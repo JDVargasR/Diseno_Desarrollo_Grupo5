@@ -1,0 +1,24 @@
+.bitacora-page .sort-link {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bitacora-page .sort-link:hover {
+    text-decoration: underline;
+}
+
+.bitacora-page .sort-icon {
+    opacity: .55;
+}
+
+.bitacora-page .sort-icon.active {
+    opacity: 1;
+}
+
+.bitacora-page .badge {
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}

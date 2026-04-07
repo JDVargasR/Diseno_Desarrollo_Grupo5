@@ -1,5 +1,6 @@
 ﻿using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
+using Proyecto_Diseno_Desarrollo_Grupo5;
 using System;
 using System.Linq;
 using System.Web.Mvc;
@@ -12,6 +13,15 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
         public ActionResult Logout()
         {
+            int? idUsuario = Session["IdUsuario"] as int?;
+            if (!idUsuario.HasValue && Session["IdUsuario"] != null)
+            {
+                int parsed;
+                if (int.TryParse(Session["IdUsuario"].ToString(), out parsed))
+                    idUsuario = parsed;
+            }
+
+            BitacoraHelper.Registrar(idUsuario, "LOGOUT", "Cierre de sesión.");
             Session.Clear();
             return RedirectToAction("Login", "Autenticacion");
         }
@@ -45,6 +55,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     Session["NombreUsuario"] = res.NOMBRE;
                     Session["IdRol"] = res.ID_ROL;
                     Session["Rol"] = res.ROL;
+
+                    BitacoraHelper.Registrar(res.ID_USUARIO, "LOGIN", "Inicio de sesión exitoso.");
 
                     // Redirección según rol
                     if (res.ROL == "ADMINISTRADOR") return RedirectToAction("Index", "Home");
@@ -101,6 +113,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
                 if (res == 1)
                 {
+                    var usuarioCreado = context.USUARIOS.FirstOrDefault(x => x.CORREO == model.Correo);
+                    BitacoraHelper.Registrar(usuarioCreado?.ID_USUARIO, "REGISTRO", "Usuario registrado en el sistema.");
+
                     TempData["OK"] = "Cuenta creada correctamente, ahora podés ve a iniciar sesión.";
                     return RedirectToAction("Login", "Autenticacion");
                 }
@@ -206,6 +221,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     // Actualizar el nombre en sesión si cambió
                     Session["NombreUsuario"] = model.Nombre;
                     ViewBag.OK = msg;
+                    BitacoraHelper.Registrar(idUsuario, "PERFIL_ACTUALIZADO", "Actualización de datos de perfil.");
                 }
                 else
                 {
