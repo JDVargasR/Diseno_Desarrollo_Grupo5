@@ -8,13 +8,15 @@ using System.Web.Mvc;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 {
-    [RolAuthorize(1)]
+    [RolAuthorize(1,2)]
     public class ProveedoresController : Controller
     {
         private DBGRUPO5Entities db = new DBGRUPO5Entities();
 
         public ActionResult Index(string q = null, int page = 1, int pageSize = 10)
         {
+            ViewBag.EsSoloLectura = (Session["IdRol"] ?? "").ToString() == "2";
+
             try
             {
                 q = (q ?? "").Trim();
@@ -95,6 +97,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             }
         }
 
+        [RolAuthorize(1)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ProveedorCrudVM vm)
@@ -141,6 +144,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
         }
 
+        [RolAuthorize(1)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ProveedorCrudVM vm)
@@ -187,6 +191,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
         }
 
+        [RolAuthorize(1)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ToggleActive(int id, int page = 1, string q = null)
@@ -222,6 +227,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             return RedirectToAction("Index", new { page, q });
         }
 
+        [RolAuthorize(1)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Deactivate(int id, int page = 1, string q = null)

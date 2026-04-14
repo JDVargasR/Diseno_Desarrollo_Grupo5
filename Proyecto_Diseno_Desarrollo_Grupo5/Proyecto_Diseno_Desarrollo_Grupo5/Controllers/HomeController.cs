@@ -9,6 +9,7 @@ using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 {
+    [RolAuthorize(1,2,3)]
     public class HomeController : Controller
     {
         private readonly DBGRUPO5Entities db = new DBGRUPO5Entities();

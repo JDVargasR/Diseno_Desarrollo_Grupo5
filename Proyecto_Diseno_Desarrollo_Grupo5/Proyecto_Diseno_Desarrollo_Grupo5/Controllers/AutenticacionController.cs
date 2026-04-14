@@ -58,7 +58,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
                     // Redirección según rol
                     if (res.ROL == "ADMINISTRADOR") return RedirectToAction("Index", "Home");
-                    if (res.ROL == "VENDEDOR") return RedirectToAction("Index", "Vendedor");
+                    if (res.ROL == "VENDEDOR") return RedirectToAction("Index", "Home");
                     return RedirectToAction("Index", "Home");
                 }
 

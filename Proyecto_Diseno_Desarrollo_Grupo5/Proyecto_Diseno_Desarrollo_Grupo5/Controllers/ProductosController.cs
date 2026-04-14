@@ -14,6 +14,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         [RolAuthorize(1,2)]
         public ActionResult Index(string q = null, int page = 1, int pageSize = 10)
         {
+            ViewBag.EsSoloLectura = (Session["IdRol"] ?? "").ToString() == "2";
+
             q = (q ?? "").Trim();
             var query = db.PRODUCTOS.AsQueryable();
 

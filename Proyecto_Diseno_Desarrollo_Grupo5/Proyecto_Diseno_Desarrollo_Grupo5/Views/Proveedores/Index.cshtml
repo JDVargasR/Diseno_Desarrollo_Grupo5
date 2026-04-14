@@ -2,7 +2,7 @@
 @model Proyecto_Diseno_Desarrollo_Grupo5.Models.ProveedorCrudVM
 @{
     ViewBag.Title = "Proveedores";
-    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+    var esSoloLectura = ViewBag.EsSoloLectura != null && (bool)ViewBag.EsSoloLectura;
 }
 
 @section styles{
@@ -16,9 +16,12 @@
             <div class="page-subtitle">Gestión de proveedores (crear, editar, inactivar)</div>
         </div>
 
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrear">
-            + Nuevo Proveedor
-        </button>
+        @if (!esSoloLectura)
+        {
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                + Nuevo Proveedor
+            </button>
+        }
     </div>
 
     @if (TempData["OK"] != null)
@@ -55,7 +58,10 @@
                         <th>Teléfono</th>
                         <th>Materiales</th>
                         <th>Estado</th>
-                        <th style="width:220px; text-align:right;">Acciones</th>
+                        @if (!esSoloLectura)
+                        {
+                            <th style="width:220px; text-align:right;">Acciones</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -71,34 +77,37 @@
                                     @(p.ID_ESTADO == 1 ? "ACTIVO" : "INACTIVO")
                                 </span>
                             </td>
-                            <td class="text-end">
-                                <button class="btn btn-outline-primary btn-sm me-1"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalEditar"
-                                        onclick="cargarProveedorEditar('@p.ID_PROVEEDOR', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.CONTACTO ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.TELEFONO ?? ""))')">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
+                            @if (!esSoloLectura)
+                            {
+                                <td class="text-end">
+                                    <button class="btn btn-outline-primary btn-sm me-1"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEditar"
+                                            onclick="cargarProveedorEditar('@p.ID_PROVEEDOR', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.CONTACTO ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.TELEFONO ?? ""))')">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
 
-                                @using (Html.BeginForm("ToggleActive", "Proveedores", FormMethod.Post, new { style = "display:inline;" }))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@p.ID_PROVEEDOR" />
-                                    <input type="hidden" name="page" value="@Model.Page" />
-                                    <input type="hidden" name="q" value="@Model.Q" />
-                                    if (p.ID_ESTADO == 1)
+                                    @using (Html.BeginForm("ToggleActive", "Proveedores", FormMethod.Post, new { style = "display:inline;" }))
                                     {
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Inactivar este proveedor?');" title="Inactivar">
-                                            <i class="bi bi-x-circle"></i>
-                                        </button>
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@p.ID_PROVEEDOR" />
+                                        <input type="hidden" name="page" value="@Model.Page" />
+                                        <input type="hidden" name="q" value="@Model.Q" />
+                                        if (p.ID_ESTADO == 1)
+                                        {
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Inactivar este proveedor?');" title="Inactivar">
+                                                <i class="bi bi-x-circle"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('¿Activar este proveedor?');" title="Activar">
+                                                <i class="bi bi-check-circle"></i>
+                                            </button>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('¿Activar este proveedor?');" title="Activar">
-                                            <i class="bi bi-check-circle"></i>
-                                        </button>
-                                    }
-                                }
-                            </td>
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -133,6 +142,8 @@
     </div>
 </div>
 
+@if (!esSoloLectura)
+{
 <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -203,6 +214,7 @@
         </div>
     </div>
 </div>
+}
 
 <script>
     function cargarProveedorEditar(id, nombre, contacto, telefono) {

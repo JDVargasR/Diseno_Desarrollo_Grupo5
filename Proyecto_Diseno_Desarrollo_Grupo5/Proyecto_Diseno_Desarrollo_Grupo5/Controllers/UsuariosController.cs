@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 {
-    [RolAuthorize(1)]
+    [RolAuthorize(1,2)]
     public class UsuariosController : Controller
     {
         private DBGRUPO5Entities db = new DBGRUPO5Entities();

@@ -2,7 +2,7 @@
 @model Proyecto_Diseno_Desarrollo_Grupo5.Models.MaterialCrudVM
 @{
     ViewBag.Title = "Materiales";
-    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+    var esSoloLectura = ViewBag.EsSoloLectura != null && (bool)ViewBag.EsSoloLectura;
 }
 
 @section styles{
@@ -16,9 +16,12 @@
             <div class="page-subtitle">Gestión de materiales (crear, editar y eliminar)</div>
         </div>
 
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrear">
-            + Nuevo Material
-        </button>
+        @if (!esSoloLectura)
+        {
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                + Nuevo Material
+            </button>
+        }
     </div>
 
     @if (TempData["OK"] != null)
@@ -57,7 +60,10 @@
                         <th>Proveedor</th>
                         <th>Estado</th>
                         <th>Alerta</th>
-                        <th style="width:260px; text-align:right;">Acciones</th>
+                        @if (!esSoloLectura)
+                        {
+                            <th style="width:260px; text-align:right;">Acciones</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -80,25 +86,28 @@
                                     <span style="color:#198754;font-weight:800;">OK</span>
                                 }
                             </td>
-                            <td class="text-end">
-                                <button class="btn btn-outline-primary btn-sm me-1"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalEditar"
-                                        onclick="cargarMaterialEditar('@m.ID_MATERIAL', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.NOMBRE ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.TIPO ?? ""))', '@m.STOCK', '@m.COSTO_UNITARIO', '@m.ID_PROVEEDOR', '@m.ID_ESTADO')">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-
-                                @using (Html.BeginForm("Delete", "Materiales", FormMethod.Post, new { style = "display:inline;" }))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@m.ID_MATERIAL" />
-                                    <input type="hidden" name="page" value="@Model.Page" />
-                                    <input type="hidden" name="q" value="@Model.Q" />
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar este material?');">
-                                        <i class="bi bi-trash"></i>
+                            @if (!esSoloLectura)
+                            {
+                                <td class="text-end">
+                                    <button class="btn btn-outline-primary btn-sm me-1"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEditar"
+                                            onclick="cargarMaterialEditar('@m.ID_MATERIAL', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.NOMBRE ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.TIPO ?? ""))', '@m.STOCK', '@m.COSTO_UNITARIO', '@m.ID_PROVEEDOR', '@m.ID_ESTADO')">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
-                                }
-                            </td>
+
+                                    @using (Html.BeginForm("Delete", "Materiales", FormMethod.Post, new { style = "display:inline;" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@m.ID_MATERIAL" />
+                                        <input type="hidden" name="page" value="@Model.Page" />
+                                        <input type="hidden" name="q" value="@Model.Q" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar este material?');">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -133,6 +142,8 @@
     </div>
 </div>
 
+@if (!esSoloLectura)
+{
 <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -267,6 +278,7 @@
         </div>
     </div>
 </div>
+}
 
 <script>
     function cargarMaterialEditar(id, nombre, tipo, stock, costo, idProveedor, idEstado) {

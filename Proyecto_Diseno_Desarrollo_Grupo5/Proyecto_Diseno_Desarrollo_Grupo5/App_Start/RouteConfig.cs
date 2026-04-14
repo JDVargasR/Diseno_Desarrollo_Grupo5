@@ -16,7 +16,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Autenticacion", action = "Login", id = UrlParameter.Optional }
             );
         }
     }

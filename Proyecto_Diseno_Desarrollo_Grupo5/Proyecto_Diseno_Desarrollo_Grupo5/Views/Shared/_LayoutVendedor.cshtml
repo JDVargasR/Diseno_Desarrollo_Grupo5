@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var nombre = (Session["NombreUsuario"] ?? "Usuario").ToString();
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -43,13 +47,11 @@
                     </button>
                     <div class="lp-dd__menu">
                         <a href="@Url.Action("Index","Productos")" class="lp-dd__item">Productos</a>
-                        <a href="#" class="lp-dd__item">Clientes</a>
+                        <a href="@Url.Action("Index","Clientes")" class="lp-dd__item">Clientes</a>
                         <a href="@Url.Action("Index","Proveedores")" class="lp-dd__item">Proveedores</a>
-                        <a href="#" class="lp-dd__item">Ventas</a>
+                        <a href="@Url.Action("Index","Ventas")" class="lp-dd__item">Ventas</a>
                         <a href="@Url.Action("Index","Materiales")" class="lp-dd__item">Materiales</a>
                         <a href="@Url.Action("Index","Usuarios")" class="lp-dd__item">Control Usuarios</a>
-                        <a href="@Url.Action("Index","Roles")" class="lp-dd__item">Roles</a>
-                        <a href="@Url.Action("Index","Categorias")" class="lp-dd__item">Categorías</a>
                     </div>
                 </div>
 
@@ -58,21 +60,8 @@
                         Servicios <span class="lp-caret"></span>
                     </button>
                     <div class="lp-dd__menu">
-                        <a href="#" class="lp-dd__item">Bitácora / Auditoría</a>
                         <a href="@Url.Action("Index","Garantias")" class="lp-dd__item">Garantias</a>
                         <a href="@Url.Action("Index","Devoluciones")" class="lp-dd__item">Devoluciones</a>
-                    </div>
-                </div>
-
-                <div class="lp-dd">
-                    <button class="lp-dd__btn" type="button">
-                        Otros <span class="lp-caret"></span>
-                    </button>
-                    <div class="lp-dd__menu">
-                        <a href="@Url.Action("Index","Salidas")" class="lp-dd__item">Movimientos</a>
-                        <a href="#" class="lp-dd__item">Análisis Predictivo</a>
-                        <a href="#" class="lp-dd__item">Reportes</a>
-                        <a href="#" class="lp-dd__item">Control Usuarios</a>
                     </div>
                 </div>
             </nav>
@@ -80,7 +69,7 @@
             <div class="lp-user">
                 <div class="lp-user__dd">
                     <button class="lp-user__btn" type="button" aria-label="Menú de usuario">
-                        <span class="lp-user__name">@Session["NombreUsuario"]</span>
+                        <span class="lp-user__name">@nombre</span>
                         <span class="lp-caret"></span>
                     </button>
                     <div class="lp-user__menu">

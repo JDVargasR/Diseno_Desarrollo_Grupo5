@@ -2,7 +2,6 @@
 @{
     var esEntrada = (Model.Tipo ?? "").ToUpperInvariant() == "ENTRADA";
     ViewBag.Title = esEntrada ? "Registrar entrada" : "Registrar salida";
-    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
 }
 
 @section styles{

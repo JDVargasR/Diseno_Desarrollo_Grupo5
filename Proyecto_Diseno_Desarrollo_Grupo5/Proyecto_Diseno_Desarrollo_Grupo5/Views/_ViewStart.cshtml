@@ -1,3 +1,24 @@
 ﻿@{
-    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+    var controller = (ViewContext.RouteData.Values["controller"] ?? "").ToString();
+    var action = (ViewContext.RouteData.Values["action"] ?? "").ToString();
+    var idRol = (Session["IdRol"] ?? "").ToString();
+
+    if (controller.Equals("Autenticacion", System.StringComparison.OrdinalIgnoreCase)
+        && (action.Equals("Login", System.StringComparison.OrdinalIgnoreCase)
+            || action.Equals("Registro", System.StringComparison.OrdinalIgnoreCase)))
+    {
+        Layout = "~/Views/Shared/_LayoutAutenticacion.cshtml";
+    }
+    else if (idRol == "1")
+    {
+        Layout = "~/Views/Shared/_LayoutAdministrador.cshtml";
+    }
+    else if (idRol == "2")
+    {
+        Layout = "~/Views/Shared/_LayoutVendedor.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+    }
 }

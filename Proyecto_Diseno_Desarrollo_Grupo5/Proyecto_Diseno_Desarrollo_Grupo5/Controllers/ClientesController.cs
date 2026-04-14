@@ -1,4 +1,5 @@
 ﻿using Proyecto_Diseno_Desarrollo_Grupo5.EF;
+using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Web.Mvc;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 {
+    [RolAuthorize(1,2)]
     public class ClientesController : Controller
     {
         private DBGRUPO5Entities db = new DBGRUPO5Entities();
