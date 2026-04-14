@@ -1,0 +1,34 @@
+@model Proyecto_Diseno_Desarrollo_Grupo5.Models.MovimientoInventarioComprobanteVM
+@{
+    ViewBag.Title = "Comprobante";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+}
+
+<div class="container" style="max-width:900px; padding-top:30px;">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h2 class="page-title">Comprobante de movimiento</h2>
+            <div class="page-subtitle">Detalle del registro realizado</div>
+        </div>
+        <a class="btn btn-outline-dark" href="@Url.Action("Index","Salidas")">Volver a movimientos</a>
+    </div>
+
+    <div class="page-section">
+        <div class="cardx p-3">
+            <div class="row g-2">
+                <div class="col-md-6"><b>Comprobante #:</b> @Model.IdMovimiento</div>
+                <div class="col-md-6"><b>Tipo:</b> @Model.Tipo</div>
+                <div class="col-md-6"><b>Fecha:</b> @Model.Fecha.ToString("dd/MM/yyyy HH:mm")</div>
+                <div class="col-md-6"><b>Estado:</b> @Model.Estado</div>
+                <div class="col-md-6"><b>Producto/Material:</b> @Model.Material</div>
+                <div class="col-md-6"><b>Proveedor:</b> @Model.Proveedor</div>
+                <div class="col-md-6"><b>Cantidad:</b> @Model.Cantidad.ToString("N2")</div>
+                <div class="col-md-12"><b>Motivo:</b> @Model.Motivo</div>
+            </div>
+        </div>
+    </div>
+</div>

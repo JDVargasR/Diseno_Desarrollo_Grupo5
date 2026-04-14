@@ -13,7 +13,7 @@
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
             <h2 class="page-title">Control de Materiales</h2>
-            <div class="page-subtitle">Gestión de materiales (crear, editar, eliminar y ajustar stock)</div>
+            <div class="page-subtitle">Gestión de materiales (crear, editar y eliminar)</div>
         </div>
 
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrear">
@@ -86,13 +86,6 @@
                                         data-bs-target="#modalEditar"
                                         onclick="cargarMaterialEditar('@m.ID_MATERIAL', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.NOMBRE ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.TIPO ?? ""))', '@m.STOCK', '@m.COSTO_UNITARIO', '@m.ID_PROVEEDOR', '@m.ID_ESTADO')">
                                     <i class="bi bi-pencil-square"></i>
-                                </button>
-
-                                <button class="btn btn-outline-secondary btn-sm me-1"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalAjuste"
-                                        onclick="cargarAjuste('@m.ID_MATERIAL', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.NOMBRE ?? ""))', '@m.STOCK')">
-                                    <i class="bi bi-sliders"></i>
                                 </button>
 
                                 @using (Html.BeginForm("Delete", "Materiales", FormMethod.Post, new { style = "display:inline;" }))
@@ -275,42 +268,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalAjuste" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="font-weight:900;">Ajuste manual de stock</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            @using (Html.BeginForm("AjustarStock", "Materiales", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="ID_MATERIAL" id="ajuste_ID_MATERIAL" />
-                <input type="hidden" name="page" value="@Model.Page" />
-                <input type="hidden" name="q" value="@Model.Q" />
-                <div class="modal-body">
-                    <div class="mb-2">
-                        <label class="form-label">Material seleccionado</label>
-                        <input class="form-control" id="ajuste_nombre" readonly />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Cantidad de ajuste (+/-)</label>
-                        <input class="form-control" name="AJUSTE_CANTIDAD" type="number" step="0.01" required />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Observación</label>
-                        <input class="form-control" name="AJUSTE_OBSERVACION" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-primary-pill">Aplicar ajuste</button>
-                </div>
-            }
-        </div>
-    </div>
-</div>
-
 <script>
     function cargarMaterialEditar(id, nombre, tipo, stock, costo, idProveedor, idEstado) {
         document.getElementById("edit_ID_MATERIAL").value = id;
@@ -322,8 +279,4 @@
         document.getElementById("edit_ID_ESTADO").value = idEstado;
     }
 
-    function cargarAjuste(id, nombre, stock) {
-        document.getElementById("ajuste_ID_MATERIAL").value = id;
-        document.getElementById("ajuste_nombre").value = nombre + " (Stock actual: " + stock + ")";
-    }
 </script>

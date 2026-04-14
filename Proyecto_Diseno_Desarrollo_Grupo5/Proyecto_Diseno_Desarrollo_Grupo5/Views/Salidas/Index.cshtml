@@ -1,42 +1,123 @@
-﻿@model IEnumerable<Proyecto_Diseno_Desarrollo_Grupo5.EF.MOVIMIENTOS_INVENTARIO>
-
+﻿@model Proyecto_Diseno_Desarrollo_Grupo5.Models.MovimientoInventarioIndexVM
 @{
-    ViewBag.Title = "Salidas de Inventario";
+    ViewBag.Title = "Movimientos de inventario";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
 }
 
-<h2>Salidas de Inventario</h2>
+@section styles{
+    <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+}
 
-<p>
-    @Html.ActionLink("Registrar nueva salida", "Create", null, new { @class = "btn btn-primary" })
-</p>
+<div class="container" style="max-width:1200px; padding-top:30px;">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h2 class="page-title">Movimientos de inventario</h2>
+            <div class="page-subtitle">Ingresos y salidas de productos/materiales</div>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-success" href="@Url.Action("CreateEntrada","Salidas")">+ Registrar entrada</a>
+            <a class="btn btn-outline-danger" href="@Url.Action("CreateSalida","Salidas")">+ Registrar salida</a>
+        </div>
+    </div>
 
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Material</th>
-            <th>Cantidad</th>
-            <th>Observación</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.FECHA.ToString("dd/MM/yyyy")</td>
-                <td>@item.MATERIALES.NOMBRE</td>
-                <td>@item.CANTIDAD</td>
-                <td>@item.OBSERVACION</td>
-                <td>
-                    @Html.ActionLink(
-                        "Detalles",
-                        "Details",
-                        new { id = item.ID_MOVIMIENTO },
-                        new { @class = "btn btn-sm btn-info" }
-                    )
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if (TempData["OK"] != null)
+    {
+        <div class="alert alert-success cardx" style="padding:12px 14px;">@TempData["OK"]</div>
+    }
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-warning cardx" style="padding:12px 14px;">@TempData["Mensaje"]</div>
+    }
+
+    <form method="get" class="page-section mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label" style="font-weight:700;">Tipo</label>
+                <select class="form-select" name="tipo">
+                    <option value="" @(string.IsNullOrWhiteSpace(Model.Tipo) ? "selected" : "")>Todos</option>
+                    <option value="ENTRADA" @(Model.Tipo == "ENTRADA" ? "selected" : "")>Entradas</option>
+                    <option value="SALIDA" @(Model.Tipo == "SALIDA" ? "selected" : "")>Salidas</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" style="font-weight:700;">Producto/Material</label>
+                <select class="form-select" name="idMaterial">
+                    <option value="">Todos</option>
+                    @foreach (var m in Model.Materiales)
+                    {
+                        <option value="@m.Value" @(Model.IdMaterial.HasValue && Model.IdMaterial.Value.ToString() == m.Value ? "selected" : "")>@m.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" style="font-weight:700;">Desde</label>
+                <input class="form-control" type="date" name="desde" value="@(Model.Desde.HasValue ? Model.Desde.Value.ToString("yyyy-MM-dd") : "")" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" style="font-weight:700;">Hasta</label>
+                <input class="form-control" type="date" name="hasta" value="@(Model.Hasta.HasValue ? Model.Hasta.Value.ToString("yyyy-MM-dd") : "")" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" style="font-weight:700;">Buscar</label>
+                <input class="form-control" name="q" value="@Model.Q" placeholder="motivo..." />
+            </div>
+            <div class="col-md-1 d-grid">
+                <button class="btn btn-dark" type="submit">Filtrar</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="page-section">
+        <div class="cardx table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Material</th>
+                        <th>Proveedor</th>
+                        <th>Cantidad</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                        <th style="width:220px; text-align:right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Movimientos != null && Model.Movimientos.Count > 0)
+                    {
+                        foreach (var item in Model.Movimientos)
+                        {
+                            <tr>
+                                <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@item.Tipo</td>
+                                <td>@item.Material</td>
+                                <td>@item.Proveedor</td>
+                                <td>@item.Cantidad.ToString("N2")</td>
+                                <td>@item.Motivo</td>
+                                <td>@item.Estado</td>
+                                <td class="text-end">
+                                    <a class="btn btn-outline-info btn-sm" href="@Url.Action("Comprobante","Salidas", new { id = item.IdMovimiento })">Comprobante</a>
+                                    @if (item.PuedeAnular)
+                                    {
+                                        <form method="post" action="@Url.Action("Anular","Salidas")" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.IdMovimiento" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Seguro que desea anular este movimiento?');">Anular</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted" style="padding:18px;">No hay movimientos para los filtros seleccionados.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

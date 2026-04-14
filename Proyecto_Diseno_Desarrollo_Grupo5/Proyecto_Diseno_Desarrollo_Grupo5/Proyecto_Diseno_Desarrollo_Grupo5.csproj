@@ -130,6 +130,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
+    <Compile Include="Controllers\DevolucionesController.cs" />
     <Compile Include="Controllers\GarantiasController.cs" />
     <Compile Include="Controllers\VendedorController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
@@ -242,11 +243,13 @@
     </Compile>
     <Compile Include="Models\CategoriaCrudVM.cs" />
     <Compile Include="Models\ClienteCrudVM.cs" />
+    <Compile Include="Models\DevolucionesVM.cs" />
     <Compile Include="Models\Garantias\SolicitudGarantiaCerrarVM.cs" />
     <Compile Include="Models\Garantias\SolicitudGarantiaCrearVM.cs" />
     <Compile Include="Models\Garantias\SolicitudGarantiaEvaluarVM.cs" />
     <Compile Include="Models\Garantias\SolicitudGarantiaFilaVM.cs" />
     <Compile Include="Models\MaterialCrudVM.cs" />
+    <Compile Include="Models\MovimientosInventarioVM.cs" />
     <Compile Include="Models\PerfilVM.cs" />
     <Compile Include="Models\ProveedorCrudVM.cs" />
     <Compile Include="Models\UsuariosModel.cs" />
@@ -374,6 +377,10 @@
     <Content Include="Views\Garantias\Create.cshtml" />
     <Content Include="Views\Garantias\Evaluar.cshtml" />
     <Content Include="Views\Garantias\Cerrar.cshtml" />
+    <Content Include="Views\Devoluciones\Index.cshtml" />
+    <Content Include="Views\Devoluciones\Create.cshtml" />
+    <Content Include="Views\Devoluciones\Reporte.cshtml" />
+    <Content Include="Views\Salidas\Comprobante.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,61 @@
+@model Proyecto_Diseno_Desarrollo_Grupo5.Models.DevolucionCrearVM
+@{
+    ViewBag.Title = "Registrar devolución";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+}
+
+<div class="container" style="max-width:900px; padding-top:30px;">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h2 class="page-title">Nueva devolución</h2>
+            <div class="page-subtitle">Registrar devolución de un producto vendido</div>
+        </div>
+        <a class="btn btn-outline-dark" href="@Url.Action("Index","Devoluciones")">Volver</a>
+    </div>
+
+    @if (TempData["ERR"] != null)
+    {
+        <div class="alert alert-danger cardx" style="padding:12px 14px;">@TempData["ERR"]</div>
+    }
+
+    @using (Html.BeginForm("Create", "Devoluciones", FormMethod.Post, new { @class = "page-section" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" style="font-weight:700;">Factura</label>
+                @Html.DropDownListFor(x => x.IdVenta, Model.Ventas, "Seleccione...", new { @class = "form-select", required = "required" })
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" style="font-weight:700;">Producto</label>
+                @Html.DropDownListFor(x => x.IdProducto, Model.Productos, "Seleccione...", new { @class = "form-select", required = "required" })
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label" style="font-weight:700;">Cantidad</label>
+                @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", type = "number", step = "0.01", min = "0.01", required = "required" })
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label" style="font-weight:700;">Política (días)</label>
+                @Html.TextBoxFor(x => x.PoliticaDias, new { @class = "form-control", type = "number", min = "1", max = "365", required = "required" })
+            </div>
+
+            <div class="col-12">
+                <label class="form-label" style="font-weight:700;">Motivo</label>
+                @Html.TextAreaFor(x => x.Motivo, new { @class = "form-control", rows = 4, maxlength = "300", required = "required", placeholder = "Describe el motivo de la devolución" })
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                <a href="@Url.Action("Index","Devoluciones")" class="btn btn-light">Cancelar</a>
+                <button type="submit" class="btn btn-primary btn-primary-pill">Guardar devolución</button>
+            </div>
+        </div>
+    }
+</div>

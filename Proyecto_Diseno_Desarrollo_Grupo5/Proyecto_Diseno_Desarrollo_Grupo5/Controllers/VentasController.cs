@@ -103,11 +103,17 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(int IdCliente, int[] IdProducto, decimal[] Cantidad, decimal[] PrecioUnitario)
+        public ActionResult Create(int? IdCliente, int[] IdProducto, decimal[] Cantidad, decimal[] PrecioUnitario)
         {
-            if (IdCliente <= 0 || IdProducto == null || IdProducto.Length == 0)
+            if (!IdCliente.HasValue || IdCliente.Value <= 0 || IdProducto == null || IdProducto.Length == 0)
             {
                 TempData["ERR"] = "Debés seleccionar cliente y agregar al menos un producto.";
+                return RedirectToAction("Create");
+            }
+
+            if (Cantidad == null || PrecioUnitario == null || Cantidad.Length != IdProducto.Length || PrecioUnitario.Length != IdProducto.Length)
+            {
+                TempData["ERR"] = "Detalle de productos inválido. Volvé a agregar los productos.";
                 return RedirectToAction("Create");
             }
 
@@ -117,7 +123,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 {
                     var venta = new VENTAS
                     {
-                        ID_CLIENTE = IdCliente,
+                        ID_CLIENTE = IdCliente.Value,
                         FECHA = DateTime.Now,
                         TOTAL = 0,
                         ID_ESTADO = 1

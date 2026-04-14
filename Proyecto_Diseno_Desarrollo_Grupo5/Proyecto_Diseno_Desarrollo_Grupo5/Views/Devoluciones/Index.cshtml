@@ -1,0 +1,161 @@
+@model System.Collections.Generic.List<Proyecto_Diseno_Desarrollo_Grupo5.Models.DevolucionFilaVM>
+@{
+    ViewBag.Title = "Devoluciones";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+
+    var q = (ViewBag.Q ?? "").ToString();
+    var estado = (ViewBag.Estado ?? "").ToString();
+    var desde = (ViewBag.Desde ?? "").ToString();
+    var hasta = (ViewBag.Hasta ?? "").ToString();
+    var estados = ViewBag.Estados as string[];
+    var esGerente = (bool)(ViewBag.EsGerente ?? false);
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+}
+
+<div class="container" style="max-width:1200px; padding-top:30px;">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h2 class="page-title">Devoluciones</h2>
+            <div class="page-subtitle">Registro, aprobación y control de inventario</div>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-dark" href="@Url.Action("Reporte","Devoluciones")">Reporte mensual</a>
+            <a class="btn btn-primary" href="@Url.Action("Create","Devoluciones")">+ Nueva devolución</a>
+        </div>
+    </div>
+
+    @if (TempData["OK"] != null)
+    {
+        <div class="alert alert-success cardx" style="padding:12px 14px;">@TempData["OK"]</div>
+    }
+
+    @if (TempData["ERR"] != null)
+    {
+        <div class="alert alert-danger cardx" style="padding:12px 14px;">@TempData["ERR"]</div>
+    }
+
+    <form method="get" class="page-section mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-md-4">
+                <label class="form-label" style="font-weight:600;">Buscar</label>
+                <input class="form-control" name="q" value="@q" placeholder="#Devolución, factura, producto o motivo" />
+            </div>
+            <div class="col-12 col-md-3">
+                <label class="form-label" style="font-weight:600;">Estado</label>
+                <select class="form-select" name="estado">
+                    <option value="">Todos</option>
+                    @if (estados != null)
+                    {
+                        foreach (var e in estados)
+                        {
+                            <option value="@e" @(estado == e ? "selected" : "")>@e</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label" style="font-weight:600;">Desde</label>
+                <input class="form-control" type="date" name="desde" value="@desde" />
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label" style="font-weight:600;">Hasta</label>
+                <input class="form-control" type="date" name="hasta" value="@hasta" />
+            </div>
+            <div class="col-12 col-md-1 d-grid">
+                <button class="btn btn-dark" type="submit">Filtrar</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="page-section mt-3">
+        <div class="cardx table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Factura</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Condición</th>
+                        <th>Motivo</th>
+                        <th>Fecha</th>
+                        <th style="width:280px; text-align:right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var d in Model)
+                        {
+                            var esPendiente = d.Estado == "PENDIENTE";
+                            var esAprobada = d.Estado == "APROBADA";
+
+                            <tr>
+                                <td>#@d.IdDevolucion</td>
+                                <td>#@d.IdVenta</td>
+                                <td>@d.Producto</td>
+                                <td>@(d.Cantidad.HasValue ? d.Cantidad.Value.ToString("N2") : "-")</td>
+                                <td><span class="badge-pill badge-ok">@d.Estado</span></td>
+                                <td>@(string.IsNullOrWhiteSpace(d.CondicionProducto) ? "-" : d.CondicionProducto)</td>
+                                <td>@d.Motivo</td>
+                                <td>@d.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="text-end">
+                                    @if (esGerente && esPendiente)
+                                    {
+                                        <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                            <form method="post" action="@Url.Action("Resolver","Devoluciones")" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@d.IdDevolucion" />
+                                                <input type="hidden" name="decision" value="APROBAR" />
+                                                <button class="btn btn-outline-success btn-sm" type="submit">Aprobar</button>
+                                            </form>
+
+                                            <form method="post" action="@Url.Action("Resolver","Devoluciones")" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@d.IdDevolucion" />
+                                                <input type="hidden" name="decision" value="RECHAZAR" />
+                                                <button class="btn btn-outline-danger btn-sm" type="submit">Rechazar</button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else if (esGerente && esAprobada)
+                                    {
+                                        <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                            <form method="post" action="@Url.Action("ProcesarInventario","Devoluciones")" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@d.IdDevolucion" />
+                                                <input type="hidden" name="condicion" value="BUENO" />
+                                                <button class="btn btn-outline-primary btn-sm" type="submit">Buen estado</button>
+                                            </form>
+
+                                            <form method="post" action="@Url.Action("ProcesarInventario","Devoluciones")" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@d.IdDevolucion" />
+                                                <input type="hidden" name="condicion" value="DANADO" />
+                                                <button class="btn btn-outline-warning btn-sm" type="submit">Dañado</button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin acciones</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted" style="padding:18px;">No hay devoluciones registradas.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
