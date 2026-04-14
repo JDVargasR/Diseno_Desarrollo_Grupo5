@@ -22,8 +22,13 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public string MOTIVO { get; set; }
         public System.DateTime FECHA { get; set; }
         public Nullable<int> ID_USUARIO { get; set; }
+        public Nullable<int> ID_VENTA { get; set; }
+        public Nullable<int> ID_PRODUCTO { get; set; }
+        public string ORIGEN { get; set; }
     
         public virtual MATERIALES MATERIALES { get; set; }
         public virtual USUARIOS USUARIOS { get; set; }
+        public virtual PRODUCTOS PRODUCTOS { get; set; }
+        public virtual VENTAS VENTAS { get; set; }
     }
 }

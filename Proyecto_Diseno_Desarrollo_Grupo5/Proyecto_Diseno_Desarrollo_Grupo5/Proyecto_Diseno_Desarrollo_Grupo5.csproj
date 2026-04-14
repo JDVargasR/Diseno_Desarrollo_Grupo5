@@ -132,6 +132,7 @@
     <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\DevolucionesController.cs" />
     <Compile Include="Controllers\GarantiasController.cs" />
+    <Compile Include="Controllers\ReportesController.cs" />
     <Compile Include="Controllers\VendedorController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\MaterialesController.cs" />
@@ -252,6 +253,7 @@
     <Compile Include="Models\MovimientosInventarioVM.cs" />
     <Compile Include="Models\PerfilVM.cs" />
     <Compile Include="Models\ProveedorCrudVM.cs" />
+    <Compile Include="Models\Reportes\DesperdicioAnalisisVM.cs" />
     <Compile Include="Models\UsuariosModel.cs" />
     <Compile Include="Models\RolesModel.cs" />
     <Compile Include="Models\ProductoCrudVM.cs" />
@@ -302,6 +304,10 @@
     <Content Include="EF\Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
+    <Content Include="DOCUMENTACION_DESPERDICIOS.md" />
+    <Content Include="IMPLEMENTACION_COMPLETADA.md" />
+    <Content Include="GUIA_USUARIO_REPORTES.md" />
+    <Content Include="ARQUITECTURA_MODULO.md" />
     <None Include="Properties\PublishProfiles\PROYECTO-GRUPO5 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
@@ -381,6 +387,9 @@
     <Content Include="Views\Devoluciones\Create.cshtml" />
     <Content Include="Views\Devoluciones\Reporte.cshtml" />
     <Content Include="Views\Salidas\Comprobante.cshtml" />
+    <Content Include="Views\Reportes\Desperdicios.cshtml" />
+    <Content Include="Views\Reportes\DesperdiciosDetalle.cshtml" />
+    <Content Include="Views\Reportes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

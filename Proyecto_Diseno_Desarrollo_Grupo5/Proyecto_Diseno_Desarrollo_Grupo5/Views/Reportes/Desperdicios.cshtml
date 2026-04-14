@@ -1,0 +1,280 @@
+@model Proyecto_Diseno_Desarrollo_Grupo5.Models.Reportes.DesperdicioAnalisisVM
+
+@{
+    ViewBag.Title = "Reportes - Análisis de Desperdicios";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="bi bi-file-earmark-bar-graph"></i> Análisis de Desperdicios</h2>
+            <p class="text-muted">Análisis detallado de desperdicios de material en el período seleccionado</p>
+        </div>
+    </div>
+
+    <!-- Filtro de fechas -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="@ViewBag.FechaInicio" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fechaFin" class="form-label">Fecha Fin</label>
+                            <input type="date" class="form-control" id="fechaFin" name="fechaFin" value="@ViewBag.FechaFin" />
+                        </div>
+                        <div class="col-md-2">
+                            <label>&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search"></i> Filtrar
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <label>&nbsp;</label>
+                            <a href="@Url.Action("DesperdiciosDetalle", new { })" class="btn btn-info w-100">
+                                <i class="bi bi-table"></i> Ver Detalle
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Total Desperdiciado</h6>
+                    <h3 class="card-title text-danger">@Model.TotalDesperdiciado.ToString("F2")</h3>
+                    <small class="text-muted">Unidades</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Transacciones</h6>
+                    <h3 class="card-title text-primary">@Model.TotalTransacciones</h3>
+                    <small class="text-muted">Registros</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Promedio x Transacción</h6>
+                    <h3 class="card-title text-info">@Model.PromedioTransaccion.ToString("F2")</h3>
+                    <small class="text-muted">Unidades</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Productos Alto Riesgo</h6>
+                    <h3 class="card-title text-warning">@Model.ProductosAltoDesperdicio.Count</h3>
+                    <small class="text-muted">> 5% desperdicio</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <strong><i class="bi bi-pie-chart"></i> Desperdicios por Producto</strong>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPorProducto" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <strong><i class="bi bi-bar-chart"></i> Desperdicios por Material</strong>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPorMaterial" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <strong><i class="bi bi-graph-up"></i> Tendencia Diaria de Desperdicios</strong>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPorDia" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos con Alto Desperdicio -->
+    @if (Model.ProductosAltoDesperdicio.Any())
+    {
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <strong><i class="bi bi-exclamation-triangle"></i> Productos con Alto Desperdicio (Requieren Atención)</strong>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>% Desperdicio</th>
+                                    <th>Total Desperdiciado</th>
+                                    <th>Recomendación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var producto in Model.ProductosAltoDesperdicio.OrderByDescending(p => p.PorcentajeDesperdicio))
+                                {
+                                    <tr class="@(producto.PorcentajeDesperdicio > 15 ? "table-danger" : "table-warning")">
+                                        <td><strong>@producto.NombreProducto</strong></td>
+                                        <td>
+                                            <span class="badge bg-@(producto.PorcentajeDesperdicio > 15 ? "danger" : "warning")">
+                                                @producto.PorcentajeDesperdicio.ToString("F2")%
+                                            </span>
+                                        </td>
+                                        <td>@producto.TotalDesperdiciado.ToString("F2")</td>
+                                        <td>@Html.Raw(producto.Recomendacion)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    // Datos desde el servidor
+    var datosProductos = @Html.Raw(Json.Encode(Model.DesperdiciosPorProducto.Select(p => new { p.NombreProducto, p.TotalDesperdiciado }).ToList()));
+    var datosMateriales = @Html.Raw(Json.Encode(Model.DesperdiciosPorMaterial.Select(m => new { m.NombreMaterial, m.TotalDesperdiciado }).ToList()));
+    var datosDias = @Html.Raw(Json.Encode(Model.DesperdiciosPorDia.Select(d => new { d.Fecha, d.TotalDesperdiciado }).ToList()));
+
+    // Colores
+    const coloresPrimarios = [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+        '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF9F40'
+    ];
+
+    // Gráfico Productos (Pie)
+    if (datosProductos.length > 0) {
+        const ctxProducto = document.getElementById('chartPorProducto').getContext('2d');
+        new Chart(ctxProducto, {
+            type: 'pie',
+            data: {
+                labels: datosProductos.map(p => p.nombreProducto),
+                datasets: [{
+                    data: datosProductos.map(p => p.totalDesperdiciado),
+                    backgroundColor: coloresPrimarios
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return context.label + ': ' + context.parsed.toFixed(2) + ' unidades';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Gráfico Materiales (Bar)
+    if (datosMateriales.length > 0) {
+        const ctxMaterial = document.getElementById('chartPorMaterial').getContext('2d');
+        new Chart(ctxMaterial, {
+            type: 'bar',
+            data: {
+                labels: datosMateriales.map(m => m.nombreMaterial),
+                datasets: [{
+                    label: 'Cantidad Desperdiciada',
+                    data: datosMateriales.map(m => m.totalDesperdiciado),
+                    backgroundColor: '#FF6384'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return context.parsed.x.toFixed(2) + ' unidades';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Gráfico Diario (Line)
+    if (datosDias.length > 0) {
+        const ctxDia = document.getElementById('chartPorDia').getContext('2d');
+        new Chart(ctxDia, {
+            type: 'line',
+            data: {
+                labels: datosDias.map(d => new Date(d.fecha).toLocaleDateString('es-CR')),
+                datasets: [{
+                    label: 'Desperdicio (unidades)',
+                    data: datosDias.map(d => d.totalDesperdiciado),
+                    borderColor: '#36A2EB',
+                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return context.parsed.y.toFixed(2) + ' unidades';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+<style>
+    .card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    .card-header {
+        font-weight: 600;
+    }
+</style>

@@ -10,6 +10,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         public decimal PRECIO_VENTA { get; set; }
         public int ID_CATEGORIA { get; set; }
         public int ID_ESTADO { get; set; }
+        public decimal PORC_DESPERDICIO { get; set; }
 
         public List<ProductoFilaVM> Productos { get; set; }
 
@@ -35,6 +36,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
 
         public int ID_ESTADO { get; set; }
         public string ESTADO { get; set; }
+        public decimal PORC_DESPERDICIO { get; set; }
     }
 
     public class ProductoVentaVM

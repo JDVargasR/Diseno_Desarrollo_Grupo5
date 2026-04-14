@@ -21,6 +21,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
             this.GARANTIAS = new HashSet<GARANTIAS>();
             this.PRODUCTO_MATERIAL = new HashSet<PRODUCTO_MATERIAL>();
             this.SOLICITUD_GARANTIA = new HashSet<SOLICITUD_GARANTIA>();
+            this.DESPERDICIOS_MATERIAL = new HashSet<DESPERDICIOS_MATERIAL>();
         }
     
         public int ID_PRODUCTO { get; set; }
@@ -28,6 +29,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public decimal PRECIO_VENTA { get; set; }
         public int ID_CATEGORIA { get; set; }
         public int ID_ESTADO { get; set; }
+        public decimal PORC_DESPERDICIO { get; set; }
     
         public virtual CATEGORIAS CATEGORIAS { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -39,5 +41,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public virtual ICollection<PRODUCTO_MATERIAL> PRODUCTO_MATERIAL { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SOLICITUD_GARANTIA> SOLICITUD_GARANTIA { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DESPERDICIOS_MATERIAL> DESPERDICIOS_MATERIAL { get; set; }
     }
 }

@@ -21,6 +21,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
             this.DEVOLUCIONES = new HashSet<DEVOLUCIONES>();
             this.PAGOS = new HashSet<PAGOS>();
             this.SOLICITUD_GARANTIA = new HashSet<SOLICITUD_GARANTIA>();
+            this.DESPERDICIOS_MATERIAL = new HashSet<DESPERDICIOS_MATERIAL>();
         }
     
         public int ID_VENTA { get; set; }
@@ -39,5 +40,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public virtual ICollection<PAGOS> PAGOS { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SOLICITUD_GARANTIA> SOLICITUD_GARANTIA { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DESPERDICIOS_MATERIAL> DESPERDICIOS_MATERIAL { get; set; }
     }
 }

@@ -52,6 +52,7 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Precio</th>
+                        <th>% Desperdicio</th>
                         <th>Categoría</th>
                         <th>Estado</th>
                         <th style="width:220px; text-align:right;">Acciones</th>
@@ -63,6 +64,11 @@
                         <tr>
                             <td>@p.NOMBRE</td>
                             <td>₡@p.PRECIO_VENTA.ToString("N2")</td>
+                            <td>
+                                <span class="badge @(p.PORC_DESPERDICIO > 5 ? "bg-warning" : "bg-secondary")">
+                                    @p.PORC_DESPERDICIO.ToString("F2")%
+                                </span>
+                            </td>
                             <td>@p.CATEGORIA</td>
                             <td>
                                 <span class="badge-pill @(p.ID_ESTADO == 1 ? "badge-ok" : "badge-off")">
@@ -73,7 +79,7 @@
                                 <button class="btn btn-outline-primary btn-sm me-1"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalEditar"
-                                        onclick="cargarProductoEditar('@p.ID_PRODUCTO', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@p.PRECIO_VENTA', '@p.ID_CATEGORIA')">
+                                        onclick="cargarProductoEditar('@p.ID_PRODUCTO', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@p.PRECIO_VENTA', '@p.ID_CATEGORIA', '@p.PORC_DESPERDICIO')">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
 
@@ -163,6 +169,11 @@
                             }
                         </select>
                     </div>
+                    <div class="mb-2">
+                        <label class="form-label">% Desperdicio (0-100)</label>
+                        <input class="form-control" name="PORC_DESPERDICIO" type="number" step="0.01" min="0" max="100" value="0" required />
+                        <small class="text-muted">Porcentaje estimado de desperdicio en producción</small>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
@@ -204,6 +215,11 @@
                             }
                         </select>
                     </div>
+                    <div class="mb-2">
+                        <label class="form-label">% Desperdicio (0-100)</label>
+                        <input class="form-control" name="PORC_DESPERDICIO" id="edit_PORC_DESPERDICIO" type="number" step="0.01" min="0" max="100" required />
+                        <small class="text-muted">Porcentaje estimado de desperdicio en producción</small>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
@@ -215,10 +231,11 @@
 </div>
 
 <script>
-    function cargarProductoEditar(id, nombre, precio, idCategoria) {
+    function cargarProductoEditar(id, nombre, precio, idCategoria, porcDesperdicio) {
         document.getElementById("edit_ID_PRODUCTO").value = id;
         document.getElementById("edit_NOMBRE").value = nombre;
         document.getElementById("edit_PRECIO_VENTA").value = precio;
         document.getElementById("edit_ID_CATEGORIA").value = idCategoria;
+        document.getElementById("edit_PORC_DESPERDICIO").value = porcDesperdicio;
     }
 </script>

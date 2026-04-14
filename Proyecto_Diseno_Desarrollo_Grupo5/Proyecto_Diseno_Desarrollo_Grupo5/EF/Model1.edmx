@@ -59,6 +59,9 @@
           <Property Name="MOTIVO" Type="nvarchar" MaxLength="250" />
           <Property Name="FECHA" Type="datetime2" Precision="0" Nullable="false" />
           <Property Name="ID_USUARIO" Type="int" />
+          <Property Name="ID_VENTA" Type="int" />
+          <Property Name="ID_PRODUCTO" Type="int" />
+          <Property Name="ORIGEN" Type="nvarchar" MaxLength="30" Nullable="false" />
         </EntityType>
         <EntityType Name="DETALLES_VENTAS">
           <Key>
@@ -172,6 +175,7 @@
           <Property Name="PRECIO_VENTA" Type="decimal" Precision="12" Scale="2" Nullable="false" />
           <Property Name="ID_CATEGORIA" Type="int" Nullable="false" />
           <Property Name="ID_ESTADO" Type="int" Nullable="false" />
+          <Property Name="PORC_DESPERDICIO" Type="decimal" Precision="5" Scale="2" Nullable="false" />
         </EntityType>
         <EntityType Name="PROVEEDORES">
           <Key>
@@ -339,6 +343,18 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_DM_PRODUCTO">
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="0..1" />
+          <End Role="DESPERDICIOS_MATERIAL" Type="Self.DESPERDICIOS_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="DESPERDICIOS_MATERIAL">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_DM_USU">
           <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="0..1" />
           <End Role="DESPERDICIOS_MATERIAL" Type="Self.DESPERDICIOS_MATERIAL" Multiplicity="*" />
@@ -348,6 +364,18 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             </Principal>
             <Dependent Role="DESPERDICIOS_MATERIAL">
               <PropertyRef Name="ID_USUARIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DM_VENTA">
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="0..1" />
+          <End Role="DESPERDICIOS_MATERIAL" Type="Self.DESPERDICIOS_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Principal>
+            <Dependent Role="DESPERDICIOS_MATERIAL">
+              <PropertyRef Name="ID_VENTA" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -824,8 +852,16 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             <End Role="MATERIALES" EntitySet="MATERIALES" />
             <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
           </AssociationSet>
+          <AssociationSet Name="FK_DM_PRODUCTO" Association="Self.FK_DM_PRODUCTO">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
+          </AssociationSet>
           <AssociationSet Name="FK_DM_USU" Association="Self.FK_DM_USU">
             <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DM_VENTA" Association="Self.FK_DM_VENTA">
+            <End Role="VENTAS" EntitySet="VENTAS" />
             <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
           </AssociationSet>
           <AssociationSet Name="FK_DV_PROD" Association="Self.FK_DV_PROD">
@@ -1018,6 +1054,11 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <Property Name="ID_USUARIO" Type="Int32" />
           <NavigationProperty Name="MATERIALES" Relationship="Self.FK_DM_MAT" FromRole="DESPERDICIOS_MATERIAL" ToRole="MATERIALES" />
           <NavigationProperty Name="USUARIOS" Relationship="Self.FK_DM_USU" FromRole="DESPERDICIOS_MATERIAL" ToRole="USUARIOS" />
+          <Property Name="ID_VENTA" Type="Int32" />
+          <Property Name="ID_PRODUCTO" Type="Int32" />
+          <Property Name="ORIGEN" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PRODUCTOS" Relationship="Model1.FK_DM_PRODUCTO" FromRole="DESPERDICIOS_MATERIAL" ToRole="PRODUCTOS" />
+          <NavigationProperty Name="VENTAS" Relationship="Model1.FK_DM_VENTA" FromRole="DESPERDICIOS_MATERIAL" ToRole="VENTAS" />
         </EntityType>
         <EntityType Name="DETALLES_VENTAS">
           <Key>
@@ -1148,6 +1189,8 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <NavigationProperty Name="GARANTIAS" Relationship="Self.FK_GAR_PROD" FromRole="PRODUCTOS" ToRole="GARANTIAS" />
           <NavigationProperty Name="PRODUCTO_MATERIAL" Relationship="Self.FK_PM_PROD" FromRole="PRODUCTOS" ToRole="PRODUCTO_MATERIAL" />
           <NavigationProperty Name="SOLICITUD_GARANTIA" Relationship="Model1.FK_SOLGAR_PRODUCTOS" FromRole="PRODUCTOS" ToRole="SOLICITUD_GARANTIA" />
+          <Property Name="PORC_DESPERDICIO" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+          <NavigationProperty Name="DESPERDICIOS_MATERIAL" Relationship="Model1.FK_DM_PRODUCTO" FromRole="PRODUCTOS" ToRole="DESPERDICIOS_MATERIAL" />
         </EntityType>
         <EntityType Name="PROVEEDORES">
           <Key>
@@ -1219,6 +1262,7 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <NavigationProperty Name="ESTADO" Relationship="Self.FK_VEN_ESTADO" FromRole="VENTAS" ToRole="ESTADO" />
           <NavigationProperty Name="PAGOS" Relationship="Self.FK_PAGOS_VENTA" FromRole="VENTAS" ToRole="PAGOS" />
           <NavigationProperty Name="SOLICITUD_GARANTIA" Relationship="Model1.FK_SOLGAR_VENTAS" FromRole="VENTAS" ToRole="SOLICITUD_GARANTIA" />
+          <NavigationProperty Name="DESPERDICIOS_MATERIAL" Relationship="Model1.FK_DM_VENTA" FromRole="VENTAS" ToRole="DESPERDICIOS_MATERIAL" />
         </EntityType>
         <EntityType Name="database_firewall_rules">
           <Key>
@@ -1787,6 +1831,14 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             <End Role="VENTAS" EntitySet="VENTAS" />
             <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
           </AssociationSet>
+          <AssociationSet Name="FK_DM_PRODUCTO" Association="Model1.FK_DM_PRODUCTO">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DM_VENTA" Association="Model1.FK_DM_VENTA">
+            <End Role="VENTAS" EntitySet="VENTAS" />
+            <End Role="DESPERDICIOS_MATERIAL" EntitySet="DESPERDICIOS_MATERIAL" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="SP_USUARIO_PERFIL_OBTENER_Result">
           <Property Type="Int32" Name="IdUsuario" Nullable="false" />
@@ -1950,6 +2002,30 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_DM_PRODUCTO">
+          <End Type="Model1.PRODUCTOS" Role="PRODUCTOS" Multiplicity="0..1" />
+          <End Type="Model1.DESPERDICIOS_MATERIAL" Role="DESPERDICIOS_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="DESPERDICIOS_MATERIAL">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DM_VENTA">
+          <End Type="Model1.VENTAS" Role="VENTAS" Multiplicity="0..1" />
+          <End Type="Model1.DESPERDICIOS_MATERIAL" Role="DESPERDICIOS_MATERIAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Principal>
+            <Dependent Role="DESPERDICIOS_MATERIAL">
+              <PropertyRef Name="ID_VENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2005,6 +2081,9 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <EntitySetMapping Name="DESPERDICIOS_MATERIAL">
             <EntityTypeMapping TypeName="Model1.DESPERDICIOS_MATERIAL">
               <MappingFragment StoreEntitySet="DESPERDICIOS_MATERIAL">
+                <ScalarProperty Name="ORIGEN" ColumnName="ORIGEN" />
+                <ScalarProperty Name="ID_PRODUCTO" ColumnName="ID_PRODUCTO" />
+                <ScalarProperty Name="ID_VENTA" ColumnName="ID_VENTA" />
                 <ScalarProperty Name="ID_DESPERDICIO" ColumnName="ID_DESPERDICIO" />
                 <ScalarProperty Name="ID_MATERIAL" ColumnName="ID_MATERIAL" />
                 <ScalarProperty Name="CANTIDAD_DESPERDICIADA" ColumnName="CANTIDAD_DESPERDICIADA" />
@@ -2116,6 +2195,7 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <EntitySetMapping Name="PRODUCTOS">
             <EntityTypeMapping TypeName="Model1.PRODUCTOS">
               <MappingFragment StoreEntitySet="PRODUCTOS">
+                <ScalarProperty Name="PORC_DESPERDICIO" ColumnName="PORC_DESPERDICIO" />
                 <ScalarProperty Name="ID_PRODUCTO" ColumnName="ID_PRODUCTO" />
                 <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
                 <ScalarProperty Name="PRECIO_VENTA" ColumnName="PRECIO_VENTA" />

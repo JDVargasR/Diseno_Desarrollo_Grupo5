@@ -64,6 +64,8 @@
         <AssociationConnector Association="Model1.FK_SOLGAR_ADMIN" />
         <AssociationConnector Association="Model1.FK_SOLGAR_TECNICO" />
         <AssociationConnector Association="Model1.FK_SOLGAR_VENTAS" />
+        <AssociationConnector Association="Model1.FK_DM_PRODUCTO" />
+        <AssociationConnector Association="Model1.FK_DM_VENTA" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

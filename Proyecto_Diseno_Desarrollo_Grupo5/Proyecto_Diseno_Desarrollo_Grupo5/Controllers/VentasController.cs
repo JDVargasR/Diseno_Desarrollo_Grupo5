@@ -170,6 +170,31 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                                 throw new Exception($"Stock insuficiente en material: {material.NOMBRE}. Disponible: {material.STOCK}, requerido: {descuento}");
 
                             material.STOCK -= descuento;
+
+                            // Registrar desperdicio basado en porcentaje de producto
+                            var producto = db.PRODUCTOS.Find(idProd);
+                            if (producto != null && producto.PORC_DESPERDICIO > 0)
+                            {
+                                var cantidadUsada = cant * r.CANTIDAD_USADA;
+                                var cantidadDesperdiciada = cantidadUsada * (producto.PORC_DESPERDICIO / 100);
+
+                                int? idUsuario = null;
+                                if (Session["IdUsuario"] != null)
+                                    idUsuario = Convert.ToInt32(Session["IdUsuario"]);
+
+                                db.DESPERDICIOS_MATERIAL.Add(new DESPERDICIOS_MATERIAL
+                                {
+                                    ID_MATERIAL = r.ID_MATERIAL,
+                                    CANTIDAD_DESPERDICIADA = cantidadDesperdiciada,
+                                    ID_USUARIO = idUsuario,
+                                    FECHA = DateTime.Now,
+                                    REUTILIZABLE = "Si",
+                                    MOTIVO = "Desperdicio normal de producción",
+                                    ID_VENTA = venta.ID_VENTA,
+                                    ID_PRODUCTO = idProd,
+                                    ORIGEN = "VENTA"
+                                });
+                            }
                         }
                     }
 

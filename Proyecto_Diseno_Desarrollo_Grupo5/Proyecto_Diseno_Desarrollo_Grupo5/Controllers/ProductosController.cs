@@ -43,7 +43,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                         ID_CATEGORIA = p.ID_CATEGORIA,
                         CATEGORIA = p.CATEGORIAS.NOMBRE,
                         ID_ESTADO = p.ID_ESTADO,
-                        ESTADO = p.ESTADO.NOMBRE
+                        ESTADO = p.ESTADO.NOMBRE,
+                        PORC_DESPERDICIO = p.PORC_DESPERDICIO
                     })
                     .ToList(),
 
@@ -87,7 +88,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 NOMBRE = vm.NOMBRE.Trim(),
                 PRECIO_VENTA = vm.PRECIO_VENTA,
                 ID_CATEGORIA = vm.ID_CATEGORIA,
-                ID_ESTADO = (vm.ID_ESTADO > 0 ? vm.ID_ESTADO : activoId)
+                ID_ESTADO = (vm.ID_ESTADO > 0 ? vm.ID_ESTADO : activoId),
+                PORC_DESPERDICIO = vm.PORC_DESPERDICIO
             };
 
             db.PRODUCTOS.Add(p);
@@ -106,6 +108,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             p.NOMBRE = (vm.NOMBRE ?? "").Trim();
             p.PRECIO_VENTA = vm.PRECIO_VENTA;
             p.ID_CATEGORIA = vm.ID_CATEGORIA;
+            p.PORC_DESPERDICIO = vm.PORC_DESPERDICIO;
 
             // NOTA: el estado se gestiona desde ToggleActive (activar/inactivar) y no desde Edit.
 

@@ -1,0 +1,95 @@
+@{
+    ViewBag.Title = "Reportes - Centro de Análisis";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h1><i class="bi bi-graph-up"></i> Centro de Análisis y Reportes</h1>
+            <p class="lead text-muted">Accede a los análisis detallados del sistema de inventarios</p>
+            <hr />
+        </div>
+    </div>
+
+    <!-- Cards principales -->
+    <div class="row g-4">
+        <!-- Card: Análisis de Desperdicios -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-pie-chart" style="font-size: 3rem; color: #FF6384;"></i>
+                    </div>
+                    <h5 class="card-title">Análisis de Desperdicios</h5>
+                    <p class="card-text text-muted">Visualiza gráficos y estadísticas de desperdicios de material en el período seleccionado.</p>
+                    <a href="@Url.Action("Desperdicios", "Reportes")" class="btn btn-outline-danger">
+                        <i class="bi bi-graph-up"></i> Ver Análisis
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Reporte Detallado -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-table" style="font-size: 3rem; color: #36A2EB;"></i>
+                    </div>
+                    <h5 class="card-title">Reporte de Desperdicios</h5>
+                    <p class="card-text text-muted">Consulta el detalle completo de cada registro de desperdicio con información de material, producto y usuario.</p>
+                    <a href="@Url.Action("DesperdiciosDetalle", "Reportes")" class="btn btn-outline-primary">
+                        <i class="bi bi-table"></i> Ver Detalle
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Más Reportes (próximamente) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 opacity-50">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-file-earmark-bar-graph" style="font-size: 3rem; color: #4BC0C0;"></i>
+                    </div>
+                    <h5 class="card-title">Más Reportes</h5>
+                    <p class="card-text text-muted">Próximamente: Ventas, Inventario, Proveedores y más análisis.</p>
+                    <button class="btn btn-outline-secondary" disabled>
+                        <i class="bi bi-hourglass-split"></i> Próximamente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de información -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card bg-light border-0">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-info-circle"></i> ¿Cómo funcionan los reportes?</h5>
+                    <p class="mb-2">
+                        Los desperdicios se registran <strong>automáticamente</strong> cuando se crea una venta. El sistema calcula la cantidad 
+                        desperdiciada basándose en el <strong>porcentaje de desperdicio configurado por producto</strong>.
+                    </p>
+                    <p class="mb-0">
+                        <strong>Fórmula:</strong> Desperdicio = (Cantidad Material Usado) × (% Desperdicio / 100)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+    }
+    .btn {
+        font-weight: 600;
+    }
+</style>
