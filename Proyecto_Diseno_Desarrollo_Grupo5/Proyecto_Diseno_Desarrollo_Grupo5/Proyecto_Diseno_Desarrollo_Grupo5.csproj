@@ -304,10 +304,6 @@
     <Content Include="EF\Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
-    <Content Include="DOCUMENTACION_DESPERDICIOS.md" />
-    <Content Include="IMPLEMENTACION_COMPLETADA.md" />
-    <Content Include="GUIA_USUARIO_REPORTES.md" />
-    <Content Include="ARQUITECTURA_MODULO.md" />
     <None Include="Properties\PublishProfiles\PROYECTO-GRUPO5 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
