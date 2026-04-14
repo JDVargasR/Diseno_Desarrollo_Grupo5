@@ -1,4 +1,8 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
+    const page = document.querySelector(".usuarios-page");
+    const puedeElegirRol = (page?.dataset.puedeElegirRol || "0") === "1";
+    const ROL_CLIENTE = parseInt(page?.dataset.idRolCliente || "3", 10);
+
     const modalEl = document.getElementById("modalUsuario");
     const modal = new bootstrap.Modal(modalEl);
 
@@ -9,14 +13,25 @@
     const uNombre = document.getElementById("uNombre");
     const uCorreo = document.getElementById("uCorreo");
     const uRol = document.getElementById("uRol");
+    const uRolGroup = document.getElementById("uRolGroup");
     const uPass = document.getElementById("uPass");
     const modalTitle = document.getElementById("modalUsuarioTitle");
+
+    const actualizarVisibilidadRol = (esEdicion) => {
+        if (!uRolGroup) return;
+
+        if (!puedeElegirRol) {
+            uRolGroup.classList.add("d-none");
+        } else {
+            uRolGroup.classList.remove("d-none");
+        }
+    };
 
     const limpiar = () => {
         uId.value = 0;
         uNombre.value = "";
         uCorreo.value = "";
-        uRol.value = "0";
+        uRol.value = puedeElegirRol ? "0" : String(ROL_CLIENTE);
         uPass.value = "";
     };
 
@@ -36,7 +51,7 @@
             return false;
         }
 
-        if (rol <= 0) {
+        if (puedeElegirRol && rol <= 0) {
             Swal.fire("Validación", "Seleccione un rol.", "warning");
             return false;
         }
@@ -63,6 +78,7 @@
     // =========================
     btnNuevo.addEventListener("click", () => {
         limpiar();
+        actualizarVisibilidadRol(false);
         modalTitle.textContent = "Nuevo Usuario";
         modal.show();
     });
@@ -82,6 +98,7 @@
             // contraseña queda vacía (solo si la quiere cambiar)
             uPass.value = "";
 
+            actualizarVisibilidadRol(true);
             modalTitle.textContent = "Editar Usuario";
             modal.show();
         });
@@ -99,7 +116,7 @@
             IdUsuario: parseInt(uId.value || "0", 10),
             Nombre: (uNombre.value || "").trim(),
             Correo: (uCorreo.value || "").trim(),
-            IdRol: parseInt(uRol.value || "0", 10),
+            IdRol: puedeElegirRol ? parseInt(uRol.value || "0", 10) : ROL_CLIENTE,
             Contrasena: (uPass.value || "").trim()
         };
 

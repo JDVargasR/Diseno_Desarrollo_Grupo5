@@ -14,12 +14,50 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
     public class UsuariosController : Controller
     {
         private DBGRUPO5Entities db = new DBGRUPO5Entities();
+        private const int RolCliente = 3;
+
+        private bool EsAdministradorEnSesion()
+        {
+            if (Session == null)
+                return false;
+
+            var rolSesion = (Session["Rol"] ?? string.Empty).ToString().Trim();
+            if (!string.IsNullOrWhiteSpace(rolSesion))
+                return rolSesion.Equals("ADMINISTRADOR", StringComparison.OrdinalIgnoreCase);
+
+            if (Session["IdRol"] == null)
+                return false;
+
+            int idRol;
+            if (!int.TryParse(Session["IdRol"].ToString(), out idRol))
+                return false;
+
+            var rol = db.ROLES.FirstOrDefault(r => r.ID_ROL == idRol);
+            if (rol == null || string.IsNullOrWhiteSpace(rol.NOMBRE))
+                return false;
+
+            return rol.NOMBRE.Trim().Equals("ADMINISTRADOR", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private int ObtenerIdRolCliente()
+        {
+            var rolCliente = db.ROLES.FirstOrDefault(r => r.NOMBRE != null && r.NOMBRE.ToUpper() == "CLIENTE");
+            return rolCliente != null ? rolCliente.ID_ROL : RolCliente;
+        }
+
+        private int ObtenerIdRolActualUsuario(int idUsuario)
+        {
+            var usuario = db.USUARIOS.FirstOrDefault(u => u.ID_USUARIO == idUsuario);
+            return usuario != null ? usuario.ID_ROL : ObtenerIdRolCliente();
+        }
 
         // ============================================
         // LISTAR (SP_USUARIOS_LISTAR)
         // ============================================
         public ActionResult Index(string q = "", int rol = 0, int estado = 0, int page = 1, int pageSize = 10)
         {
+            var esAdministrador = EsAdministradorEnSesion();
+
             var lista = db.Database.SqlQuery<UsuariosModel>(
                 "EXEC dbo.SP_USUARIOS_LISTAR @Q, @ID_ROL, @ID_ESTADO",
                 new SqlParameter("@Q", (object)q ?? DBNull.Value),
@@ -39,6 +77,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             ViewBag.PageSize = pageSize;
             ViewBag.TotalItems = total;
             ViewBag.TotalPages = pageSize <= 0 ? 0 : (int)Math.Ceiling((double)total / pageSize);
+            ViewBag.PuedeElegirRol = esAdministrador;
+            ViewBag.IdRolCliente = ObtenerIdRolCliente();
 
             return View(paged);
         }
@@ -49,6 +89,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         [HttpPost]
         public ActionResult Create(UsuariosModel model)
         {
+            if (!EsAdministradorEnSesion())
+                model.IdRol = ObtenerIdRolCliente();
+
             if (!ModelState.IsValid)
                 return Json(new { ok = false, msg = "Datos inválidos." });
 
@@ -87,6 +130,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         [HttpPost]
         public ActionResult Update(UsuariosModel model)
         {
+            if (!EsAdministradorEnSesion())
+                model.IdRol = ObtenerIdRolActualUsuario(model.IdUsuario);
+
             if (!ModelState.IsValid)
                 return Json(new { ok = false, msg = "Datos inválidos." });
 

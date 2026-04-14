@@ -8,6 +8,8 @@
     var estado = (int)(ViewBag.Estado ?? 0);
 
     var roles = ViewBag.Roles as System.Collections.Generic.List<Proyecto_Diseno_Desarrollo_Grupo5.EF.ROLES>;
+    var puedeElegirRol = (bool)(ViewBag.PuedeElegirRol ?? false);
+    var idRolCliente = (int)(ViewBag.IdRolCliente ?? 3);
 
     var current = (int)(ViewBag.Page ?? 1);
     var totalPages = (int)(ViewBag.TotalPages ?? 1);
@@ -17,7 +19,7 @@
     <link rel="stylesheet" href="~/StaticFiles/css/Usuarios.css" />
 }
 
-<main class="usuarios-page" data-no-reveal="true">
+<main class="usuarios-page" data-no-reveal="true" data-puede-elegir-rol="@(puedeElegirRol ? "1" : "0")" data-id-rol-cliente="@idRolCliente">
     <div class="container py-4">
 
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
@@ -185,7 +187,7 @@
                         <input type="email" class="form-control" id="uCorreo" maxlength="120" />
                     </div>
 
-                    <div class="mb-2">
+                    <div class="mb-2 @(puedeElegirRol ? "" : "d-none")" id="uRolGroup">
                         <label class="form-label">Rol</label>
                         <select class="form-select" id="uRol">
                             <option value="0">Seleccione...</option>
@@ -217,5 +219,5 @@
 </main>
 
 @section scripts{
-    <script src="~/StaticFiles/js/Usuarios.js"></script>
+    <script src="~/StaticFiles/js/Usuarios.js?v=20261007"></script>
 }
