@@ -2,6 +2,7 @@
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.UI;
@@ -159,6 +160,66 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                             .Where(pm => pm.ID_PRODUCTO == idProd)
                             .ToList();
 
+                        // Obtener el producto para verificar porcentaje de desperdicio
+                        var producto = db.PRODUCTOS.Find(idProd);
+
+                        // Registrar desperdicios basado en el porcentaje del producto
+                        if (producto != null && producto.PORC_DESPERDICIO > 0)
+                        {
+                            int? idUsuario = null;
+                            if (Session["IdUsuario"] != null)
+                                idUsuario = Convert.ToInt32(Session["IdUsuario"]);
+
+                            if (receta.Count > 0)
+                            {
+                                // Si hay receta, registrar desperdicio por cada material
+                                foreach (var r in receta)
+                                {
+                                    var cantidadUsada = cant * r.CANTIDAD_USADA;
+                                    var cantidadDesperdiciada = cantidadUsada * (producto.PORC_DESPERDICIO / 100);
+
+                                    db.DESPERDICIOS_MATERIAL.Add(new DESPERDICIOS_MATERIAL
+                                    {
+                                        ID_MATERIAL = r.ID_MATERIAL,
+                                        CANTIDAD_DESPERDICIADA = cantidadDesperdiciada,
+                                        CANTIDAD_REUTILIZADA = 0,
+                                        ID_USUARIO = idUsuario,
+                                        FECHA = DateTime.Now,
+                                        REUTILIZABLE = "S",
+                                        MOTIVO = "Desperdicio normal de producción",
+                                        ID_VENTA = venta.ID_VENTA,
+                                        ID_PRODUCTO = idProd,
+                                        ORIGEN = "VENTA"
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                // Si no hay receta, registrar desperdicio directo del producto
+                                // Buscar un material genérico o el primero disponible
+                                var primerMaterial = db.MATERIALES.FirstOrDefault();
+                                if (primerMaterial != null)
+                                {
+                                    var cantidadDesperdiciada = cant * (producto.PORC_DESPERDICIO / 100);
+
+                                    db.DESPERDICIOS_MATERIAL.Add(new DESPERDICIOS_MATERIAL
+                                    {
+                                        ID_MATERIAL = primerMaterial.ID_MATERIAL,
+                                        CANTIDAD_DESPERDICIADA = cantidadDesperdiciada,
+                                        CANTIDAD_REUTILIZADA = 0,
+                                        ID_USUARIO = idUsuario,
+                                        FECHA = DateTime.Now,
+                                        REUTILIZABLE = "S",
+                                        MOTIVO = $"Desperdicio del {producto.PORC_DESPERDICIO}% en producción (sin receta específica)",
+                                        ID_VENTA = venta.ID_VENTA,
+                                        ID_PRODUCTO = idProd,
+                                        ORIGEN = "VENTA"
+                                    });
+                                }
+                            }
+                        }
+
+                        // Descontar del stock de materiales si hay receta
                         foreach (var r in receta)
                         {
                             var material = db.MATERIALES.Find(r.ID_MATERIAL);
@@ -170,33 +231,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                                 throw new Exception($"Stock insuficiente en material: {material.NOMBRE}. Disponible: {material.STOCK}, requerido: {descuento}");
 
                             material.STOCK -= descuento;
-
-                            // Registrar desperdicio basado en porcentaje de producto
-                            var producto = db.PRODUCTOS.Find(idProd);
-                            if (producto != null && producto.PORC_DESPERDICIO > 0)
-                            {
-                                var cantidadUsada = cant * r.CANTIDAD_USADA;
-                                var cantidadDesperdiciada = cantidadUsada * (producto.PORC_DESPERDICIO / 100);
-
-                                int? idUsuario = null;
-                                if (Session["IdUsuario"] != null)
-                                    idUsuario = Convert.ToInt32(Session["IdUsuario"]);
-
-                                db.DESPERDICIOS_MATERIAL.Add(new DESPERDICIOS_MATERIAL
-                                {
-                                    ID_MATERIAL = r.ID_MATERIAL,
-                                    CANTIDAD_DESPERDICIADA = cantidadDesperdiciada,
-                                    ID_USUARIO = idUsuario,
-                                    FECHA = DateTime.Now,
-                                    REUTILIZABLE = "Si",
-                                    MOTIVO = "Desperdicio normal de producción",
-                                    ID_VENTA = venta.ID_VENTA,
-                                    ID_PRODUCTO = idProd,
-                                    ORIGEN = "VENTA"
-                                });
-                            }
                         }
                     }
+
 
                     venta.TOTAL = total;
                     db.SaveChanges();
@@ -204,6 +241,18 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     tx.Commit();
                     TempData["OK"] = $"Venta #{venta.ID_VENTA} registrada correctamente.";
                     return RedirectToAction("Index");
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    tx.Rollback();
+
+                    var errores = ex.EntityValidationErrors
+                        .SelectMany(e => e.ValidationErrors)
+                        .Select(e => $"{e.PropertyName}: {e.ErrorMessage}")
+                        .ToList();
+
+                    TempData["ERR"] = "Error de validación: " + string.Join(" | ", errores);
+                    return RedirectToAction("Create");
                 }
                 catch (Exception ex)
                 {
@@ -336,6 +385,76 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             TempData["OK"] = "Pago registrado correctamente.";
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerDesperdicios(int idVenta)
+        {
+            var desperdicios = db.DESPERDICIOS_MATERIAL
+                .Where(d => d.ID_VENTA == idVenta)
+                .Include(d => d.MATERIALES)
+                .Include(d => d.PRODUCTOS)
+                .Select(d => new
+                {
+                    idMaterial = d.ID_MATERIAL,
+                    nombreMaterial = d.MATERIALES.NOMBRE,
+                    cantidad = d.CANTIDAD_DESPERDICIADA,
+                    unidad = d.MATERIALES.TIPO,
+                    producto = d.PRODUCTOS.NOMBRE,
+                    fecha = d.FECHA,
+                    motivo = d.MOTIVO
+                })
+                .ToList();
+
+            return Json(desperdicios, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult DiagnosticoDesperdicios()
+        {
+            var total = db.DESPERDICIOS_MATERIAL.Count();
+            var ventaCount = db.DESPERDICIOS_MATERIAL.Where(d => d.ORIGEN == "VENTA").Count();
+            var recientes = db.DESPERDICIOS_MATERIAL
+                .OrderByDescending(d => d.FECHA)
+                .Take(5)
+                .Select(d => new
+                {
+                    id = d.ID_DESPERDICIO,
+                    venta = d.ID_VENTA,
+                    cantidad = d.CANTIDAD_DESPERDICIADA,
+                    origen = d.ORIGEN,
+                    fecha = d.FECHA
+                })
+                .ToList();
+
+            return Json(new
+            {
+                totalDesperdicios = total,
+                desperdiciodeVentas = ventaCount,
+                recientes = recientes
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult Desperdicios(int id)
+        {
+            var venta = db.VENTAS
+                .Include(v => v.DETALLES_VENTAS)
+                .FirstOrDefault(v => v.ID_VENTA == id);
+
+            if (venta == null)
+                return HttpNotFound();
+
+            var desperdicios = db.DESPERDICIOS_MATERIAL
+                .Where(d => d.ID_VENTA == id)
+                .Include(d => d.MATERIALES)
+                .Include(d => d.PRODUCTOS)
+                .ToList();
+
+            ViewBag.Venta = venta;
+            ViewBag.TotalDesperdiciado = desperdicios.Sum(d => d.CANTIDAD_DESPERDICIADA);
+
+            return View(desperdicios);
         }
 
         [HttpGet]

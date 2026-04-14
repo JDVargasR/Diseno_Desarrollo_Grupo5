@@ -42,9 +42,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         {
             var vm = new DesperdicioAnalisisVM();
 
+            // Ajustar fechaFin para incluir todo el día (hasta 23:59:59)
+            var fechaFinAjustada = fechaFin.AddDays(1).AddSeconds(-1);
+
             // Obtener todos los desperdicios en el rango de fechas
             var desperdicios = db.DESPERDICIOS_MATERIAL
-                .Where(d => d.FECHA >= fechaInicio && d.FECHA <= fechaFin && d.ORIGEN == "VENTA")
+                .Where(d => d.FECHA >= fechaInicio && d.FECHA <= fechaFinAjustada && d.ORIGEN == "VENTA")
                 .Include(d => d.MATERIALES)
                 .Include(d => d.PRODUCTOS)
                 .ToList();
@@ -89,10 +92,10 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             // Desperdicios por Día
             vm.DesperdiciosPorDia = desperdicios
-                .GroupBy(d => DbFunctions.TruncateTime(d.FECHA))
+                .GroupBy(d => d.FECHA.Date)
                 .Select(g => new DesperdicioDiaVM
                 {
-                    Fecha = g.Key.Value,
+                    Fecha = g.Key,
                     TotalDesperdiciado = g.Sum(d => d.CANTIDAD_DESPERDICIADA),
                     CantidadTransacciones = g.Count()
                 })
@@ -100,18 +103,24 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 .ToList();
 
             // Productos con alto desperdicio
+            var totalPorProducto = desperdicios
+                .Where(d => d.ID_PRODUCTO.HasValue)
+                .GroupBy(d => d.ID_PRODUCTO.Value)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.CANTIDAD_DESPERDICIADA));
+
             vm.ProductosAltoDesperdicio = db.PRODUCTOS
                 .Where(p => p.PORC_DESPERDICIO > 5 && p.ID_ESTADO == 1)
+                .ToList()
                 .Select(p => new ProductoAltoDesperdicioVM
                 {
                     IdProducto = p.ID_PRODUCTO,
                     NombreProducto = p.NOMBRE,
                     PorcentajeDesperdicio = p.PORC_DESPERDICIO,
-                    TotalDesperdiciado = desperdicios
-                        .Where(d => d.ID_PRODUCTO == p.ID_PRODUCTO)
-                        .Sum(d => d.CANTIDAD_DESPERDICIADA),
-                    Recomendacion = p.PORC_DESPERDICIO > 15 
-                        ? "⚠️ Alto desperdicio. Revisar procesos de producción." 
+                    TotalDesperdiciado = totalPorProducto.ContainsKey(p.ID_PRODUCTO)
+                        ? totalPorProducto[p.ID_PRODUCTO]
+                        : 0,
+                    Recomendacion = p.PORC_DESPERDICIO > 15
+                        ? "⚠️ Alto desperdicio. Revisar procesos de producción."
                         : "Monitorear desperdicio"
                 })
                 .OrderByDescending(p => p.PorcentajeDesperdicio)
@@ -128,8 +137,10 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             if (!fechaFin.HasValue)
                 fechaFin = DateTime.Now;
 
+            var fechaFinAjustada = fechaFin.Value.Date.AddDays(1).AddSeconds(-1);
+
             var desperdicios = db.DESPERDICIOS_MATERIAL
-                .Where(d => d.FECHA >= fechaInicio && d.FECHA <= fechaFin && d.ORIGEN == "VENTA")
+                .Where(d => d.FECHA >= fechaInicio && d.FECHA <= fechaFinAjustada && d.ORIGEN == "VENTA")
                 .Include(d => d.MATERIALES)
                 .Include(d => d.PRODUCTOS)
                 .Include(d => d.USUARIOS)

@@ -76,6 +76,13 @@
                             <td class="text-end">
                                 <div class="d-flex gap-2 justify-content-end flex-wrap">
 
+                                    <a href="@Url.Action("Desperdicios","Ventas", new { id = v.IdVenta })"
+                                       class="btn btn-outline-warning btn-sm"
+                                       title="Ver desperdicios"
+                                       data-bs-toggle="tooltip">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </a>
+
                                     @if (isActiva && tieneSaldo)
                                     {
                                         <button type="button"

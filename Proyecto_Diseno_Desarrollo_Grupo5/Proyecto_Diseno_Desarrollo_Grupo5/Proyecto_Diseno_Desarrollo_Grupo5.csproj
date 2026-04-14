@@ -390,6 +390,7 @@
     <Content Include="Views\Reportes\Desperdicios.cshtml" />
     <Content Include="Views\Reportes\DesperdiciosDetalle.cshtml" />
     <Content Include="Views\Reportes\Index.cshtml" />
+    <Content Include="Views\Ventas\Desperdicios.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

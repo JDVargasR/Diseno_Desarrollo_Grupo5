@@ -1,0 +1,121 @@
+@model IEnumerable<Proyecto_Diseno_Desarrollo_Grupo5.EF.DESPERDICIOS_MATERIAL>
+
+@{
+    ViewBag.Title = "Desperdicios de Venta";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="bi bi-exclamation-triangle"></i> Desperdicios - Venta #@ViewBag.Venta.ID_VENTA</h2>
+            <p class="text-muted">Detalle de materiales desperdiciados en esta venta</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Venta:</strong> #@ViewBag.Venta.ID_VENTA
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Cliente:</strong> @ViewBag.Venta.CLIENTES.NOMBRE
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Fecha:</strong> @ViewBag.Venta.FECHA.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Total Desperdiciado:</strong> <span class="badge bg-warning">@ViewBag.TotalDesperdiciado.ToString("F2") unidades</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @if (Model != null && Model.Count() > 0)
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-table"></i> Detalle de Desperdicios</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Material</th>
+                                        <th>Cantidad Desperdiciada</th>
+                                        <th>Unidad</th>
+                                        <th>Motivo</th>
+                                        <th>Fecha</th>
+                                        <th>Reutilizable</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var desperdicio in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (desperdicio.PRODUCTOS != null)
+                                                {
+                                                    <strong>@desperdicio.PRODUCTOS.NOMBRE</strong>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>@desperdicio.MATERIALES.NOMBRE</td>
+                                            <td>
+                                                <span class="badge bg-danger">@desperdicio.CANTIDAD_DESPERDICIADA.ToString("F2")</span>
+                                            </td>
+                                            <td>@desperdicio.MATERIALES.TIPO</td>
+                                            <td>@desperdicio.MOTIVO</td>
+                                            <td>@desperdicio.FECHA.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>
+                                                @if (desperdicio.REUTILIZABLE == "Si")
+                                                {
+                                                    <span class="badge bg-success">Reutilizable</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">No reutilizable</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-primary">
+                                        <td colspan="2" class="text-end"><strong>Total:</strong></td>
+                                        <td>
+                                            <strong>@Model.Sum(d => d.CANTIDAD_DESPERDICIADA).ToString("F2")</strong>
+                                        </td>
+                                        <td colspan="4"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle"></i> <strong>Sin desperdicios registrados</strong> en esta venta
+                </div>
+            }
+        </div>
+    </div>
+</div>
