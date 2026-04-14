@@ -1,7 +1,7 @@
 @model Proyecto_Diseno_Desarrollo_Grupo5.Models.Reportes.DesperdicioAnalisisVM
 
 @{
-    ViewBag.Title = "Reportes - Análisis de Desperdicios";
+    ViewBag.Title = "Reportes - Analisis de Desperdicios";
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" />
@@ -10,8 +10,8 @@
 <div class="container-fluid mt-4">
     <div class="row mb-4">
         <div class="col-md-12">
-            <h2><i class="bi bi-file-earmark-bar-graph"></i> Análisis de Desperdicios</h2>
-            <p class="text-muted">Análisis detallado de desperdicios de material en el período seleccionado</p>
+            <h2><i class="bi bi-file-earmark-bar-graph"></i> Analisis de Desperdicios</h2>
+            <p class="text-muted">Analisis detallado de desperdicios de material en el periodo seleccionado</p>
         </div>
     </div>
 
@@ -70,7 +70,7 @@
         <div class="col-md-3">
             <div class="card text-center">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Promedio x Transacción</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Promedio x Transaccion</h6>
                     <h3 class="card-title text-info">@Model.PromedioTransaccion.ToString("F2")</h3>
                     <small class="text-muted">Unidades</small>
                 </div>
@@ -87,7 +87,7 @@
         </div>
     </div>
 
-    <!-- Gráficos -->
+    <!-- Graficos -->
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card">
@@ -131,7 +131,7 @@
             <div class="col-md-12">
                 <div class="card border-warning">
                     <div class="card-header bg-warning text-dark">
-                        <strong><i class="bi bi-exclamation-triangle"></i> Productos con Alto Desperdicio (Requieren Atención)</strong>
+                    <strong><i class="bi bi-exclamation-triangle"></i> Productos con Alto Desperdicio (Requieren Atencion)</strong>
                     </div>
                     <div class="card-body">
                         <table class="table table-hover">
@@ -140,7 +140,7 @@
                                     <th>Producto</th>
                                     <th>% Desperdicio</th>
                                     <th>Total Desperdiciado</th>
-                                    <th>Recomendación</th>
+                                    <th>Recomendacion</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -154,7 +154,7 @@
                                             </span>
                                         </td>
                                         <td>@producto.TotalDesperdiciado.ToString("F2")</td>
-                                        <td>@Html.Raw(producto.Recomendacion)</td>
+                                        <td>@producto.Recomendacion</td>
                                     </tr>
                                 }
                             </tbody>
@@ -178,15 +178,15 @@
         '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF9F40'
     ];
 
-    // Gráfico Productos (Pie)
+    // Grafico Productos (Pie)
     if (datosProductos.length > 0) {
         const ctxProducto = document.getElementById('chartPorProducto').getContext('2d');
         new Chart(ctxProducto, {
             type: 'pie',
             data: {
-                labels: datosProductos.map(p => p.nombreProducto),
+                labels: datosProductos.map(p => p.NombreProducto || 'Sin nombre'),
                 datasets: [{
-                    data: datosProductos.map(p => p.totalDesperdiciado),
+                    data: datosProductos.map(p => p.TotalDesperdiciado || 0),
                     backgroundColor: coloresPrimarios
                 }]
             },
@@ -206,16 +206,16 @@
         });
     }
 
-    // Gráfico Materiales (Bar)
+    // Grafico Materiales (Bar)
     if (datosMateriales.length > 0) {
         const ctxMaterial = document.getElementById('chartPorMaterial').getContext('2d');
         new Chart(ctxMaterial, {
             type: 'bar',
             data: {
-                labels: datosMateriales.map(m => m.nombreMaterial),
+                labels: datosMateriales.map(m => m.NombreMaterial || 'Sin nombre'),
                 datasets: [{
                     label: 'Cantidad Desperdiciada',
-                    data: datosMateriales.map(m => m.totalDesperdiciado),
+                    data: datosMateriales.map(m => m.TotalDesperdiciado || 0),
                     backgroundColor: '#FF6384'
                 }]
             },
@@ -236,16 +236,16 @@
         });
     }
 
-    // Gráfico Diario (Line)
+    // Grafico Diario (Line)
     if (datosDias.length > 0) {
         const ctxDia = document.getElementById('chartPorDia').getContext('2d');
         new Chart(ctxDia, {
             type: 'line',
             data: {
-                labels: datosDias.map(d => new Date(d.fecha).toLocaleDateString('es-CR')),
+                labels: datosDias.map(d => new Date(d.Fecha).toLocaleDateString('es-CR')),
                 datasets: [{
                     label: 'Desperdicio (unidades)',
-                    data: datosDias.map(d => d.totalDesperdiciado),
+                    data: datosDias.map(d => d.TotalDesperdiciado || 0),
                     borderColor: '#36A2EB',
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     tension: 0.3,
@@ -276,5 +276,14 @@
     }
     .card-header {
         font-weight: 600;
+    }
+
+    .card.border-warning table tbody td,
+    .card.border-warning table thead th {
+        color: #1f2937 !important;
+    }
+
+    .card.border-warning .badge.bg-warning {
+        color: #111827;
     }
 </style>

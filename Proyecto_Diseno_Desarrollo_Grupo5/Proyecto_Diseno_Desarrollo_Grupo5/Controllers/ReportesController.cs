@@ -120,7 +120,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                         ? totalPorProducto[p.ID_PRODUCTO]
                         : 0,
                     Recomendacion = p.PORC_DESPERDICIO > 15
-                        ? "⚠️ Alto desperdicio. Revisar procesos de producción."
+                        ? "Alto desperdicio. Revisar procesos de produccion."
                         : "Monitorear desperdicio"
                 })
                 .OrderByDescending(p => p.PorcentajeDesperdicio)
