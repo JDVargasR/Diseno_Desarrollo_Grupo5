@@ -20,6 +20,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
             this.DETALLES_VENTAS = new HashSet<DETALLES_VENTAS>();
             this.GARANTIAS = new HashSet<GARANTIAS>();
             this.PRODUCTO_MATERIAL = new HashSet<PRODUCTO_MATERIAL>();
+            this.SOLICITUD_GARANTIA = new HashSet<SOLICITUD_GARANTIA>();
         }
     
         public int ID_PRODUCTO { get; set; }
@@ -36,5 +37,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public virtual ICollection<GARANTIAS> GARANTIAS { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PRODUCTO_MATERIAL> PRODUCTO_MATERIAL { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SOLICITUD_GARANTIA> SOLICITUD_GARANTIA { get; set; }
     }
 }

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="3bc0e531ba054280bd3afaa0431ec5bc" Name="Diagram1" ZoomLevel="55">
+      <Diagram DiagramId="3bc0e531ba054280bd3afaa0431ec5bc" Name="Diagram1" ZoomLevel="57">
         <EntityTypeShape EntityType="Model1.BITACORA" Width="1.5" PointX="12.5" PointY="13" IsExpanded="true" />
         <EntityTypeShape EntityType="Model1.CATEGORIAS" Width="1.5" PointX="3" PointY="12.375" IsExpanded="true" />
         <EntityTypeShape EntityType="Model1.CLIENTES" Width="1.5" PointX="3" PointY="15.25" IsExpanded="true" />
@@ -54,6 +54,16 @@
         <AssociationConnector Association="Model1.FK_PM_PROD" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.FK_USU_ROL" ManuallyRouted="false" />
         <AssociationConnector Association="Model1.ROLES_PERMISOS" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="Model1.NOTIFICACIONES" Width="1.5" PointX="17.75" PointY="13.5" />
+        <EntityTypeShape EntityType="Model1.SOLICITUD_GARANTIA" Width="1.5" PointX="15.5" PointY="12.125" />
+        <AssociationConnector Association="Model1.FK_NOTIF_CLIENTE" />
+        <AssociationConnector Association="Model1.FK_SOLGAR_CLIENTES" />
+        <AssociationConnector Association="Model1.FK_NOTIF_SOLICITUD" />
+        <AssociationConnector Association="Model1.FK_NOTIF_USUARIO" />
+        <AssociationConnector Association="Model1.FK_SOLGAR_PRODUCTOS" />
+        <AssociationConnector Association="Model1.FK_SOLGAR_ADMIN" />
+        <AssociationConnector Association="Model1.FK_SOLGAR_TECNICO" />
+        <AssociationConnector Association="Model1.FK_SOLGAR_VENTAS" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

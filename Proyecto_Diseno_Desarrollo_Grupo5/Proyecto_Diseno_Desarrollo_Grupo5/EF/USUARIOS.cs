@@ -20,6 +20,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
             this.BITACORA = new HashSet<BITACORA>();
             this.DESPERDICIOS_MATERIAL = new HashSet<DESPERDICIOS_MATERIAL>();
             this.PAGOS = new HashSet<PAGOS>();
+            this.NOTIFICACIONES = new HashSet<NOTIFICACIONES>();
+            this.SOLICITUD_GARANTIA = new HashSet<SOLICITUD_GARANTIA>();
+            this.SOLICITUD_GARANTIA1 = new HashSet<SOLICITUD_GARANTIA>();
         }
     
         public int ID_USUARIO { get; set; }
@@ -37,5 +40,11 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PAGOS> PAGOS { get; set; }
         public virtual ROLES ROLES { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NOTIFICACIONES> NOTIFICACIONES { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SOLICITUD_GARANTIA> SOLICITUD_GARANTIA { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SOLICITUD_GARANTIA> SOLICITUD_GARANTIA1 { get; set; }
     }
 }

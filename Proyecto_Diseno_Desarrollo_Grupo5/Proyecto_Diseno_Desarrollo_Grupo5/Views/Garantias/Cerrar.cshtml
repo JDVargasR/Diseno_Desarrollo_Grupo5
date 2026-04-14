@@ -1,0 +1,55 @@
+@model Proyecto_Diseno_Desarrollo_Grupo5.Models.Garantias.SolicitudGarantiaCerrarVM
+@{
+    ViewBag.Title = "Cerrar garantía";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+}
+
+<div class="container" style="max-width:900px; padding-top:30px;">
+
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h2 class="page-title">Cerrar solicitud</h2>
+            <div class="page-subtitle">Administrador: marcar garantía como finalizada</div>
+        </div>
+        <a class="btn btn-outline-secondary" href="@Url.Action("Index","Garantias")">Volver</a>
+    </div>
+
+    <div class="page-section mb-3">
+        <div class="row g-2">
+            <div class="col-6"><b>Solicitud:</b> #@Model.IdSolicitud</div>
+            <div class="col-6"><b>Venta:</b> #@Model.IdVenta</div>
+            <div class="col-12"><b>Cliente:</b> @Model.Cliente</div>
+            <div class="col-12"><b>Producto:</b> @Model.Producto</div>
+            <div class="col-12"><b>Estado actual:</b> @Model.Estado</div>
+        </div>
+    </div>
+
+    <div class="page-section">
+        @using (Html.BeginForm("Cerrar", "Garantias", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.IdSolicitud)
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label" style="font-weight:700;">Fecha de entrega</label>
+                    @Html.TextBoxFor(m => m.FechaEntrega, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label" style="font-weight:700;">Observación final (opcional)</label>
+                    @Html.TextAreaFor(m => m.ObservacionFinal, 3, 40, new { @class = "form-control", placeholder = "Notas de cierre..." })
+                </div>
+
+                <div class="col-12 d-flex justify-content-end gap-2">
+                    <a class="btn btn-light" href="@Url.Action("Index","Garantias")">Cancelar</a>
+                    <button class="btn btn-primary btn-primary-pill" type="submit" onclick="return confirm('¿Marcar la solicitud como FINALIZADA?');">Finalizar</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

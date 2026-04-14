@@ -48,6 +48,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public virtual DbSet<USUARIOS> USUARIOS { get; set; }
         public virtual DbSet<VENTAS> VENTAS { get; set; }
         public virtual DbSet<database_firewall_rules> database_firewall_rules { get; set; }
+        public virtual DbSet<NOTIFICACIONES> NOTIFICACIONES { get; set; }
+        public virtual DbSet<SOLICITUD_GARANTIA> SOLICITUD_GARANTIA { get; set; }
     
         public virtual int SP_USUARIO_PERFIL_ACTUALIZAR(Nullable<int> iD_USUARIO, string nOMBRE, string cORREO, string cONTRASENA_ACTUAL, string cONTRASENA_NUEVA, ObjectParameter oK, ObjectParameter mSG)
         {

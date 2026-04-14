@@ -18,6 +18,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public CLIENTES()
         {
             this.VENTAS = new HashSet<VENTAS>();
+            this.NOTIFICACIONES = new HashSet<NOTIFICACIONES>();
+            this.SOLICITUD_GARANTIA = new HashSet<SOLICITUD_GARANTIA>();
         }
     
         public int ID_CLIENTE { get; set; }
@@ -30,5 +32,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.EF
         public virtual ESTADO ESTADO { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VENTAS> VENTAS { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NOTIFICACIONES> NOTIFICACIONES { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SOLICITUD_GARANTIA> SOLICITUD_GARANTIA { get; set; }
     }
 }

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Model1.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Model1.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BITACORA">
           <Key>
             <PropertyRef Name="ID_BITACORA" />
@@ -120,6 +120,20 @@
           <Property Name="FECHA" Type="datetime2" Precision="0" Nullable="false" />
           <Property Name="OBSERVACION" Type="nvarchar" MaxLength="250" />
         </EntityType>
+        <EntityType Name="NOTIFICACIONES">
+          <Key>
+            <PropertyRef Name="ID_NOTIFICACION" />
+          </Key>
+          <Property Name="ID_NOTIFICACION" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_USUARIO" Type="int" />
+          <Property Name="ID_CLIENTE" Type="int" />
+          <Property Name="ID_SOLICITUD" Type="int" />
+          <Property Name="TITULO" Type="nvarchar" MaxLength="120" Nullable="false" />
+          <Property Name="MENSAJE" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="FECHA" Type="datetime" Nullable="false" />
+          <Property Name="LEIDA" Type="bit" Nullable="false" />
+          <Property Name="MODULO" Type="nvarchar" MaxLength="60" />
+        </EntityType>
         <EntityType Name="PAGOS">
           <Key>
             <PropertyRef Name="ID_PAGO" />
@@ -195,6 +209,24 @@
           </Key>
           <Property Name="ID_ROL" Type="int" Nullable="false" />
           <Property Name="ID_PERMISO" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SOLICITUD_GARANTIA">
+          <Key>
+            <PropertyRef Name="ID_SOLICITUD" />
+          </Key>
+          <Property Name="ID_SOLICITUD" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_VENTA" Type="int" Nullable="false" />
+          <Property Name="ID_PRODUCTO" Type="int" Nullable="false" />
+          <Property Name="ID_CLIENTE" Type="int" Nullable="false" />
+          <Property Name="FECHA_SOLICITUD" Type="datetime" Nullable="false" />
+          <Property Name="DESCRIPCION_FALLA" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="ESTADO" Type="nvarchar" MaxLength="40" Nullable="false" />
+          <Property Name="ID_TECNICO" Type="int" />
+          <Property Name="FECHA_REVISION" Type="datetime" />
+          <Property Name="FECHA_RESOLUCION" Type="datetime" />
+          <Property Name="OBSERVACIONES_TECNICAS" Type="nvarchar" MaxLength="800" />
+          <Property Name="ID_ADMIN_CIERRE" Type="int" />
+          <Property Name="FECHA_ENTREGA" Type="datetime" />
         </EntityType>
         <EntityType Name="USUARIOS">
           <Key>
@@ -391,6 +423,42 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_NOTIF_CLIENTE">
+          <End Role="CLIENTES" Type="Self.CLIENTES" Multiplicity="0..1" />
+          <End Role="NOTIFICACIONES" Type="Self.NOTIFICACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CLIENTES">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Principal>
+            <Dependent Role="NOTIFICACIONES">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NOTIF_SOLICITUD">
+          <End Role="SOLICITUD_GARANTIA" Type="Self.SOLICITUD_GARANTIA" Multiplicity="0..1" />
+          <End Role="NOTIFICACIONES" Type="Self.NOTIFICACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_SOLICITUD" />
+            </Principal>
+            <Dependent Role="NOTIFICACIONES">
+              <PropertyRef Name="ID_SOLICITUD" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NOTIF_USUARIO">
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="0..1" />
+          <End Role="NOTIFICACIONES" Type="Self.NOTIFICACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="NOTIFICACIONES">
+              <PropertyRef Name="ID_USUARIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PAGOS_USUARIO">
           <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="0..1" />
           <End Role="PAGOS" Type="Self.PAGOS" Multiplicity="*" />
@@ -535,6 +603,66 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SOLGAR_ADMIN">
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="0..1" />
+          <End Role="SOLICITUD_GARANTIA" Type="Self.SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_ADMIN_CIERRE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_CLIENTES">
+          <End Role="CLIENTES" Type="Self.CLIENTES" Multiplicity="1" />
+          <End Role="SOLICITUD_GARANTIA" Type="Self.SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CLIENTES">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_PRODUCTOS">
+          <End Role="PRODUCTOS" Type="Self.PRODUCTOS" Multiplicity="1" />
+          <End Role="SOLICITUD_GARANTIA" Type="Self.SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_TECNICO">
+          <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="0..1" />
+          <End Role="SOLICITUD_GARANTIA" Type="Self.SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_TECNICO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_VENTAS">
+          <End Role="VENTAS" Type="Self.VENTAS" Multiplicity="1" />
+          <End Role="SOLICITUD_GARANTIA" Type="Self.SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_VENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_USU_ESTADO">
           <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
           <End Role="USUARIOS" Type="Self.USUARIOS" Multiplicity="*" />
@@ -650,6 +778,7 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <EntitySet Name="GARANTIAS" EntityType="Self.GARANTIAS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MATERIALES" EntityType="Self.MATERIALES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MOVIMIENTOS_INVENTARIO" EntityType="Self.MOVIMIENTOS_INVENTARIO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NOTIFICACIONES" EntityType="Self.NOTIFICACIONES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PAGOS" EntityType="Self.PAGOS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PERMISOS" EntityType="Self.PERMISOS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PRODUCTO_MATERIAL" EntityType="Self.PRODUCTO_MATERIAL" Schema="dbo" store:Type="Tables" />
@@ -658,6 +787,7 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <EntitySet Name="REGISTRO_CORTES" EntityType="Self.REGISTRO_CORTES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ROLES" EntityType="Self.ROLES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ROLES_PERMISOS" EntityType="Self.ROLES_PERMISOS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SOLICITUD_GARANTIA" EntityType="Self.SOLICITUD_GARANTIA" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="USUARIOS" EntityType="Self.USUARIOS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VENTAS" EntityType="Self.VENTAS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="database_firewall_rules" EntityType="Self.database_firewall_rules" store:Type="Views" store:Schema="sys">
@@ -722,6 +852,18 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             <End Role="MATERIALES" EntitySet="MATERIALES" />
             <End Role="MOVIMIENTOS_INVENTARIO" EntitySet="MOVIMIENTOS_INVENTARIO" />
           </AssociationSet>
+          <AssociationSet Name="FK_NOTIF_CLIENTE" Association="Self.FK_NOTIF_CLIENTE">
+            <End Role="CLIENTES" EntitySet="CLIENTES" />
+            <End Role="NOTIFICACIONES" EntitySet="NOTIFICACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NOTIF_SOLICITUD" Association="Self.FK_NOTIF_SOLICITUD">
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+            <End Role="NOTIFICACIONES" EntitySet="NOTIFICACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NOTIF_USUARIO" Association="Self.FK_NOTIF_USUARIO">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="NOTIFICACIONES" EntitySet="NOTIFICACIONES" />
+          </AssociationSet>
           <AssociationSet Name="FK_PAGOS_USUARIO" Association="Self.FK_PAGOS_USUARIO">
             <End Role="USUARIOS" EntitySet="USUARIOS" />
             <End Role="PAGOS" EntitySet="PAGOS" />
@@ -770,6 +912,26 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             <End Role="ROLES" EntitySet="ROLES" />
             <End Role="ROLES_PERMISOS" EntitySet="ROLES_PERMISOS" />
           </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_ADMIN" Association="Self.FK_SOLGAR_ADMIN">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_CLIENTES" Association="Self.FK_SOLGAR_CLIENTES">
+            <End Role="CLIENTES" EntitySet="CLIENTES" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_PRODUCTOS" Association="Self.FK_SOLGAR_PRODUCTOS">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_TECNICO" Association="Self.FK_SOLGAR_TECNICO">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_VENTAS" Association="Self.FK_SOLGAR_VENTAS">
+            <End Role="VENTAS" EntitySet="VENTAS" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
           <AssociationSet Name="FK_USU_ESTADO" Association="Self.FK_USU_ESTADO">
             <End Role="ESTADO" EntitySet="ESTADO" />
             <End Role="USUARIOS" EntitySet="USUARIOS" />
@@ -787,8 +949,7 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             <End Role="VENTAS" EntitySet="VENTAS" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Model1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -829,6 +990,8 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <Property Name="ID_ESTADO" Type="Int32" Nullable="false" />
           <NavigationProperty Name="ESTADO" Relationship="Self.FK_CLIENTES_ESTADO" FromRole="CLIENTES" ToRole="ESTADO" />
           <NavigationProperty Name="VENTAS" Relationship="Self.FK_VEN_CLI" FromRole="CLIENTES" ToRole="VENTAS" />
+          <NavigationProperty Name="NOTIFICACIONES" Relationship="Model1.FK_NOTIF_CLIENTE" FromRole="CLIENTES" ToRole="NOTIFICACIONES" />
+          <NavigationProperty Name="SOLICITUD_GARANTIA" Relationship="Model1.FK_SOLGAR_CLIENTES" FromRole="CLIENTES" ToRole="SOLICITUD_GARANTIA" />
         </EntityType>
         <EntityType Name="CORTES">
           <Key>
@@ -984,6 +1147,7 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <NavigationProperty Name="ESTADO" Relationship="Self.FK_PROD_ESTADO" FromRole="PRODUCTOS" ToRole="ESTADO" />
           <NavigationProperty Name="GARANTIAS" Relationship="Self.FK_GAR_PROD" FromRole="PRODUCTOS" ToRole="GARANTIAS" />
           <NavigationProperty Name="PRODUCTO_MATERIAL" Relationship="Self.FK_PM_PROD" FromRole="PRODUCTOS" ToRole="PRODUCTO_MATERIAL" />
+          <NavigationProperty Name="SOLICITUD_GARANTIA" Relationship="Model1.FK_SOLGAR_PRODUCTOS" FromRole="PRODUCTOS" ToRole="SOLICITUD_GARANTIA" />
         </EntityType>
         <EntityType Name="PROVEEDORES">
           <Key>
@@ -1036,6 +1200,9 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <NavigationProperty Name="ESTADO" Relationship="Self.FK_USU_ESTADO" FromRole="USUARIOS" ToRole="ESTADO" />
           <NavigationProperty Name="PAGOS" Relationship="Self.FK_PAGOS_USUARIO" FromRole="USUARIOS" ToRole="PAGOS" />
           <NavigationProperty Name="ROLES" Relationship="Self.FK_USU_ROL" FromRole="USUARIOS" ToRole="ROLES" />
+          <NavigationProperty Name="NOTIFICACIONES" Relationship="Model1.FK_NOTIF_USUARIO" FromRole="USUARIOS" ToRole="NOTIFICACIONES" />
+          <NavigationProperty Name="SOLICITUD_GARANTIA" Relationship="Model1.FK_SOLGAR_ADMIN" FromRole="USUARIOS" ToRole="SOLICITUD_GARANTIA" />
+          <NavigationProperty Name="SOLICITUD_GARANTIA1" Relationship="Model1.FK_SOLGAR_TECNICO" FromRole="USUARIOS" ToRole="SOLICITUD_GARANTIA" />
         </EntityType>
         <EntityType Name="VENTAS">
           <Key>
@@ -1051,6 +1218,7 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <NavigationProperty Name="DEVOLUCIONES" Relationship="Self.FK_DEV_VEN" FromRole="VENTAS" ToRole="DEVOLUCIONES" />
           <NavigationProperty Name="ESTADO" Relationship="Self.FK_VEN_ESTADO" FromRole="VENTAS" ToRole="ESTADO" />
           <NavigationProperty Name="PAGOS" Relationship="Self.FK_PAGOS_VENTA" FromRole="VENTAS" ToRole="PAGOS" />
+          <NavigationProperty Name="SOLICITUD_GARANTIA" Relationship="Model1.FK_SOLGAR_VENTAS" FromRole="VENTAS" ToRole="SOLICITUD_GARANTIA" />
         </EntityType>
         <EntityType Name="database_firewall_rules">
           <Key>
@@ -1540,7 +1708,7 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             <Parameter Name="MSG" Mode="InOut" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_USUARIO_PERFIL_OBTENER" ReturnType="Collection(Model1.SP_USUARIO_PERFIL_OBTENER_Result)">
-            <Parameter Name="ID_USUARIO" Mode="In" Type="Int32" />
+          <Parameter Name="ID_USUARIO" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="SP_USUARIOS_ACTUALIZAR">
             <Parameter Name="ID_USUARIO" Mode="In" Type="Int32" />
@@ -1585,6 +1753,40 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
             <Parameter Name="ID_ESTADO" Mode="In" Type="Int32" />
             <Parameter Name="Resultado" Mode="InOut" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="NOTIFICACIONES" EntityType="Model1.NOTIFICACIONES" />
+          <EntitySet Name="SOLICITUD_GARANTIA" EntityType="Model1.SOLICITUD_GARANTIA" />
+          <AssociationSet Name="FK_NOTIF_CLIENTE" Association="Model1.FK_NOTIF_CLIENTE">
+            <End Role="CLIENTES" EntitySet="CLIENTES" />
+            <End Role="NOTIFICACIONES" EntitySet="NOTIFICACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_CLIENTES" Association="Model1.FK_SOLGAR_CLIENTES">
+            <End Role="CLIENTES" EntitySet="CLIENTES" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NOTIF_SOLICITUD" Association="Model1.FK_NOTIF_SOLICITUD">
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+            <End Role="NOTIFICACIONES" EntitySet="NOTIFICACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NOTIF_USUARIO" Association="Model1.FK_NOTIF_USUARIO">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="NOTIFICACIONES" EntitySet="NOTIFICACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_PRODUCTOS" Association="Model1.FK_SOLGAR_PRODUCTOS">
+            <End Role="PRODUCTOS" EntitySet="PRODUCTOS" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_ADMIN" Association="Model1.FK_SOLGAR_ADMIN">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_TECNICO" Association="Model1.FK_SOLGAR_TECNICO">
+            <End Role="USUARIOS" EntitySet="USUARIOS" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SOLGAR_VENTAS" Association="Model1.FK_SOLGAR_VENTAS">
+            <End Role="VENTAS" EntitySet="VENTAS" />
+            <End Role="SOLICITUD_GARANTIA" EntitySet="SOLICITUD_GARANTIA" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="SP_USUARIO_PERFIL_OBTENER_Result">
           <Property Type="Int32" Name="IdUsuario" Nullable="false" />
@@ -1611,6 +1813,143 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           <Property Type="Int32" Name="ID_ROL" Nullable="false" />
           <Property Type="String" Name="ROL" Nullable="false" MaxLength="60" />
         </ComplexType>
+        <EntityType Name="NOTIFICACIONES">
+          <Key>
+            <PropertyRef Name="ID_NOTIFICACION" />
+          </Key>
+          <Property Name="ID_NOTIFICACION" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_USUARIO" Type="Int32" />
+          <Property Name="ID_CLIENTE" Type="Int32" />
+          <Property Name="ID_SOLICITUD" Type="Int32" />
+          <Property Name="TITULO" Type="String" Nullable="false" MaxLength="120" FixedLength="false" Unicode="true" />
+          <Property Name="MENSAJE" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LEIDA" Type="Boolean" Nullable="false" />
+          <Property Name="MODULO" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CLIENTES" Relationship="Model1.FK_NOTIF_CLIENTE" FromRole="NOTIFICACIONES" ToRole="CLIENTES" />
+          <NavigationProperty Name="SOLICITUD_GARANTIA" Relationship="Model1.FK_NOTIF_SOLICITUD" FromRole="NOTIFICACIONES" ToRole="SOLICITUD_GARANTIA" />
+          <NavigationProperty Name="USUARIOS" Relationship="Model1.FK_NOTIF_USUARIO" FromRole="NOTIFICACIONES" ToRole="USUARIOS" />
+        </EntityType>
+        <EntityType Name="SOLICITUD_GARANTIA">
+          <Key>
+            <PropertyRef Name="ID_SOLICITUD" />
+          </Key>
+          <Property Name="ID_SOLICITUD" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_VENTA" Type="Int32" Nullable="false" />
+          <Property Name="ID_PRODUCTO" Type="Int32" Nullable="false" />
+          <Property Name="ID_CLIENTE" Type="Int32" Nullable="false" />
+          <Property Name="FECHA_SOLICITUD" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DESCRIPCION_FALLA" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ESTADO" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="ID_TECNICO" Type="Int32" />
+          <Property Name="FECHA_REVISION" Type="DateTime" Precision="3" />
+          <Property Name="FECHA_RESOLUCION" Type="DateTime" Precision="3" />
+          <Property Name="OBSERVACIONES_TECNICAS" Type="String" MaxLength="800" FixedLength="false" Unicode="true" />
+          <Property Name="ID_ADMIN_CIERRE" Type="Int32" />
+          <Property Name="FECHA_ENTREGA" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="CLIENTES" Relationship="Model1.FK_SOLGAR_CLIENTES" FromRole="SOLICITUD_GARANTIA" ToRole="CLIENTES" />
+          <NavigationProperty Name="NOTIFICACIONES" Relationship="Model1.FK_NOTIF_SOLICITUD" FromRole="SOLICITUD_GARANTIA" ToRole="NOTIFICACIONES" />
+          <NavigationProperty Name="PRODUCTOS" Relationship="Model1.FK_SOLGAR_PRODUCTOS" FromRole="SOLICITUD_GARANTIA" ToRole="PRODUCTOS" />
+          <NavigationProperty Name="USUARIOS" Relationship="Model1.FK_SOLGAR_ADMIN" FromRole="SOLICITUD_GARANTIA" ToRole="USUARIOS" />
+          <NavigationProperty Name="USUARIOS1" Relationship="Model1.FK_SOLGAR_TECNICO" FromRole="SOLICITUD_GARANTIA" ToRole="USUARIOS" />
+          <NavigationProperty Name="VENTAS" Relationship="Model1.FK_SOLGAR_VENTAS" FromRole="SOLICITUD_GARANTIA" ToRole="VENTAS" />
+        </EntityType>
+        <Association Name="FK_NOTIF_CLIENTE">
+          <End Type="Model1.CLIENTES" Role="CLIENTES" Multiplicity="0..1" />
+          <End Type="Model1.NOTIFICACIONES" Role="NOTIFICACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CLIENTES">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Principal>
+            <Dependent Role="NOTIFICACIONES">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_CLIENTES">
+          <End Type="Model1.CLIENTES" Role="CLIENTES" Multiplicity="1" />
+          <End Type="Model1.SOLICITUD_GARANTIA" Role="SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CLIENTES">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_CLIENTE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NOTIF_SOLICITUD">
+          <End Type="Model1.SOLICITUD_GARANTIA" Role="SOLICITUD_GARANTIA" Multiplicity="0..1" />
+          <End Type="Model1.NOTIFICACIONES" Role="NOTIFICACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_SOLICITUD" />
+            </Principal>
+            <Dependent Role="NOTIFICACIONES">
+              <PropertyRef Name="ID_SOLICITUD" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NOTIF_USUARIO">
+          <End Type="Model1.USUARIOS" Role="USUARIOS" Multiplicity="0..1" />
+          <End Type="Model1.NOTIFICACIONES" Role="NOTIFICACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="NOTIFICACIONES">
+              <PropertyRef Name="ID_USUARIO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_PRODUCTOS">
+          <End Type="Model1.PRODUCTOS" Role="PRODUCTOS" Multiplicity="1" />
+          <End Type="Model1.SOLICITUD_GARANTIA" Role="SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTOS">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_PRODUCTO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_ADMIN">
+          <End Type="Model1.USUARIOS" Role="USUARIOS" Multiplicity="0..1" />
+          <End Type="Model1.SOLICITUD_GARANTIA" Role="SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_ADMIN_CIERRE" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_TECNICO">
+          <End Type="Model1.USUARIOS" Role="USUARIOS" Multiplicity="0..1" />
+          <End Type="Model1.SOLICITUD_GARANTIA" Role="SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USUARIOS">
+              <PropertyRef Name="ID_USUARIO" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_TECNICO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SOLGAR_VENTAS">
+          <End Type="Model1.VENTAS" Role="VENTAS" Multiplicity="1" />
+          <End Type="Model1.SOLICITUD_GARANTIA" Role="SOLICITUD_GARANTIA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VENTAS">
+              <PropertyRef Name="ID_VENTA" />
+            </Principal>
+            <Dependent Role="SOLICITUD_GARANTIA">
+              <PropertyRef Name="ID_VENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1903,6 +2242,40 @@ warning 6002: The table/view 'DBGRUPO5.sys.database_firewall_rules' does not hav
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USUARIO_RECUPERARCONTRASENA_SP" FunctionName="Model1.Store.USUARIO_RECUPERARCONTRASENA_SP" />
           <FunctionImportMapping FunctionImportName="USUARIO_REGISTRAR_SP" FunctionName="Model1.Store.USUARIO_REGISTRAR_SP" />
+          <EntitySetMapping Name="NOTIFICACIONES">
+            <EntityTypeMapping TypeName="Model1.NOTIFICACIONES">
+              <MappingFragment StoreEntitySet="NOTIFICACIONES">
+                <ScalarProperty Name="MODULO" ColumnName="MODULO" />
+                <ScalarProperty Name="LEIDA" ColumnName="LEIDA" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="MENSAJE" ColumnName="MENSAJE" />
+                <ScalarProperty Name="TITULO" ColumnName="TITULO" />
+                <ScalarProperty Name="ID_SOLICITUD" ColumnName="ID_SOLICITUD" />
+                <ScalarProperty Name="ID_CLIENTE" ColumnName="ID_CLIENTE" />
+                <ScalarProperty Name="ID_USUARIO" ColumnName="ID_USUARIO" />
+                <ScalarProperty Name="ID_NOTIFICACION" ColumnName="ID_NOTIFICACION" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SOLICITUD_GARANTIA">
+            <EntityTypeMapping TypeName="Model1.SOLICITUD_GARANTIA">
+              <MappingFragment StoreEntitySet="SOLICITUD_GARANTIA">
+                <ScalarProperty Name="FECHA_ENTREGA" ColumnName="FECHA_ENTREGA" />
+                <ScalarProperty Name="ID_ADMIN_CIERRE" ColumnName="ID_ADMIN_CIERRE" />
+                <ScalarProperty Name="OBSERVACIONES_TECNICAS" ColumnName="OBSERVACIONES_TECNICAS" />
+                <ScalarProperty Name="FECHA_RESOLUCION" ColumnName="FECHA_RESOLUCION" />
+                <ScalarProperty Name="FECHA_REVISION" ColumnName="FECHA_REVISION" />
+                <ScalarProperty Name="ID_TECNICO" ColumnName="ID_TECNICO" />
+                <ScalarProperty Name="ESTADO" ColumnName="ESTADO" />
+                <ScalarProperty Name="DESCRIPCION_FALLA" ColumnName="DESCRIPCION_FALLA" />
+                <ScalarProperty Name="FECHA_SOLICITUD" ColumnName="FECHA_SOLICITUD" />
+                <ScalarProperty Name="ID_CLIENTE" ColumnName="ID_CLIENTE" />
+                <ScalarProperty Name="ID_PRODUCTO" ColumnName="ID_PRODUCTO" />
+                <ScalarProperty Name="ID_VENTA" ColumnName="ID_VENTA" />
+                <ScalarProperty Name="ID_SOLICITUD" ColumnName="ID_SOLICITUD" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

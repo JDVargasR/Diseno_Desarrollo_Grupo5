@@ -130,6 +130,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
+    <Compile Include="Controllers\GarantiasController.cs" />
     <Compile Include="Controllers\VendedorController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\MaterialesController.cs" />
@@ -193,6 +194,9 @@
     <Compile Include="EF\MOVIMIENTOS_INVENTARIO.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="EF\NOTIFICACIONES.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="EF\PAGOS.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -212,6 +216,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="EF\ROLES.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EF\SOLICITUD_GARANTIA.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="EF\SP_USUARIOS_LISTAR_Result.cs">
@@ -235,6 +242,10 @@
     </Compile>
     <Compile Include="Models\CategoriaCrudVM.cs" />
     <Compile Include="Models\ClienteCrudVM.cs" />
+    <Compile Include="Models\Garantias\SolicitudGarantiaCerrarVM.cs" />
+    <Compile Include="Models\Garantias\SolicitudGarantiaCrearVM.cs" />
+    <Compile Include="Models\Garantias\SolicitudGarantiaEvaluarVM.cs" />
+    <Compile Include="Models\Garantias\SolicitudGarantiaFilaVM.cs" />
     <Compile Include="Models\MaterialCrudVM.cs" />
     <Compile Include="Models\PerfilVM.cs" />
     <Compile Include="Models\ProveedorCrudVM.cs" />
@@ -359,6 +370,10 @@
     <Content Include="Views\Ventas\Create.cshtml" />
     <Content Include="Views\Ventas\Index.cshtml" />
     <Content Include="Views\Home\Bitacora.cshtml" />
+    <Content Include="Views\Garantias\Index.cshtml" />
+    <Content Include="Views\Garantias\Create.cshtml" />
+    <Content Include="Views\Garantias\Evaluar.cshtml" />
+    <Content Include="Views\Garantias\Cerrar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

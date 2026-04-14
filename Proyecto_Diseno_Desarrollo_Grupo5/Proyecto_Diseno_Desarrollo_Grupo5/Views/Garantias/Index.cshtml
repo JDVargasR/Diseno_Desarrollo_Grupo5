@@ -1,0 +1,154 @@
+@model System.Collections.Generic.List<Proyecto_Diseno_Desarrollo_Grupo5.Models.Garantias.SolicitudGarantiaFilaVM>
+@{
+    ViewBag.Title = "Garantías";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+
+    var q = (ViewBag.Q ?? "").ToString();
+    var estado = (ViewBag.Estado ?? "").ToString();
+    var desde = (ViewBag.Desde ?? "").ToString();
+    var hasta = (ViewBag.Hasta ?? "").ToString();
+
+    var estados = ViewBag.Estados as string[];
+
+    var current = (int)(ViewBag.Page ?? 1);
+    var total = (int)(ViewBag.TotalPages ?? 1);
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+}
+
+<div class="container" style="max-width:1100px; padding-top:30px;">
+
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h2 class="page-title">Garantías</h2>
+            <div class="page-subtitle">Solicitudes, evaluación y cierre</div>
+        </div>
+
+        <a class="btn btn-primary" href="@Url.Action("Create","Garantias")">+ Nueva solicitud</a>
+    </div>
+
+    @if (TempData["OK"] != null)
+    {
+        <div class="alert alert-success cardx" style="padding:12px 14px;">@TempData["OK"]</div>
+    }
+
+    @if (TempData["ERR"] != null)
+    {
+        <div class="alert alert-danger cardx" style="padding:12px 14px;">@TempData["ERR"]</div>
+    }
+
+    <form method="get" class="page-section mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-md-4">
+                <label class="form-label" style="font-weight:600;">Buscar</label>
+                <input class="form-control" name="q" value="@q" placeholder="#Solicitud, #Venta, cliente o producto" />
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label class="form-label" style="font-weight:600;">Estado</label>
+                <select class="form-select" name="estado">
+                    <option value="">Todos</option>
+                    @if (estados != null)
+                    {
+                        foreach (var e in estados)
+                        {
+                            <option value="@e" @(estado == e ? "selected" : "")>@e</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label class="form-label" style="font-weight:600;">Desde</label>
+                <input class="form-control" type="date" name="desde" value="@desde" />
+            </div>
+
+            <div class="col-6 col-md-2">
+                <label class="form-label" style="font-weight:600;">Hasta</label>
+                <input class="form-control" type="date" name="hasta" value="@hasta" />
+            </div>
+
+            <div class="col-12 col-md-1 d-grid">
+                <button class="btn btn-dark" type="submit">Filtrar</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="page-section mt-3">
+        <div class="cardx table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width:110px;">Solicitud</th>
+                        <th style="width:110px;">Venta</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th style="width:180px;">Fecha</th>
+                        <th style="width:220px;">Estado</th>
+                        <th style="width:220px; text-align:right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var s in Model)
+                        {
+                            <tr>
+                                <td>#@s.IdSolicitud</td>
+                                <td>#@s.IdVenta</td>
+                                <td>@s.Cliente</td>
+                                <td>@s.Producto</td>
+                                <td>@s.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <span class="badge-pill badge-ok">@s.Estado</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                        <a class="btn btn-outline-success btn-sm" href="@Url.Action("Evaluar", "Garantias", new { id = s.IdSolicitud })" title="Evaluar">
+                                            <i class="bi bi-clipboard-check"></i>
+                                        </a>
+                                        <a class="btn btn-outline-primary btn-sm" href="@Url.Action("Cerrar", "Garantias", new { id = s.IdSolicitud })" title="Cerrar">
+                                            <i class="bi bi-flag"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted" style="padding:18px;">No hay solicitudes.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @{
+            int start = Math.Max(1, current - 2);
+            int end = Math.Min(total, current + 2);
+        }
+
+        <nav aria-label="Paginación" class="mt-3">
+            <ul class="pagination">
+                <li class="page-item @(current == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { q = q, estado = estado, desde = desde, hasta = hasta, page = current - 1 })">Anterior</a>
+                </li>
+
+                @for (int i = start; i <= end; i++)
+                {
+                    <li class="page-item @(i == current ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { q = q, estado = estado, desde = desde, hasta = hasta, page = i })">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(current >= total ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { q = q, estado = estado, desde = desde, hasta = hasta, page = current + 1 })">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

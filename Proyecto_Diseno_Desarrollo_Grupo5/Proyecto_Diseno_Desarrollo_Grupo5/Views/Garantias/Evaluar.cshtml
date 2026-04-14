@@ -1,0 +1,55 @@
+@model Proyecto_Diseno_Desarrollo_Grupo5.Models.Garantias.SolicitudGarantiaEvaluarVM
+@{
+    ViewBag.Title = "Evaluar garantía";
+    Layout = "~/Views/Shared/_LayoutCliente.cshtml";
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+}
+
+<div class="container" style="max-width:900px; padding-top:30px;">
+
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h2 class="page-title">Evaluar solicitud</h2>
+            <div class="page-subtitle">Técnico: resultado y observaciones</div>
+        </div>
+        <a class="btn btn-outline-secondary" href="@Url.Action("Index","Garantias")">Volver</a>
+    </div>
+
+    <div class="page-section mb-3">
+        <div class="row g-2">
+            <div class="col-6"><b>Solicitud:</b> #@Model.IdSolicitud</div>
+            <div class="col-6"><b>Venta:</b> #@Model.IdVenta</div>
+            <div class="col-12"><b>Cliente:</b> @Model.Cliente</div>
+            <div class="col-12"><b>Producto:</b> @Model.Producto</div>
+            <div class="col-12"><b>Fecha:</b> @Model.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")</div>
+        </div>
+    </div>
+
+    <div class="page-section">
+        @using (Html.BeginForm("Evaluar", "Garantias", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.IdSolicitud)
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label" style="font-weight:700;">Resultado</label>
+                    @Html.DropDownListFor(m => m.Estado, Model.Estados, "Seleccione...", new { @class = "form-select", required = "required" })
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label" style="font-weight:700;">Observaciones</label>
+                    @Html.TextAreaFor(m => m.ObservacionesTecnicas, 4, 40, new { @class = "form-control", placeholder = "Detalle técnico / justificación..." })
+                </div>
+
+                <div class="col-12 d-flex justify-content-end gap-2">
+                    <a class="btn btn-light" href="@Url.Action("Index","Garantias")">Cancelar</a>
+                    <button class="btn btn-primary btn-primary-pill" type="submit">Guardar evaluación</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
