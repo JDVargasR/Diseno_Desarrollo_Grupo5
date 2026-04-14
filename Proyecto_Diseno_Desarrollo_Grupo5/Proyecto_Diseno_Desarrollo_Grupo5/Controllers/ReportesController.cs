@@ -47,7 +47,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             // Obtener todos los desperdicios en el rango de fechas
             var desperdicios = db.DESPERDICIOS_MATERIAL
-                .Where(d => d.FECHA >= fechaInicio && d.FECHA <= fechaFinAjustada && d.ORIGEN == "VENTA")
+                .Where(d => d.FECHA >= fechaInicio && d.FECHA <= fechaFinAjustada)
                 .Include(d => d.MATERIALES)
                 .Include(d => d.PRODUCTOS)
                 .ToList();
@@ -90,8 +90,20 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 .OrderByDescending(d => d.TotalDesperdiciado)
                 .ToList();
 
+            // Desperdicios por origen de transaccion
+            vm.DesperdiciosPorOrigen = desperdicios
+                .GroupBy(d => string.IsNullOrWhiteSpace(d.ORIGEN) ? "SIN ORIGEN" : d.ORIGEN.Trim())
+                .Select(g => new DesperdicioOrigenVM
+                {
+                    Origen = g.Key,
+                    TotalDesperdiciado = g.Sum(d => d.CANTIDAD_DESPERDICIADA),
+                    CantidadTransacciones = g.Count()
+                })
+                .OrderByDescending(o => o.TotalDesperdiciado)
+                .ToList();
+
             // Desperdicios por Día
-            vm.DesperdiciosPorDia = desperdicios
+            var resumenPorDia = desperdicios
                 .GroupBy(d => d.FECHA.Date)
                 .Select(g => new DesperdicioDiaVM
                 {
@@ -99,8 +111,30 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     TotalDesperdiciado = g.Sum(d => d.CANTIDAD_DESPERDICIADA),
                     CantidadTransacciones = g.Count()
                 })
-                .OrderBy(d => d.Fecha)
-                .ToList();
+                .ToDictionary(d => d.Fecha, d => d);
+
+            vm.DesperdiciosPorDia = new System.Collections.Generic.List<DesperdicioDiaVM>();
+            var fechaCursor = fechaInicio.Date;
+            var fechaLimite = fechaFin.Date;
+
+            while (fechaCursor <= fechaLimite)
+            {
+                if (resumenPorDia.ContainsKey(fechaCursor))
+                {
+                    vm.DesperdiciosPorDia.Add(resumenPorDia[fechaCursor]);
+                }
+                else
+                {
+                    vm.DesperdiciosPorDia.Add(new DesperdicioDiaVM
+                    {
+                        Fecha = fechaCursor,
+                        TotalDesperdiciado = 0,
+                        CantidadTransacciones = 0
+                    });
+                }
+
+                fechaCursor = fechaCursor.AddDays(1);
+            }
 
             // Productos con alto desperdicio
             var totalPorProducto = desperdicios
@@ -140,9 +174,10 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             var fechaFinAjustada = fechaFin.Value.Date.AddDays(1).AddSeconds(-1);
 
             var desperdicios = db.DESPERDICIOS_MATERIAL
-                .Where(d => d.FECHA >= fechaInicio && d.FECHA <= fechaFinAjustada && d.ORIGEN == "VENTA")
+                .Where(d => d.FECHA >= fechaInicio && d.FECHA <= fechaFinAjustada)
                 .Include(d => d.MATERIALES)
                 .Include(d => d.PRODUCTOS)
+                .Include(d => d.PRODUCTOS.CATEGORIAS)
                 .Include(d => d.USUARIOS)
                 .OrderByDescending(d => d.FECHA)
                 .ToList();
@@ -154,7 +189,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     Fecha = d.FECHA,
                     Material = d.MATERIALES?.NOMBRE ?? "Sin material",
                     CantidadDesperdiciada = d.CANTIDAD_DESPERDICIADA,
-                    Unidad = d.MATERIALES?.TIPO ?? "",
+                    Unidad = d.PRODUCTOS?.CATEGORIAS?.NOMBRE ?? d.MATERIALES?.TIPO ?? "",
                     Producto = d.PRODUCTOS?.NOMBRE ?? "Sin producto",
                     IdVenta = d.ID_VENTA,
                     Motivo = d.MOTIVO ?? "No especificado",
@@ -204,6 +239,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     nombre = m.NombreMaterial,
                     cantidad = m.TotalDesperdiciado,
                     unidad = m.Unidad
+                }),
+                porOrigen = vm.DesperdiciosPorOrigen.Select(o => new
+                {
+                    origen = o.Origen,
+                    cantidad = o.TotalDesperdiciado,
+                    transacciones = o.CantidadTransacciones
                 }),
                 porDia = vm.DesperdiciosPorDia.Select(d => new
                 {

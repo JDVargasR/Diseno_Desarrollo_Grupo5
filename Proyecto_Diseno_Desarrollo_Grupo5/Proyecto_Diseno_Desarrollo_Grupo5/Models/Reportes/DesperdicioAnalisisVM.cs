@@ -19,6 +19,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models.Reportes
         // Por Material
         public List<DesperdicioMaterialVM> DesperdiciosPorMaterial { get; set; }
 
+        // Por Origen de transaccion
+        public List<DesperdicioOrigenVM> DesperdiciosPorOrigen { get; set; }
+
         // Por Día
         public List<DesperdicioDiaVM> DesperdiciosPorDia { get; set; }
 
@@ -29,6 +32,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models.Reportes
         {
             DesperdiciosPorProducto = new List<DesperdicioProductoVM>();
             DesperdiciosPorMaterial = new List<DesperdicioMaterialVM>();
+            DesperdiciosPorOrigen = new List<DesperdicioOrigenVM>();
             DesperdiciosPorDia = new List<DesperdicioDiaVM>();
             ProductosAltoDesperdicio = new List<ProductoAltoDesperdicioVM>();
         }
@@ -55,6 +59,13 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models.Reportes
     public class DesperdicioDiaVM
     {
         public DateTime Fecha { get; set; }
+        public decimal TotalDesperdiciado { get; set; }
+        public int CantidadTransacciones { get; set; }
+    }
+
+    public class DesperdicioOrigenVM
+    {
+        public string Origen { get; set; }
         public decimal TotalDesperdiciado { get; set; }
         public int CantidadTransacciones { get; set; }
     }

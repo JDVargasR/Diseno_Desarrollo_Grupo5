@@ -59,13 +59,12 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Fecha</th>
-                                        <th>Material</th>
+                                        <th>Categoria</th>
                                         <th>Cantidad</th>
                                         <th>Producto</th>
                                         <th>Venta #</th>
                                         <th>Usuario</th>
                                         <th>Motivo</th>
-                                        <th>Reutilizable</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -76,9 +75,7 @@
                                                 <small>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</small>
                                             </td>
                                             <td>
-                                                <strong>@item.Material</strong>
-                                                <br />
-                                                <small class="text-muted">@item.Unidad</small>
+                                                <strong>@(string.IsNullOrWhiteSpace(item.Unidad) ? "Sin categoria" : item.Unidad)</strong>
                                             </td>
                                             <td>
                                                 <span class="badge bg-danger">@item.CantidadDesperdiciada.ToString("F2")</span>
@@ -97,11 +94,6 @@
                                             <td>@item.Usuario</td>
                                             <td>
                                                 <small>@item.Motivo</small>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-@(item.Reutilizable == "Si" ? "success" : "secondary")">
-                                                    @item.Reutilizable
-                                                </span>
                                             </td>
                                         </tr>
                                     }

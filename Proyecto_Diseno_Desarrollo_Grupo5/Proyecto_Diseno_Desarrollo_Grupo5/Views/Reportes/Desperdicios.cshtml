@@ -94,7 +94,7 @@
                 <div class="card-header bg-primary text-white">
                     <strong><i class="bi bi-pie-chart"></i> Desperdicios por Producto</strong>
                 </div>
-                <div class="card-body">
+                <div class="card-body chart-body">
                     <canvas id="chartPorProducto" height="300"></canvas>
                 </div>
             </div>
@@ -102,9 +102,9 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <strong><i class="bi bi-bar-chart"></i> Desperdicios por Material</strong>
+                    <strong><i class="bi bi-bar-chart"></i> Desperdicios por Tipo de Transaccion</strong>
                 </div>
-                <div class="card-body">
+                <div class="card-body chart-body">
                     <canvas id="chartPorMaterial" height="300"></canvas>
                 </div>
             </div>
@@ -117,7 +117,7 @@
                 <div class="card-header bg-success text-white">
                     <strong><i class="bi bi-graph-up"></i> Tendencia Diaria de Desperdicios</strong>
                 </div>
-                <div class="card-body">
+                <div class="card-body chart-body">
                     <canvas id="chartPorDia" height="100"></canvas>
                 </div>
             </div>
@@ -169,8 +169,8 @@
 <script>
     // Datos desde el servidor
     var datosProductos = @Html.Raw(Json.Encode(Model.DesperdiciosPorProducto.Select(p => new { p.NombreProducto, p.TotalDesperdiciado }).ToList()));
-    var datosMateriales = @Html.Raw(Json.Encode(Model.DesperdiciosPorMaterial.Select(m => new { m.NombreMaterial, m.TotalDesperdiciado }).ToList()));
-    var datosDias = @Html.Raw(Json.Encode(Model.DesperdiciosPorDia.Select(d => new { d.Fecha, d.TotalDesperdiciado }).ToList()));
+    var datosOrigen = @Html.Raw(Json.Encode(Model.DesperdiciosPorOrigen.Select(o => new { o.Origen, o.TotalDesperdiciado, o.CantidadTransacciones }).ToList()));
+    var datosDias = @Html.Raw(Json.Encode(Model.DesperdiciosPorDia.Select(d => new { Fecha = d.Fecha.ToString("yyyy-MM-dd"), d.TotalDesperdiciado }).ToList()));
 
     // Colores
     const coloresPrimarios = [
@@ -192,8 +192,15 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: { left: 20, right: 20, top: 10, bottom: 10 }
+                },
                 plugins: {
-                    legend: { position: 'bottom' },
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#FFFFFF' }
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (context) {
@@ -206,30 +213,50 @@
         });
     }
 
-    // Grafico Materiales (Bar)
-    if (datosMateriales.length > 0) {
+    // Grafico Origenes (Bar)
+    if (datosOrigen.length > 0) {
         const ctxMaterial = document.getElementById('chartPorMaterial').getContext('2d');
         new Chart(ctxMaterial, {
             type: 'bar',
             data: {
-                labels: datosMateriales.map(m => m.NombreMaterial || 'Sin nombre'),
+                labels: datosOrigen.map(o => o.Origen || 'SIN ORIGEN'),
                 datasets: [{
                     label: 'Cantidad Desperdiciada',
-                    data: datosMateriales.map(m => m.TotalDesperdiciado || 0),
-                    backgroundColor: '#FF6384'
+                    data: datosOrigen.map(o => o.TotalDesperdiciado || 0),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                    borderRadius: 6,
+                    maxBarThickness: 28
                 }]
             },
             options: {
                 indexAxis: 'y',
                 responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: { left: 22, right: 22, top: 10, bottom: 10 }
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function (context) {
                                 return context.parsed.x.toFixed(2) + ' unidades';
+                            },
+                            afterLabel: function (context) {
+                                var item = datosOrigen[context.dataIndex];
+                                return 'Transacciones: ' + (item ? item.CantidadTransacciones : 0);
                             }
                         }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#FFFFFF' },
+                        grid: { color: 'rgba(255,255,255,0.15)' }
+                    },
+                    y: {
+                        ticks: { color: '#FFFFFF' },
+                        grid: { color: 'rgba(255,255,255,0.10)' }
                     }
                 }
             }
@@ -242,26 +269,50 @@
         new Chart(ctxDia, {
             type: 'line',
             data: {
-                labels: datosDias.map(d => new Date(d.Fecha).toLocaleDateString('es-CR')),
+                labels: datosDias.map(d => {
+                    var fecha = new Date(d.Fecha + 'T00:00:00');
+                    return isNaN(fecha.getTime()) ? d.Fecha : fecha.toLocaleDateString('es-CR');
+                }),
                 datasets: [{
                     label: 'Desperdicio (unidades)',
                     data: datosDias.map(d => d.TotalDesperdiciado || 0),
-                    borderColor: '#36A2EB',
-                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    borderColor: '#22D3EE',
+                    backgroundColor: 'rgba(34, 211, 238, 0.20)',
+                    pointBackgroundColor: '#FFFFFF',
+                    pointBorderColor: '#22D3EE',
+                    pointRadius: 4,
                     tension: 0.3,
                     fill: true
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: { left: 20, right: 20, top: 10, bottom: 10 }
+                },
                 plugins: {
-                    legend: { display: true },
+                    legend: {
+                        display: true,
+                        labels: { color: '#FFFFFF' }
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (context) {
                                 return context.parsed.y.toFixed(2) + ' unidades';
                             }
                         }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#FFFFFF' },
+                        grid: { color: 'rgba(255,255,255,0.12)' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#FFFFFF' },
+                        grid: { color: 'rgba(255,255,255,0.12)' }
                     }
                 }
             }
@@ -278,9 +329,23 @@
         font-weight: 600;
     }
 
-    .card.border-warning table tbody td,
-    .card.border-warning table thead th {
+    .chart-body {
+        padding: 18px 26px;
+        min-height: 320px;
+    }
+
+    #chartPorDia {
+        min-height: 260px;
+    }
+
+    .card.border-warning table tbody td {
         color: #1f2937 !important;
+    }
+
+    .card.border-warning table thead th {
+        color: #FFFFFF !important;
+        background-color: #111827 !important;
+        border-color: #1f2937 !important;
     }
 
     .card.border-warning .badge.bg-warning {
