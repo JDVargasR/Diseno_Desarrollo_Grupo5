@@ -387,6 +387,7 @@
     <Content Include="Views\Reportes\DesperdiciosDetalle.cshtml" />
     <Content Include="Views\Reportes\Index.cshtml" />
     <Content Include="Views\Ventas\Desperdicios.cshtml" />
+    <Content Include="Views\Home\ClienteCatalogo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

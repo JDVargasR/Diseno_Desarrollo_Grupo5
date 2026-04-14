@@ -19,6 +19,36 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             return View();
         }
 
+        [RolAuthorize(3)]
+        public ActionResult Productos()
+        {
+            var estadoActivoId = db.ESTADO
+                .Where(e => e.NOMBRE == "Activo")
+                .Select(e => e.ID_ESTADO)
+                .FirstOrDefault();
+
+            var query = db.PRODUCTOS.AsQueryable();
+
+            if (estadoActivoId > 0)
+            {
+                query = query.Where(p => p.ID_ESTADO == estadoActivoId);
+            }
+
+            var productosCliente = query
+                .OrderBy(p => p.NOMBRE)
+                .Take(80)
+                .Select(p => new ProductoFilaVM
+                {
+                    ID_PRODUCTO = p.ID_PRODUCTO,
+                    NOMBRE = p.NOMBRE,
+                    PRECIO_VENTA = p.PRECIO_VENTA,
+                    CATEGORIA = p.CATEGORIAS != null ? p.CATEGORIAS.NOMBRE : "Sin categoria"
+                })
+                .ToList();
+
+            return View("ClienteCatalogo", productosCliente);
+        }
+
         [RolAuthorize(1)]
         public ActionResult Bitacora(string q = "", string accion = "", string modulo = "", string resultado = "", string sort = "fecha", string dir = "desc", int page = 1, int pageSize = 10)
         {

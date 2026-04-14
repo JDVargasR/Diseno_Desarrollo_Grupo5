@@ -1,0 +1,300 @@
+@model List<Proyecto_Diseno_Desarrollo_Grupo5.Models.ProductoFilaVM>
+
+@{
+    ViewBag.Title = "Catalogo de Productos";
+}
+
+@section styles {
+    <style>
+        .cliente-catalogo-wrap {
+            width: min(1180px, 92vw);
+            margin: 24px auto;
+        }
+
+        .cliente-catalogo-card {
+            background: rgba(17, 24, 39, 0.55);
+            border: 1px solid rgba(148, 163, 184, .12);
+            border-radius: 14px;
+        }
+
+        .cliente-catalogo-table th,
+        .cliente-catalogo-table td {
+            vertical-align: middle;
+        }
+
+        .cliente-catalogo-table thead th {
+            color: #cbd5e1;
+            font-weight: 700;
+            border-color: rgba(148, 163, 184, .15);
+        }
+
+        .cliente-catalogo-table tbody td {
+            color: #e2e8f0;
+            border-color: rgba(148, 163, 184, .12);
+        }
+
+        .cliente-catalogo-table tbody tr:hover {
+            background: rgba(16, 185, 129, 0.06);
+        }
+
+        .panel-cotizacion-vacio {
+            color: #94a3b8;
+            font-size: 13px;
+            padding: 8px 0;
+        }
+
+        .panel-cotizacion-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px dashed rgba(148, 163, 184, .2);
+            padding: 8px 0;
+            color: #e2e8f0;
+        }
+
+        .panel-cotizacion-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .btn-cantidad {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid rgba(148, 163, 184, .25);
+            background: rgba(15, 23, 42, .5);
+            color: #e2e8f0;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .btn-cantidad:hover {
+            background: rgba(16, 185, 129, .2);
+            border-color: rgba(16, 185, 129, .45);
+        }
+
+        .btn-eliminar-item {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, .35);
+            background: rgba(239, 68, 68, .10);
+            color: #fecaca;
+        }
+
+        .btn-eliminar-item:hover {
+            background: rgba(239, 68, 68, .25);
+        }
+
+        .cantidad-badge {
+            min-width: 34px;
+            text-align: center;
+            font-weight: 800;
+            color: #cbd5e1;
+        }
+
+        .panel-cotizacion-total {
+            font-weight: 800;
+            color: #6ee7b7;
+        }
+    </style>
+}
+
+<div class="cliente-catalogo-wrap">
+    <div class="mb-3">
+        <h2 class="mb-1"><i class="bi bi-box-seam"></i> Catalogo de productos</h2>
+        <p class="text-muted mb-0">Selecciona productos para armar una solicitud rapida de cotizacion.</p>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-lg-8">
+            <div class="card cliente-catalogo-card">
+                <div class="card-header bg-primary text-white fw-bold">
+                    Productos disponibles
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 cliente-catalogo-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Precio</th>
+                                    <th>Categoria</th>
+                                    <th class="text-end">Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Count > 0)
+                                {
+                                    foreach (var p in Model)
+                                    {
+                                        <tr>
+                                            <td>@p.NOMBRE</td>
+                                            <td>@p.PRECIO_VENTA.ToString("C", new System.Globalization.CultureInfo("es-CR"))</td>
+                                            <td>@(string.IsNullOrWhiteSpace(p.CATEGORIA) ? "Sin categoria" : p.CATEGORIA)</td>
+                                            <td class="text-end">
+                                                <button type="button"
+                                                        class="btn btn-sm btn-success js-agregar-cotizacion"
+                                                        data-id="@p.ID_PRODUCTO"
+                                                        data-nombre="@p.NOMBRE"
+                                                        data-precio="@p.PRECIO_VENTA">
+                                                    <i class="bi bi-plus-circle"></i> Agregar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">No hay productos disponibles.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card cliente-catalogo-card">
+                <div class="card-header bg-info text-white fw-bold">
+                    Panel de venta (cotizacion)
+                </div>
+                <div class="card-body">
+                    <div id="panelCotizacionItems" class="mb-3">
+                        <div class="panel-cotizacion-vacio">No hay productos agregados.</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Total estimado</span>
+                        <span id="panelCotizacionTotal" class="panel-cotizacion-total">₡0,00</span>
+                    </div>
+
+                    <button id="btnSolicitarCotizacion" type="button" class="btn btn-primary w-100">
+                        <i class="bi bi-send"></i> Solicitar cotizacion
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        (function () {
+            var items = {};
+            var panelItems = document.getElementById('panelCotizacionItems');
+            var panelTotal = document.getElementById('panelCotizacionTotal');
+            var addButtons = document.querySelectorAll('.js-agregar-cotizacion');
+            var btnSolicitar = document.getElementById('btnSolicitarCotizacion');
+            var landingUrl = '@Url.Action("Index", "Home")';
+
+            function formatoCRC(valor) {
+                return new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(valor || 0);
+            }
+
+            function renderPanel() {
+                var keys = Object.keys(items);
+                if (keys.length === 0) {
+                    panelItems.innerHTML = '<div class="panel-cotizacion-vacio">No hay productos agregados.</div>';
+                    panelTotal.textContent = formatoCRC(0);
+                    return;
+                }
+
+                var total = 0;
+                var html = '';
+                for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    var item = items[key];
+                    var subtotal = item.precio * item.cantidad;
+                    total += subtotal;
+
+                    html += '<div class="panel-cotizacion-item">'
+                        + '<div>'
+                        + '<strong>' + item.nombre + '</strong>'
+                        + '<div class="panel-cotizacion-controls">'
+                        + '<button type="button" class="btn-cantidad js-restar" data-id="' + key + '">-</button>'
+                        + '<span class="cantidad-badge">' + item.cantidad + '</span>'
+                        + '<button type="button" class="btn-cantidad js-sumar" data-id="' + key + '">+</button>'
+                        + '<button type="button" class="btn-eliminar-item js-eliminar" data-id="' + key + '" title="Eliminar"><i class="bi bi-trash"></i></button>'
+                        + '</div>'
+                        + '</div>'
+                        + '<div class="text-end">' + formatoCRC(subtotal) + '</div>'
+                        + '</div>';
+                }
+
+                panelItems.innerHTML = html;
+                panelTotal.textContent = formatoCRC(total);
+            }
+
+            for (var i = 0; i < addButtons.length; i++) {
+                addButtons[i].addEventListener('click', function () {
+                    var id = this.getAttribute('data-id');
+                    var nombre = this.getAttribute('data-nombre');
+                    var precio = parseFloat(this.getAttribute('data-precio')) || 0;
+
+                    if (!items[id]) {
+                        items[id] = { nombre: nombre, precio: precio, cantidad: 0 };
+                    }
+
+                    items[id].cantidad += 1;
+                    renderPanel();
+                });
+            }
+
+            panelItems.addEventListener('click', function (e) {
+                var btn = e.target.closest('button');
+                if (!btn) return;
+
+                var id = btn.getAttribute('data-id');
+                if (!id || !items[id]) return;
+
+                if (btn.classList.contains('js-sumar')) {
+                    items[id].cantidad += 1;
+                } else if (btn.classList.contains('js-restar')) {
+                    items[id].cantidad -= 1;
+                    if (items[id].cantidad <= 0) {
+                        delete items[id];
+                    }
+                } else if (btn.classList.contains('js-eliminar')) {
+                    delete items[id];
+                }
+
+                renderPanel();
+            });
+
+            btnSolicitar.addEventListener('click', function () {
+                if (Object.keys(items).length === 0) {
+                    if (window.Swal) {
+                        Swal.fire('Sin productos', 'Agrega al menos un producto para solicitar la cotizacion.', 'warning');
+                    } else {
+                        alert('Agrega al menos un producto para solicitar la cotizacion.');
+                    }
+                    return;
+                }
+
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Solicitud enviada',
+                        text: 'Pronto seras contactado por uno de nuestros asesores.'
+                    }).then(function () {
+                        window.location.href = landingUrl;
+                    });
+                } else {
+                    alert('Pronto seras contactado por uno de nuestros asesores.');
+                    window.location.href = landingUrl;
+                }
+
+                items = {};
+                renderPanel();
+            });
+
+            renderPanel();
+        })();
+    </script>
+}
