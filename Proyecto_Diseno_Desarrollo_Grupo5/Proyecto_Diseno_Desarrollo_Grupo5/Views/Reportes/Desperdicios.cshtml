@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
-<div class="container-fluid mt-4">
+<div class="lp-container mt-4 desperdicios-analisis-page">
     <div class="row mb-4">
         <div class="col-md-12">
             <h2><i class="bi bi-file-earmark-bar-graph"></i> Analisis de Desperdicios</h2>
@@ -321,34 +321,39 @@
 </script>
 
 <style>
-    .card {
+    .desperdicios-analisis-page {
+        margin-top: 1.5rem;
+    }
+
+    .desperdicios-analisis-page .card {
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         border: none;
     }
-    .card-header {
+
+    .desperdicios-analisis-page .card-header {
         font-weight: 600;
     }
 
-    .chart-body {
+    .desperdicios-analisis-page .chart-body {
         padding: 18px 26px;
         min-height: 320px;
     }
 
-    #chartPorDia {
+    .desperdicios-analisis-page #chartPorDia {
         min-height: 260px;
     }
 
-    .card.border-warning table tbody td {
+    .desperdicios-analisis-page .card.border-warning table tbody td {
         color: #1f2937 !important;
     }
 
-    .card.border-warning table thead th {
+    .desperdicios-analisis-page .card.border-warning table thead th {
         color: #FFFFFF !important;
         background-color: #111827 !important;
         border-color: #1f2937 !important;
     }
 
-    .card.border-warning .badge.bg-warning {
+    .desperdicios-analisis-page .card.border-warning .badge.bg-warning {
         color: #111827;
     }
 </style>
