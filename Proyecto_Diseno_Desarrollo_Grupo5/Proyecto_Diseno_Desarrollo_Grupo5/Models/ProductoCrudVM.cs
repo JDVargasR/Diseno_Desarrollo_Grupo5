@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
@@ -6,10 +7,18 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
     public class ProductoCrudVM
     {
         public int ID_PRODUCTO { get; set; }
+        
+        [Required]
+        [StringLength(140)]
         public string NOMBRE { get; set; }
+        
+        // Limitar a máximo 10 000 000 y mostrar mensaje claro
+        [Range(0.01, 10000000, ErrorMessage = "El precio de venta debe estar entre ₡0.01 y ₡10 000 000.")]
         public decimal PRECIO_VENTA { get; set; }
         public int ID_CATEGORIA { get; set; }
         public int ID_ESTADO { get; set; }
+        
+        [Range(0, 100)]
         public decimal PORC_DESPERDICIO { get; set; }
 
         public List<ProductoFilaVM> Productos { get; set; }

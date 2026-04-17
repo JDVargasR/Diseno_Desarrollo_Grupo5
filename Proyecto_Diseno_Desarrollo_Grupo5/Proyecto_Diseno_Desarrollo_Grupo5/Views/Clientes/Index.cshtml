@@ -30,7 +30,6 @@
         <div class="alert alert-danger cardx" style="padding:12px 14px;">@TempData["ERR"]</div>
     }
 
-
     <div class="page-section">
         <div class="page-section mb-3">
             @using (Html.BeginForm("Index", "Clientes", FormMethod.Get))
@@ -39,9 +38,9 @@
                     <div class="col-md-9">
                         <label class="form-label" style="font-weight:600;">Buscar</label>
                         <input type="text" name="q" value="@Model.Q"
-                               class="form-control" placeholder="Nombre, Telefono o Correo" />
+                               class="form-control" placeholder="Nombre, Telefono o Correo"
+                               maxlength="100" />
                     </div>
-
                     <div class="col-md-3">
                         <button type="submit" class="btn btn-dark w-100"
                                 style="height:44px; border-radius:10px; font-weight:600;">
@@ -52,210 +51,248 @@
                 <input type="hidden" name="page" value="@Model.Page" />
             }
         </div>
-
     </div>
 
-<div class="page-section mt-3">
-    <div class="cardx table-wrap">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        <a class="sort-link"
-                           href="@Url.Action("Index", new { q = Model.Q, sortOrder = ViewBag.NameSortParm, page = Model.Page })">
-                            Cliente
-                            <span class="sort-ico">
-                                @(Request["sortOrder"] == "name_desc" ? "⬇" : "⬆")
-                            </span>
-                        </a>
-                    </th>
-                    <th style="width:150px;">Teléfono</th>
-                    <th>Correo</th>
-                    <th>Dirección</th>
-                    <th style="width:130px;">Estado</th>
-                    <th style="width:240px; text-align:right;">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var c in Model.Clientes)
-                {
+    <div class="page-section mt-3">
+        <div class="cardx table-wrap">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>
-                            <div class="chip">
-                                <div>
-                                    <div style="font-weight:900;">@c.NOMBRE</div>
+                        <th>
+                            <a class="sort-link"
+                               href="@Url.Action("Index", new { q = Model.Q, sortOrder = ViewBag.NameSortParm, page = Model.Page })">
+                                Cliente
+                                <span class="sort-ico">
+                                    @(Request["sortOrder"] == "name_desc" ? "⬇" : "⬆")
+                                </span>
+                            </a>
+                        </th>
+                        <th style="width:150px;">Teléfono</th>
+                        <th>Correo</th>
+                        <th>Dirección</th>
+                        <th style="width:130px;">Estado</th>
+                        <th style="width:240px; text-align:right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Clientes)
+                    {
+                        <tr>
+                            <td>
+                                <div class="chip">
+                                    <div>
+                                        <div style="font-weight:900;">@c.NOMBRE</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td>@c.TELEFONO</td>
-                        <td>@c.CORREO</td>
-                        <td>@c.DIRECCION</td>
-                        <td>
-                            <span class="badge-pill @(c.ID_ESTADO == 1 ? "badge-ok" : "badge-off")">
-                                @(c.ID_ESTADO == 1 ? "ACTIVO" : "INACTIVO")
-                            </span>
-                        </td>
+                            </td>
+                            <td>@c.TELEFONO</td>
+                            <td>@c.CORREO</td>
+                            <td>@c.DIRECCION</td>
+                            <td>
+                                <span class="badge-pill @(c.ID_ESTADO == 1 ? "badge-ok" : "badge-off")">
+                                    @(c.ID_ESTADO == 1 ? "ACTIVO" : "INACTIVO")
+                                </span>
+                            </td>
 
-                        <td class="text-end" style="width:100px;">
-                            <button class="btn btn-outline-primary btn-sm me-1"
-                                    title="Editar"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalEditar"
-                                    onclick="cargarClienteEditar('@c.ID_CLIENTE',
+                            <td class="text-end" style="width:100px;">
+                                <button class="btn btn-outline-primary btn-sm me-1"
+                                        title="Editar"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEditar"
+                                        onclick="cargarClienteEditar('@c.ID_CLIENTE',
               '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(c.NOMBRE ?? ""))',
               '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(c.TELEFONO ?? ""))',
               '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(c.CORREO ?? ""))',
               '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(c.DIRECCION ?? ""))',
               '@c.ID_ESTADO')">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-
-                            @using (Html.BeginForm("ToggleEstado", "Clientes", FormMethod.Post, new { style = "display:inline;" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@c.ID_CLIENTE" />
-                                <input type="hidden" name="q" value="@Model.Q" />
-                                <input type="hidden" name="sortOrder" value="@Request["sortOrder"]" />
-                                <input type="hidden" name="page" value="@Model.Page" />
-
-                                var esActivo = (c.ID_ESTADO == 1);
-                                <input type="hidden" name="accionBitacora" value="@(esActivo ? "DESACTIVAR" : "ACTIVAR")" />
-
-                                <button type="submit"
-                                        class="btn btn-outline-danger btn-sm"
-                                        title="@(esActivo ? "Inactivar" : "Activar")">
-                                    <i class="bi @(esActivo ? "bi-person-x" : "bi-person-check")"></i>
+                                    <i class="bi bi-pencil-square"></i>
                                 </button>
-                            }
-                        </td>
-                    </tr>
+
+                                @using (Html.BeginForm("ToggleEstado", "Clientes", FormMethod.Post, new { style = "display:inline;" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.ID_CLIENTE" />
+                                    <input type="hidden" name="q" value="@Model.Q" />
+                                    <input type="hidden" name="sortOrder" value="@Request["sortOrder"]" />
+                                    <input type="hidden" name="page" value="@Model.Page" />
+
+                                    var esActivo = (c.ID_ESTADO == 1);
+                                    <input type="hidden" name="accionBitacora" value="@(esActivo ? "DESACTIVAR" : "ACTIVAR")" />
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-sm"
+                                            title="@(esActivo ? "Inactivar" : "Activar")">
+                                        <i class="bi @(esActivo ? "bi-person-x" : "bi-person-check")"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <nav aria-label="Paginación" class="mt-3">
+            <ul class="pagination">
+                @{
+                    var current = Model.Page;
+                    var total = Model.TotalPages;
+                    int start = Math.Max(1, current - 2);
+                    int end = Math.Min(total, current + 2);
                 }
-            </tbody>
-        </table>
-    </div>
 
-    <!-- Pagination -->
-    <nav aria-label="Paginación" class="mt-3">
-        <ul class="pagination">
-            @{
-                var current = Model.Page;
-                var total = Model.TotalPages;
-                int start = Math.Max(1, current - 2);
-                int end = Math.Min(total, current + 2);
-            }
-
-            <li class="page-item @(current == 1 ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { q = Model.Q, sortOrder = Request["sortOrder"], page = current - 1 })">Anterior</a>
-            </li>
-
-            @for (int i = start; i <= end; i++)
-            {
-                <li class="page-item @(i == current ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new { q = Model.Q, sortOrder = Request["sortOrder"], page = i })">@i</a>
+                <li class="page-item @(current == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { q = Model.Q, sortOrder = Request["sortOrder"], page = current - 1 })">Anterior</a>
                 </li>
-            }
 
-            <li class="page-item @(current >= total ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { q = Model.Q, sortOrder = Request["sortOrder"], page = current + 1 })">Siguiente</a>
-            </li>
-        </ul>
-    </nav>
-
-    <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-weight:900;">Nuevo cliente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                @using (Html.BeginForm("Create", "Clientes", FormMethod.Post))
+                @for (int i = start; i <= end; i++)
                 {
-                    @Html.AntiForgeryToken()
-
-                    <div class="modal-body">
-                        <div class="mb-2">
-                            <label class="form-label">Nombre</label>
-                            <input class="form-control" name="NOMBRE" required />
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Teléfono</label>
-                            <input class="form-control" name="TELEFONO" />
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Correo</label>
-                            <input class="form-control" name="CORREO" type="email" />
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Dirección</label>
-                            <input class="form-control" name="DIRECCION" />
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary btn-primary-pill" style="box-shadow:none;">Guardar</button>
-                    </div>
+                    <li class="page-item @(i == current ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { q = Model.Q, sortOrder = Request["sortOrder"], page = i })">@i</a>
+                    </li>
                 }
+
+                <li class="page-item @(current >= total ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { q = Model.Q, sortOrder = Request["sortOrder"], page = current + 1 })">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="font-weight:900;">Nuevo cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    @using (Html.BeginForm("Create", "Clientes", FormMethod.Post, new { id = "formCrearCliente", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="modal-body">
+                            <div id="crear-errores-cliente" class="alert alert-danger d-none" role="alert"></div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                                <input class="form-control" name="NOMBRE" id="crear_NOMBRE"
+                                       maxlength="100"
+                                       placeholder="Nombre completo del cliente" />
+                                <small class="text-muted">Máximo 100 caracteres. Solo letras y espacios.</small>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Teléfono</label>
+                                <input class="form-control" name="TELEFONO" id="crear_TELEFONO"
+                                       type="tel"
+                                       maxlength="8"
+                                       placeholder="Ej: 88887777"
+                                       inputmode="numeric" />
+                                <small class="text-muted">Solo números, exactamente 8 dígitos (si se ingresa).</small>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Correo</label>
+                                <input class="form-control" name="CORREO" id="crear_CORREO"
+                                       type="email"
+                                       maxlength="120"
+                                       placeholder="ejemplo@correo.com" />
+                                <small class="text-muted">Máximo 120 caracteres.</small>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Dirección</label>
+                                <input class="form-control" name="DIRECCION" id="crear_DIRECCION"
+                                       maxlength="200"
+                                       placeholder="Dirección del cliente" />
+                                <small class="text-muted">Máximo 200 caracteres.</small>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary btn-primary-pill"
+                                    style="box-shadow:none;"
+                                    onclick="validarYEnviarCliente('formCrearCliente','crear')">
+                                Guardar
+                            </button>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-weight:900;">Editar cliente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="font-weight:900;">Editar cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    @using (Html.BeginForm("Edit", "Clientes", FormMethod.Post, new { id = "formEditarCliente", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="modal-body">
+                            <input type="hidden" name="ID_CLIENTE" id="edit_ID_CLIENTE" />
+                            <input type="hidden" name="Q" value="@Model.Q" />
+                            <input type="hidden" name="Page" value="@Model.Page" />
+
+                            <div id="editar-errores-cliente" class="alert alert-danger d-none" role="alert"></div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                                <input class="form-control" name="NOMBRE" id="edit_NOMBRE"
+                                       maxlength="100"
+                                       placeholder="Nombre completo del cliente" />
+                                <small class="text-muted">Máximo 100 caracteres. Solo letras y espacios.</small>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Teléfono</label>
+                                <input class="form-control" name="TELEFONO" id="edit_TELEFONO"
+                                       type="tel"
+                                       maxlength="8"
+                                       placeholder="Ej: 88887777"
+                                       inputmode="numeric" />
+                                <small class="text-muted">Solo números, exactamente 8 dígitos (si se ingresa).</small>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Correo</label>
+                                <input class="form-control" name="CORREO" id="edit_CORREO"
+                                       type="email"
+                                       maxlength="120"
+                                       placeholder="ejemplo@correo.com" />
+                                <small class="text-muted">Máximo 120 caracteres.</small>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Dirección</label>
+                                <input class="form-control" name="DIRECCION" id="edit_DIRECCION"
+                                       maxlength="200"
+                                       placeholder="Dirección del cliente" />
+                                <small class="text-muted">Máximo 200 caracteres.</small>
+                            </div>
+
+                            <input type="hidden" name="ID_ESTADO" id="edit_ID_ESTADO" />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary btn-primary-pill"
+                                    style="box-shadow:none;"
+                                    onclick="validarYEnviarCliente('formEditarCliente','editar')">
+                                Guardar cambios
+                            </button>
+                        </div>
+                    }
                 </div>
-
-                @using (Html.BeginForm("Edit", "Clientes", FormMethod.Post))
-                {
-                    @Html.AntiForgeryToken()
-
-                    <div class="modal-body">
-                        <input type="hidden" name="ID_CLIENTE" id="edit_ID_CLIENTE" />
-                        <input type="hidden" name="Q" value="@Model.Q" />
-                        <input type="hidden" name="Page" value="@Model.Page" />
-
-                        <div class="mb-2">
-                            <label class="form-label">Nombre</label>
-                            <input class="form-control" name="NOMBRE" id="edit_NOMBRE" required />
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Teléfono</label>
-                            <input class="form-control" name="TELEFONO" id="edit_TELEFONO" />
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Correo</label>
-                            <input class="form-control" name="CORREO" id="edit_CORREO" type="email" />
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Dirección</label>
-                            <input class="form-control" name="DIRECCION" id="edit_DIRECCION" />
-                        </div>
-
-                        <input type="hidden" name="ID_ESTADO" id="edit_ID_ESTADO" />
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary btn-primary-pill" style="box-shadow:none;">Guardar cambios</button>
-                    </div>
-                }
             </div>
         </div>
+
     </div>
-
-
-</div>
-
 </div>
 
 <script>
@@ -266,5 +303,91 @@
         document.getElementById("edit_CORREO").value = correo;
         document.getElementById("edit_DIRECCION").value = direccion;
         document.getElementById("edit_ID_ESTADO").value = idEstado;
+        ocultarErrores('editar-errores-cliente');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalCrear = document.getElementById('modalCrear');
+        if (modalCrear) {
+            modalCrear.addEventListener('show.bs.modal', function () {
+                ocultarErrores('crear-errores-cliente');
+            });
+        }
+
+        ['crear_TELEFONO', 'edit_TELEFONO'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('keypress', function (e) {
+                    if (!/[0-9]/.test(e.key)) e.preventDefault();
+                });
+                el.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            }
+        });
+    });
+
+    function mostrarErrores(contenedorId, errores) {
+        var el = document.getElementById(contenedorId);
+        if (!el) return;
+        el.innerHTML = '<strong>Por favor corrija los siguientes errores:</strong><ul class="mb-0 mt-1">'
+            + errores.map(function (e) { return '<li>' + e + '</li>'; }).join('')
+            + '</ul>';
+        el.classList.remove('d-none');
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function ocultarErrores(contenedorId) {
+        var el = document.getElementById(contenedorId);
+        if (el) { el.innerHTML = ''; el.classList.add('d-none'); }
+    }
+
+    function validarYEnviarCliente(formId, prefijo) {
+        var errores = [];
+        var errorContenedor = prefijo === 'crear' ? 'crear-errores-cliente' : 'editar-errores-cliente';
+
+        var nombreEl = document.getElementById(prefijo === 'crear' ? 'crear_NOMBRE' : 'edit_NOMBRE');
+        var nombreVal = nombreEl ? nombreEl.value.trim() : '';
+        if (!nombreVal) {
+            errores.push('El nombre del cliente es obligatorio.');
+        } else if (nombreVal.length > 100) {
+            errores.push('El nombre no puede superar los 100 caracteres (actualmente tiene ' + nombreVal.length + ').');
+        } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/.test(nombreVal)) {
+            errores.push('El nombre solo puede contener letras y espacios, sin números ni caracteres especiales.');
+        }
+
+        var telEl = document.getElementById(prefijo === 'crear' ? 'crear_TELEFONO' : 'edit_TELEFONO');
+        var telVal = telEl ? telEl.value.trim() : '';
+        if (telVal !== '') {
+            if (!/^[0-9]+$/.test(telVal)) {
+                errores.push('El teléfono solo puede contener dígitos numéricos.');
+            } else if (telVal.length !== 8) {
+                errores.push('El teléfono debe tener exactamente 8 dígitos (actualmente tiene ' + telVal.length + ').');
+            }
+        }
+
+        var correoEl = document.getElementById(prefijo === 'crear' ? 'crear_CORREO' : 'edit_CORREO');
+        var correoVal = correoEl ? correoEl.value.trim() : '';
+        if (correoVal !== '') {
+            if (correoVal.length > 120) {
+                errores.push('El correo no puede superar los 120 caracteres.');
+            } else if (!/^[^\s]+[^\s]+\.[^\s]+$/.test(correoVal)) {
+                errores.push('El correo electrónico no tiene un formato válido (ej: usuario@dominio.com).');
+            }
+        }
+
+        var dirEl = document.getElementById(prefijo === 'crear' ? 'crear_DIRECCION' : 'edit_DIRECCION');
+        var dirVal = dirEl ? dirEl.value.trim() : '';
+        if (dirVal.length > 200) {
+            errores.push('La dirección no puede superar los 200 caracteres (actualmente tiene ' + dirVal.length + ').');
+        }
+
+        if (errores.length > 0) {
+            mostrarErrores(errorContenedor, errores);
+            return;
+        }
+
+        ocultarErrores(errorContenedor);
+        document.getElementById(formId).submit();
     }
 </script>

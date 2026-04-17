@@ -1,6 +1,7 @@
 ﻿using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
@@ -27,18 +28,20 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         // Form (Create/Edit)
         public int ID_CLIENTE { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        [StringLength(100, ErrorMessage = "El nombre no puede tener más de 100 caracteres.")]
+        [RegularExpression("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", ErrorMessage = "El nombre solo puede contener letras y espacios.")]
         public string NOMBRE { get; set; }
 
-        [StringLength(30)]
+        [StringLength(8, ErrorMessage = "El teléfono debe tener máximo 8 dígitos.")]
+        [RegularExpression(@"^[0-9]{0,8}$", ErrorMessage = "El teléfono solo puede contener números y máximo 8 dígitos.")]
         public string TELEFONO { get; set; }
 
-        [StringLength(120)]
-        [EmailAddress]
+        [StringLength(120, ErrorMessage = "El correo no puede tener más de 120 caracteres.")]
+        [EmailAddress(ErrorMessage = "Debe ingresar un correo electrónico válido.")]
         public string CORREO { get; set; }
 
-        [StringLength(200)]
+        [StringLength(200, ErrorMessage = "La dirección no puede tener más de 200 caracteres.")]
         public string DIRECCION { get; set; }
 
         public int ID_ESTADO { get; set; } = 1;

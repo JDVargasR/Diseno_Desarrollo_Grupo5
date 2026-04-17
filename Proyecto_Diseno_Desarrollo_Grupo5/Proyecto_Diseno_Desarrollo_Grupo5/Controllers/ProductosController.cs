@@ -3,7 +3,9 @@ using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
+using System.Globalization;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 {
@@ -11,7 +13,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
     {
         private DBGRUPO5Entities db = new DBGRUPO5Entities();
 
-        [RolAuthorize(1,2)]
+        [RolAuthorize(1, 2)]
         public ActionResult Index(string q = null, int page = 1, int pageSize = 10)
         {
             ViewBag.EsSoloLectura = (Session["IdRol"] ?? "").ToString() == "2";
@@ -27,7 +29,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             query = query.OrderBy(p => p.NOMBRE);
 
             var total = query.Count();
-            var skip = (Math.Max(page,1) - 1) * pageSize;
+            var skip = (Math.Max(page, 1) - 1) * pageSize;
             var items = query.Skip(skip).Take(pageSize).ToList();
 
             var vm = new ProductoCrudVM
@@ -74,13 +76,64 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             return View(vm);
         }
 
+        private bool TryParseDecimalFromRequest(string key, out decimal value)
+        {
+            value = 0m;
+            var raw = (Request[key] ?? "").Trim();
+            if (string.IsNullOrEmpty(raw)) return false;
+
+            if (decimal.TryParse(raw, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+                return true;
+            if (decimal.TryParse(raw, NumberStyles.Any, CultureInfo.CurrentCulture, out value))
+                return true;
+
+            var alt = raw.Replace(',', '.');
+            if (decimal.TryParse(alt, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+                return true;
+
+            return false;
+        }
+
+        private string ValidarCamposProducto(string nombre, decimal precio, decimal porc)
+        {
+            if (string.IsNullOrWhiteSpace(nombre))
+                return "El nombre del producto es obligatorio.";
+
+            if (nombre.Trim().Length > 140)
+                return "El nombre no puede superar los 140 caracteres.";
+
+            if (!Regex.IsMatch(nombre.Trim(), @"^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 \-_.,()]+$"))
+                return "El nombre contiene caracteres no permitidos. Use letras, números, espacios y signos básicos (-, _, ., ,).";
+
+            if (precio < 0.01m || precio > 10_000_000m)
+                return "El precio de venta debe estar entre ₡0.01 y ₡10,000,000.";
+
+            if (porc < 0m || porc > 100m)
+                return "El porcentaje de desperdicio debe estar entre 0 y 100.";
+
+            return null;
+        }
+
         [RolAuthorize(1)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ProductoCrudVM vm)
         {
-            if (string.IsNullOrWhiteSpace(vm.NOMBRE))
-                return RedirectToAction("Index");
+            TryParseDecimalFromRequest("PRECIO_VENTA", out decimal precio);
+            TryParseDecimalFromRequest("PORC_DESPERDICIO", out decimal porc);
+
+            var error = ValidarCamposProducto(vm.NOMBRE, precio, porc);
+            if (error != null)
+            {
+                TempData["ERR"] = error;
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            if (vm.ID_CATEGORIA <= 0)
+            {
+                TempData["ERR"] = "Debe seleccionar una categoría.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
 
             var estadoActivo = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Activo");
             var activoId = estadoActivo != null ? estadoActivo.ID_ESTADO : 1;
@@ -88,14 +141,15 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             var p = new PRODUCTOS
             {
                 NOMBRE = vm.NOMBRE.Trim(),
-                PRECIO_VENTA = vm.PRECIO_VENTA,
+                PRECIO_VENTA = precio,
                 ID_CATEGORIA = vm.ID_CATEGORIA,
                 ID_ESTADO = (vm.ID_ESTADO > 0 ? vm.ID_ESTADO : activoId),
-                PORC_DESPERDICIO = vm.PORC_DESPERDICIO
+                PORC_DESPERDICIO = porc
             };
 
             db.PRODUCTOS.Add(p);
             db.SaveChanges();
+            TempData["OK"] = "Producto creado correctamente.";
             return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
         }
 
@@ -104,17 +158,35 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ProductoCrudVM vm)
         {
+            bool precioParsed = TryParseDecimalFromRequest("PRECIO_VENTA", out decimal precio);
+            bool porcParsed = TryParseDecimalFromRequest("PORC_DESPERDICIO", out decimal porc);
+
+            if (!precioParsed) precio = vm.PRECIO_VENTA;
+            if (!porcParsed) porc = vm.PORC_DESPERDICIO;
+
+            var error = ValidarCamposProducto(vm.NOMBRE, precio, porc);
+            if (error != null)
+            {
+                TempData["ERR"] = error;
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            if (vm.ID_CATEGORIA <= 0)
+            {
+                TempData["ERR"] = "Debe seleccionar una categoría.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
             var p = db.PRODUCTOS.Find(vm.ID_PRODUCTO);
             if (p == null) return RedirectToAction("Index");
 
-            p.NOMBRE = (vm.NOMBRE ?? "").Trim();
-            p.PRECIO_VENTA = vm.PRECIO_VENTA;
+            p.NOMBRE = vm.NOMBRE.Trim();
+            p.PRECIO_VENTA = precio;
             p.ID_CATEGORIA = vm.ID_CATEGORIA;
-            p.PORC_DESPERDICIO = vm.PORC_DESPERDICIO;
-
-            // NOTA: el estado se gestiona desde ToggleActive (activar/inactivar) y no desde Edit.
+            p.PORC_DESPERDICIO = porc;
 
             db.SaveChanges();
+            TempData["OK"] = "Producto actualizado correctamente.";
             return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
         }
 
@@ -145,8 +217,6 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, int page = 1, string q = null)
         {
-            // Antes se eliminaba físicamente, pero falla si existen referencias (ej: DETALLES_VENTAS).
-            // Se cambia por inactivación para mantener integridad referencial.
             var p = db.PRODUCTOS.Find(id);
             if (p == null) return RedirectToAction("Index", new { page, q });
 

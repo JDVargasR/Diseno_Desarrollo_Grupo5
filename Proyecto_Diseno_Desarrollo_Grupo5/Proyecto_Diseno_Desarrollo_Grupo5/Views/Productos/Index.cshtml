@@ -28,6 +28,10 @@
     {
         <div class="alert alert-success cardx" style="padding:12px 14px;">@TempData["OK"]</div>
     }
+    @if (TempData["ERR"] != null)
+    {
+        <div class="alert alert-danger cardx" style="padding:12px 14px;">@TempData["ERR"]</div>
+    }
     @if (TempData["Mensaje"] != null)
     {
         <div class="alert alert-warning cardx" style="padding:12px 14px;">@TempData["Mensaje"]</div>
@@ -39,7 +43,7 @@
             <div class="row g-2 align-items-end">
                 <div class="col-md-9">
                     <label class="form-label" style="font-weight:600;">Buscar</label>
-                    <input type="text" name="q" value="@Model.Q" class="form-control" placeholder="Nombre o categoría" />
+                    <input type="text" name="q" value="@Model.Q" class="form-control" placeholder="Nombre o categoría" maxlength="100" />
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-dark w-100" style="height:44px; border-radius:10px; font-weight:600;">🔎 Buscar</button>
@@ -87,7 +91,7 @@
                                     <button class="btn btn-outline-primary btn-sm me-1"
                                             data-bs-toggle="modal"
                                             data-bs-target="#modalEditar"
-                                            onclick="cargarProductoEditar('@p.ID_PRODUCTO', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@p.PRECIO_VENTA', '@p.ID_CATEGORIA', '@p.PORC_DESPERDICIO')">
+                                            onclick="cargarProductoEditar('@p.ID_PRODUCTO', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@(p.PRECIO_VENTA.ToString(System.Globalization.CultureInfo.InvariantCulture))', '@p.ID_CATEGORIA', '@(p.PORC_DESPERDICIO.ToString(System.Globalization.CultureInfo.InvariantCulture))')">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
 
@@ -149,105 +153,242 @@
 
 @if (!esSoloLectura)
 {
-<div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="font-weight:900;">Nuevo producto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            @using (Html.BeginForm("Create", "Productos", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="Page" value="@Model.Page" />
-                <input type="hidden" name="Q" value="@Model.Q" />
-                <div class="modal-body">
-                    <div class="mb-2">
-                        <label class="form-label">Nombre</label>
-                        <input class="form-control" name="NOMBRE" required />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Precio de venta</label>
-                        <input class="form-control" name="PRECIO_VENTA" type="number" step="0.01" min="0" required />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Categoría</label>
-                        <select class="form-select" name="ID_CATEGORIA" required>
-                            <option value="">-- Seleccione --</option>
-                            @foreach (var c in Model.Categorias)
-                            {
-                                <option value="@c.Value">@c.Text</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">% Desperdicio (0-100)</label>
-                        <input class="form-control" name="PORC_DESPERDICIO" type="number" step="0.01" min="0" max="100" value="0" required />
-                        <small class="text-muted">Porcentaje estimado de desperdicio en producción</small>
-                    </div>
+    <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-weight:900;">Nuevo producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-primary-pill">Guardar</button>
-                </div>
-            }
-        </div>
-    </div>
-</div>
+                @using (Html.BeginForm("Create", "Productos", FormMethod.Post, new { id = "formCrearProducto", novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Page" value="@Model.Page" />
+                    <input type="hidden" name="Q" value="@Model.Q" />
+                    <div class="modal-body">
 
-<div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="font-weight:900;">Editar producto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <div id="crear-errores" class="alert alert-danger d-none" role="alert"></div>
+
+                        <div class="mb-2">
+                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input class="form-control" name="NOMBRE" id="crear_NOMBRE"
+                                   maxlength="140"
+                                   placeholder="Nombre del producto" />
+                            <small class="text-muted">Máximo 140 caracteres. Solo letras, números y espacios.</small>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Precio de venta (₡) <span class="text-danger">*</span></label>
+                            <input class="form-control" name="PRECIO_VENTA" id="crear_PRECIO_VENTA"
+                                   type="number" step="0.01" min="0.01" max="10000000"
+                                   placeholder="Ej: 1500.00" />
+                            <small class="text-muted">Entre ₡0.01 y ₡10,000,000.</small>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                            <select class="form-select" name="ID_CATEGORIA" id="crear_ID_CATEGORIA">
+                                <option value="">-- Seleccione --</option>
+                                @foreach (var c in Model.Categorias)
+                                {
+                                    <option value="@c.Value">@c.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">% Desperdicio (0–100) <span class="text-danger">*</span></label>
+                            <input class="form-control" name="PORC_DESPERDICIO" id="crear_PORC_DESPERDICIO"
+                                   type="number" step="0.01" min="0" max="100" value="0" />
+                            <small class="text-muted">Porcentaje estimado de desperdicio en producción.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-primary-pill" onclick="validarYEnviarProducto('formCrearProducto','crear')">Guardar</button>
+                    </div>
+                }
             </div>
-            @using (Html.BeginForm("Edit", "Productos", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="ID_PRODUCTO" id="edit_ID_PRODUCTO" />
-                <input type="hidden" name="Page" value="@Model.Page" />
-                <input type="hidden" name="Q" value="@Model.Q" />
-                <div class="modal-body">
-                    <div class="mb-2">
-                        <label class="form-label">Nombre</label>
-                        <input class="form-control" name="NOMBRE" id="edit_NOMBRE" required />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Precio de venta</label>
-                        <input class="form-control" name="PRECIO_VENTA" id="edit_PRECIO_VENTA" type="number" step="0.01" min="0" required />
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Categoría</label>
-                        <select class="form-select" name="ID_CATEGORIA" id="edit_ID_CATEGORIA" required>
-                            @foreach (var c in Model.Categorias)
-                            {
-                                <option value="@c.Value">@c.Text</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">% Desperdicio (0-100)</label>
-                        <input class="form-control" name="PORC_DESPERDICIO" id="edit_PORC_DESPERDICIO" type="number" step="0.01" min="0" max="100" required />
-                        <small class="text-muted">Porcentaje estimado de desperdicio en producción</small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-primary-pill">Guardar cambios</button>
-                </div>
-            }
         </div>
     </div>
-</div>
+
+    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-weight:900;">Editar producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                @using (Html.BeginForm("Edit", "Productos", FormMethod.Post, new { id = "formEditarProducto", novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ID_PRODUCTO" id="edit_ID_PRODUCTO" />
+                    <input type="hidden" name="Page" value="@Model.Page" />
+                    <input type="hidden" name="Q" value="@Model.Q" />
+                    <div class="modal-body">
+
+                        <div id="editar-errores" class="alert alert-danger d-none" role="alert"></div>
+
+                        <div class="mb-2">
+                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input class="form-control" name="NOMBRE" id="edit_NOMBRE"
+                                   maxlength="140"
+                                   placeholder="Nombre del producto" />
+                            <small class="text-muted">Máximo 140 caracteres.</small>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Precio de venta (₡) <span class="text-danger">*</span></label>
+                            <input class="form-control" name="PRECIO_VENTA" id="edit_PRECIO_VENTA"
+                                   type="number" step="0.01" min="0.01" max="10000000"
+                                   placeholder="Ej: 1500.00" />
+                            <small class="text-muted">Entre ₡0.01 y ₡10,000,000.</small>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                            <select class="form-select" name="ID_CATEGORIA" id="edit_ID_CATEGORIA">
+                                @foreach (var c in Model.Categorias)
+                                {
+                                    <option value="@c.Value">@c.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">% Desperdicio (0–100) <span class="text-danger">*</span></label>
+                            <input class="form-control" name="PORC_DESPERDICIO" id="edit_PORC_DESPERDICIO"
+                                   type="number" step="0.01" min="0" max="100" />
+                            <small class="text-muted">Porcentaje estimado de desperdicio en producción.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-primary-pill" onclick="validarYEnviarProducto('formEditarProducto','editar')">Guardar cambios</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 }
 
 <script>
+    var _productoEditarPendiente = null;
+
     function cargarProductoEditar(id, nombre, precio, idCategoria, porcDesperdicio) {
-        document.getElementById("edit_ID_PRODUCTO").value = id;
-        document.getElementById("edit_NOMBRE").value = nombre;
-        document.getElementById("edit_PRECIO_VENTA").value = precio;
-        document.getElementById("edit_ID_CATEGORIA").value = idCategoria;
-        document.getElementById("edit_PORC_DESPERDICIO").value = porcDesperdicio;
+        _productoEditarPendiente = {
+            id: id,
+            nombre: nombre,
+            precio: String(precio).replace(/,/g, '.'),
+            idCategoria: idCategoria,
+            porcDesperdicio: String(porcDesperdicio).replace(/,/g, '.')
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalEditar = document.getElementById('modalEditar');
+        if (modalEditar) {
+            modalEditar.addEventListener('shown.bs.modal', function () {
+                if (_productoEditarPendiente) {
+                    var d = _productoEditarPendiente;
+                    document.getElementById("edit_ID_PRODUCTO").value = d.id;
+                    document.getElementById("edit_NOMBRE").value = d.nombre;
+                    document.getElementById("edit_ID_CATEGORIA").value = d.idCategoria;
+
+                    setTimeout(function () {
+                        var precioEl = document.getElementById("edit_PRECIO_VENTA");
+                        var porcEl = document.getElementById("edit_PORC_DESPERDICIO");
+                        precioEl.value = d.precio;
+                        porcEl.value = d.porcDesperdicio;
+                        precioEl.dispatchEvent(new Event('input'));
+                        porcEl.dispatchEvent(new Event('input'));
+                    }, 50);
+
+                    ocultarErrores('editar-errores');
+                    _productoEditarPendiente = null;
+                }
+            });
+        }
+
+        var modalCrear = document.getElementById('modalCrear');
+        if (modalCrear) {
+            modalCrear.addEventListener('show.bs.modal', function () {
+                ocultarErrores('crear-errores');
+            });
+        }
+    });
+
+    function mostrarErrores(contenedorId, errores) {
+        var el = document.getElementById(contenedorId);
+        if (!el) return;
+        el.innerHTML = '<strong>Por favor corrija los siguientes errores:</strong><ul class="mb-0 mt-1">'
+            + errores.map(function (e) { return '<li>' + e + '</li>'; }).join('')
+            + '</ul>';
+        el.classList.remove('d-none');
+    }
+
+    function ocultarErrores(contenedorId) {
+        var el = document.getElementById(contenedorId);
+        if (el) { el.innerHTML = ''; el.classList.add('d-none'); }
+    }
+
+    function validarYEnviarProducto(formId, prefijo) {
+        var errores = [];
+        var errorContenedor = prefijo === 'crear' ? 'crear-errores' : 'editar-errores';
+
+        var nombre = document.getElementById(prefijo === 'crear' ? 'crear_NOMBRE' : 'edit_NOMBRE');
+        var nombreVal = nombre ? nombre.value.trim() : '';
+        if (!nombreVal) {
+            errores.push('El nombre del producto es obligatorio.');
+        } else if (nombreVal.length > 140) {
+            errores.push('El nombre no puede superar los 140 caracteres (actualmente tiene ' + nombreVal.length + ').');
+        } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 \-_.,()]+$/.test(nombreVal)) {
+            errores.push('El nombre contiene caracteres no permitidos. Use letras, números, espacios y signos básicos (-, _, ., ,).');
+        }
+
+        var precioId = prefijo === 'crear' ? 'crear_PRECIO_VENTA' : 'edit_PRECIO_VENTA';
+        var precioEl = document.getElementById(precioId);
+        var precioStr = precioEl ? precioEl.value.trim() : '';
+        if (precioStr === '') {
+            errores.push('El precio de venta es obligatorio.');
+        } else {
+            var precio = parseFloat(precioStr);
+            if (isNaN(precio)) {
+                errores.push('El precio de venta debe ser un número válido.');
+            } else if (precio < 0.01) {
+                errores.push('El precio de venta debe ser al menos ₡0.01.');
+            } else if (precio > 10000000) {
+                errores.push('El precio de venta no puede superar ₡10,000,000.');
+            } else {
+                var partes = precioStr.split('.');
+                if (partes[1] && partes[1].length > 2) {
+                    errores.push('El precio de venta puede tener máximo 2 decimales.');
+                }
+            }
+        }
+
+        var catId = prefijo === 'crear' ? 'crear_ID_CATEGORIA' : 'edit_ID_CATEGORIA';
+        var catEl = document.getElementById(catId);
+        if (!catEl || !catEl.value) {
+            errores.push('Debe seleccionar una categoría.');
+        }
+
+        var porcId = prefijo === 'crear' ? 'crear_PORC_DESPERDICIO' : 'edit_PORC_DESPERDICIO';
+        var porcEl = document.getElementById(porcId);
+        var porcStr = porcEl ? porcEl.value.trim() : '';
+        if (porcStr === '') {
+            errores.push('El porcentaje de desperdicio es obligatorio (puede ser 0).');
+        } else {
+            var porc = parseFloat(porcStr);
+            if (isNaN(porc)) {
+                errores.push('El % de desperdicio debe ser un número válido.');
+            } else if (porc < 0) {
+                errores.push('El % de desperdicio no puede ser negativo.');
+            } else if (porc > 100) {
+                errores.push('El % de desperdicio no puede superar 100%.');
+            }
+        }
+
+        if (errores.length > 0) {
+            mostrarErrores(errorContenedor, errores);
+            return;
+        }
+
+        ocultarErrores(errorContenedor);
+        document.getElementById(formId).submit();
     }
 </script>

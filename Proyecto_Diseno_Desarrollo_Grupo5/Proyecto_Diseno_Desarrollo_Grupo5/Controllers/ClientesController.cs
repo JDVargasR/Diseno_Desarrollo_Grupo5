@@ -73,15 +73,17 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(ClienteCrudVM vm)
         {
-            if (string.IsNullOrWhiteSpace(vm.NOMBRE))
+            if (!ModelState.IsValid)
             {
-                TempData["ERR"] = "El nombre del cliente es obligatorio.";
-                return RedirectToAction("Index");
-            }
+                // Resumir errores y mostrarlos claramente
+                var errores = string.Join(" ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => string.IsNullOrEmpty(e.ErrorMessage) ? e.Exception?.Message : e.ErrorMessage));
 
-            if (!string.IsNullOrWhiteSpace(vm.CORREO) && !ModelState.IsValid)
-            {
-                TempData["ERR"] = "Correo inválido.";
+                TempData["ERR"] = string.IsNullOrWhiteSpace(errores)
+                    ? "Revise los datos ingresados."
+                    : errores;
+
                 return RedirectToAction("Index");
             }
 
@@ -112,10 +114,17 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 return RedirectToAction("Index");
             }
 
-            if (string.IsNullOrWhiteSpace(vm.NOMBRE))
+            if (!ModelState.IsValid)
             {
-                TempData["ERR"] = "El nombre del cliente es obligatorio.";
-                return RedirectToAction("Index");
+                var errores = string.Join(" ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => string.IsNullOrEmpty(e.ErrorMessage) ? e.Exception?.Message : e.ErrorMessage));
+
+                TempData["ERR"] = string.IsNullOrWhiteSpace(errores)
+                    ? "Revise los datos ingresados."
+                    : errores;
+
+                return RedirectToAction("Index", new { q = vm.Q, page = vm.Page });
             }
 
             c.NOMBRE = vm.NOMBRE.Trim();
