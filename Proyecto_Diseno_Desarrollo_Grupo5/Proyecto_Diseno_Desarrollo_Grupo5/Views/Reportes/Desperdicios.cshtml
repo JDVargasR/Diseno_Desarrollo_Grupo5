@@ -20,7 +20,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="get" class="row g-3">
+                    <form method="get" id="formFiltroDesperdicios" class="row g-3">
                         <div class="col-md-3">
                             <label for="fechaInicio" class="form-label">Fecha Inicio</label>
                             <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="@ViewBag.FechaInicio" />
@@ -31,7 +31,7 @@
                         </div>
                         <div class="col-md-2">
                             <label>&nbsp;</label>
-                            <button type="submit" class="btn btn-primary w-100">
+                            <button type="submit" class="btn btn-primary w-100" id="btnFiltrarDesperdicios">
                                 <i class="bi bi-search"></i> Filtrar
                             </button>
                         </div>
@@ -53,7 +53,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Total Desperdiciado</h6>
-                    <h3 class="card-title text-danger">@Model.TotalDesperdiciado.ToString("F2")</h3>
+                    <h3 class="card-title text-danger" id="kpiTotalDesperdiciado">@Model.TotalDesperdiciado.ToString("F2")</h3>
                     <small class="text-muted">Unidades</small>
                 </div>
             </div>
@@ -62,7 +62,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Transacciones</h6>
-                    <h3 class="card-title text-primary">@Model.TotalTransacciones</h3>
+                    <h3 class="card-title text-primary" id="kpiTotalTransacciones">@Model.TotalTransacciones</h3>
                     <small class="text-muted">Registros</small>
                 </div>
             </div>
@@ -71,7 +71,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Promedio x Transaccion</h6>
-                    <h3 class="card-title text-info">@Model.PromedioTransaccion.ToString("F2")</h3>
+                    <h3 class="card-title text-info" id="kpiPromedioTransaccion">@Model.PromedioTransaccion.ToString("F2")</h3>
                     <small class="text-muted">Unidades</small>
                 </div>
             </div>
@@ -80,7 +80,7 @@
             <div class="card text-center">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Productos Alto Riesgo</h6>
-                    <h3 class="card-title text-warning">@Model.ProductosAltoDesperdicio.Count</h3>
+                    <h3 class="card-title text-warning" id="kpiProductosAltoRiesgo">@Model.ProductosAltoDesperdicio.Count</h3>
                     <small class="text-muted">> 5% desperdicio</small>
                 </div>
             </div>
@@ -125,45 +125,51 @@
     </div>
 
     <!-- Productos con Alto Desperdicio -->
+    <div class="row mb-4" id="altoRiesgoContainer">
     @if (Model.ProductosAltoDesperdicio.Any())
     {
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card border-warning">
-                    <div class="card-header bg-warning text-dark">
-                    <strong><i class="bi bi-exclamation-triangle"></i> Productos con Alto Desperdicio (Requieren Atencion)</strong>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>% Desperdicio</th>
-                                    <th>Total Desperdiciado</th>
-                                    <th>Recomendacion</th>
+        <div class="col-md-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                <strong><i class="bi bi-exclamation-triangle"></i> Productos con Alto Desperdicio (Requieren Atencion)</strong>
+                </div>
+                <div class="card-body" id="altoRiesgoBody">
+                    <table class="table table-hover" id="altoRiesgoTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th>% Desperdicio</th>
+                                <th>Total Desperdiciado</th>
+                                <th>Recomendacion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var producto in Model.ProductosAltoDesperdicio.OrderByDescending(p => p.PorcentajeDesperdicio))
+                            {
+                                <tr class="@(producto.PorcentajeDesperdicio > 15 ? "table-danger" : "table-warning")">
+                                    <td><strong>@producto.NombreProducto</strong></td>
+                                    <td>
+                                        <span class="badge bg-@(producto.PorcentajeDesperdicio > 15 ? "danger" : "warning")">
+                                            @producto.PorcentajeDesperdicio.ToString("F2")%
+                                        </span>
+                                    </td>
+                                    <td>@producto.TotalDesperdiciado.ToString("F2")</td>
+                                    <td>@producto.Recomendacion</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var producto in Model.ProductosAltoDesperdicio.OrderByDescending(p => p.PorcentajeDesperdicio))
-                                {
-                                    <tr class="@(producto.PorcentajeDesperdicio > 15 ? "table-danger" : "table-warning")">
-                                        <td><strong>@producto.NombreProducto</strong></td>
-                                        <td>
-                                            <span class="badge bg-@(producto.PorcentajeDesperdicio > 15 ? "danger" : "warning")">
-                                                @producto.PorcentajeDesperdicio.ToString("F2")%
-                                            </span>
-                                        </td>
-                                        <td>@producto.TotalDesperdiciado.ToString("F2")</td>
-                                        <td>@producto.Recomendacion</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     }
+    else
+    {
+        <div class="col-md-12">
+            <div class="alert alert-info">No hay productos con alto desperdicio en el período seleccionado.</div>
+        </div>
+    }
+    </div>
 </div>
 
 <script>
@@ -171,6 +177,11 @@
     var datosProductos = @Html.Raw(Json.Encode(Model.DesperdiciosPorProducto.Select(p => new { p.NombreProducto, p.TotalDesperdiciado }).ToList()));
     var datosOrigen = @Html.Raw(Json.Encode(Model.DesperdiciosPorOrigen.Select(o => new { o.Origen, o.TotalDesperdiciado, o.CantidadTransacciones }).ToList()));
     var datosDias = @Html.Raw(Json.Encode(Model.DesperdiciosPorDia.Select(d => new { Fecha = d.Fecha.ToString("yyyy-MM-dd"), d.TotalDesperdiciado }).ToList()));
+    var datosAltoRiesgo = @Html.Raw(Json.Encode(Model.ProductosAltoDesperdicio.Select(p => new { p.NombreProducto, p.PorcentajeDesperdicio, p.TotalDesperdiciado, p.Recomendacion }).ToList()));
+
+    var chartProducto = null;
+    var chartOrigen = null;
+    var chartDia = null;
 
     // Colores
     const coloresPrimarios = [
@@ -178,146 +189,245 @@
         '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF9F40'
     ];
 
-    // Grafico Productos (Pie)
-    if (datosProductos.length > 0) {
-        const ctxProducto = document.getElementById('chartPorProducto').getContext('2d');
-        new Chart(ctxProducto, {
-            type: 'pie',
-            data: {
-                labels: datosProductos.map(p => p.NombreProducto || 'Sin nombre'),
-                datasets: [{
-                    data: datosProductos.map(p => p.TotalDesperdiciado || 0),
-                    backgroundColor: coloresPrimarios
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: { left: 20, right: 20, top: 10, bottom: 10 }
+    function destruirGraficos() {
+        if (chartProducto) { chartProducto.destroy(); chartProducto = null; }
+        if (chartOrigen) { chartOrigen.destroy(); chartOrigen = null; }
+        if (chartDia) { chartDia.destroy(); chartDia = null; }
+    }
+
+    function renderAltoRiesgo(productos) {
+        var container = document.getElementById('altoRiesgoContainer');
+        if (!container) return;
+
+        if (!productos || productos.length === 0) {
+            container.innerHTML = '<div class="col-md-12"><div class="alert alert-info">No hay productos con alto desperdicio en el período seleccionado.</div></div>';
+            return;
+        }
+
+        var rows = productos.map(function (producto) {
+            var nombre = producto.NombreProducto || producto.nombreProducto || producto.nombre || '';
+            var porcentaje = Number(producto.PorcentajeDesperdicio ?? producto.porcentajeDesperdicio ?? producto.porcentaje ?? 0);
+            var total = Number(producto.TotalDesperdiciado ?? producto.totalDesperdiciado ?? producto.cantidad ?? 0);
+            var recomendacion = producto.Recomendacion || producto.recomendacion || '';
+            var clase = porcentaje > 15 ? 'table-danger' : 'table-warning';
+            var badge = porcentaje > 15 ? 'danger' : 'warning';
+            return '<tr class="' + clase + '">'
+                + '<td><strong>' + nombre + '</strong></td>'
+                + '<td><span class="badge bg-' + badge + '">' + porcentaje.toFixed(2) + '%</span></td>'
+                + '<td>' + total.toFixed(2) + '</td>'
+                + '<td>' + recomendacion + '</td>'
+                + '</tr>';
+        }).join('');
+
+        container.innerHTML = '<div class="col-md-12">'
+            + '<div class="card border-warning">'
+            + '<div class="card-header bg-warning text-dark"><strong><i class="bi bi-exclamation-triangle"></i> Productos con Alto Desperdicio (Requieren Atencion)</strong></div>'
+            + '<div class="card-body" id="altoRiesgoBody">'
+            + '<table class="table table-hover" id="altoRiesgoTable">'
+            + '<thead class="table-light"><tr><th>Producto</th><th>% Desperdicio</th><th>Total Desperdiciado</th><th>Recomendacion</th></tr></thead>'
+            + '<tbody>' + rows + '</tbody>'
+            + '</table>'
+            + '</div>'
+            + '</div>'
+            + '</div>';
+    }
+
+    function renderDashboard(data) {
+        document.getElementById('kpiTotalDesperdiciado').textContent = Number(data.totalDesperdiciado || 0).toFixed(2);
+        document.getElementById('kpiTotalTransacciones').textContent = data.totalTransacciones || 0;
+        document.getElementById('kpiPromedioTransaccion').textContent = Number(data.promedioTransaccion || 0).toFixed(2);
+        document.getElementById('kpiProductosAltoRiesgo').textContent = (data.productosAltoDesperdicio || []).length;
+
+        datosProductos = data.porProducto || [];
+        datosOrigen = data.porOrigen || [];
+        datosDias = data.porDia || [];
+        datosAltoRiesgo = data.productosAltoDesperdicio || [];
+
+        destruirGraficos();
+
+        if (datosProductos.length > 0) {
+            const ctxProducto = document.getElementById('chartPorProducto').getContext('2d');
+            chartProducto = new Chart(ctxProducto, {
+                type: 'pie',
+                data: {
+                    labels: datosProductos.map(function (p) { return p.NombreProducto || p.nombreProducto || p.nombre || 'Sin nombre'; }),
+                    datasets: [{
+                        data: datosProductos.map(function (p) { return Number(p.TotalDesperdiciado ?? p.totalDesperdiciado ?? p.cantidad ?? 0); }),
+                        backgroundColor: coloresPrimarios
+                    }]
                 },
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { color: '#FFFFFF' }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: { left: 20, right: 20, top: 10, bottom: 10 }
                     },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return context.label + ': ' + context.parsed.toFixed(2) + ' unidades';
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#FFFFFF' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.label + ': ' + context.parsed.toFixed(2) + ' unidades';
+                                }
                             }
                         }
                     }
                 }
-            }
+            });
+        }
+
+        if (datosOrigen.length > 0) {
+            const ctxMaterial = document.getElementById('chartPorMaterial').getContext('2d');
+            chartOrigen = new Chart(ctxMaterial, {
+                type: 'bar',
+                data: {
+                    labels: datosOrigen.map(function (o) { return o.Origen || o.origen || 'SIN ORIGEN'; }),
+                    datasets: [{
+                        label: 'Cantidad Desperdiciada',
+                        data: datosOrigen.map(function (o) { return Number(o.TotalDesperdiciado ?? o.cantidad ?? o.totalDesperdiciado ?? 0); }),
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                        borderRadius: 6,
+                        maxBarThickness: 28
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: { left: 22, right: 22, top: 10, bottom: 10 }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.parsed.x.toFixed(2) + ' unidades';
+                                },
+                                afterLabel: function (context) {
+                                    var item = datosOrigen[context.dataIndex];
+                                    return 'Transacciones: ' + (item ? (item.CantidadTransacciones || item.cantidadTransacciones || 0) : 0);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            grid: { color: 'rgba(255,255,255,0.15)' }
+                        },
+                        y: {
+                            ticks: { color: '#FFFFFF' },
+                            grid: { color: 'rgba(255,255,255,0.10)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        if (datosDias.length > 0) {
+            const ctxDia = document.getElementById('chartPorDia').getContext('2d');
+            chartDia = new Chart(ctxDia, {
+                type: 'line',
+                data: {
+                    labels: datosDias.map(function (d) {
+                        var rawFecha = d.Fecha || d.fecha;
+                        var fecha = new Date(rawFecha + 'T00:00:00');
+                        return isNaN(fecha.getTime()) ? rawFecha : fecha.toLocaleDateString('es-CR');
+                    }),
+                    datasets: [{
+                        label: 'Desperdicio (unidades)',
+                        data: datosDias.map(function (d) { return Number(d.TotalDesperdiciado ?? d.cantidad ?? 0); }),
+                        borderColor: '#22D3EE',
+                        backgroundColor: 'rgba(34, 211, 238, 0.20)',
+                        pointBackgroundColor: '#FFFFFF',
+                        pointBorderColor: '#22D3EE',
+                        pointRadius: 4,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: { left: 20, right: 20, top: 10, bottom: 10 }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: { color: '#FFFFFF' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.parsed.y.toFixed(2) + ' unidades';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            grid: { color: 'rgba(255,255,255,0.12)' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#FFFFFF' },
+                            grid: { color: 'rgba(255,255,255,0.12)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        renderAltoRiesgo(datosAltoRiesgo);
+    }
+
+    function refrescarDesperdicios() {
+        var fechaInicio = document.getElementById('fechaInicio').value;
+        var fechaFin = document.getElementById('fechaFin').value;
+        var urlJson = '@Url.Action("DesperdiciosJSON", "Reportes")' + '?fechaInicio=' + encodeURIComponent(fechaInicio) + '&fechaFin=' + encodeURIComponent(fechaFin);
+
+        fetch(urlJson, { credentials: 'same-origin' })
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                renderDashboard(data);
+            })
+            .catch(function () {
+                var urlVista = '@Url.Action("Desperdicios", "Reportes")' + '?fechaInicio=' + encodeURIComponent(fechaInicio) + '&fechaFin=' + encodeURIComponent(fechaFin);
+                window.location.href = urlVista;
+            });
+    }
+
+    var formFiltro = document.getElementById('formFiltroDesperdicios');
+    if (formFiltro) {
+        formFiltro.addEventListener('submit', function (e) {
+            e.preventDefault();
+            refrescarDesperdicios();
         });
     }
 
-    // Grafico Origenes (Bar)
-    if (datosOrigen.length > 0) {
-        const ctxMaterial = document.getElementById('chartPorMaterial').getContext('2d');
-        new Chart(ctxMaterial, {
-            type: 'bar',
-            data: {
-                labels: datosOrigen.map(o => o.Origen || 'SIN ORIGEN'),
-                datasets: [{
-                    label: 'Cantidad Desperdiciada',
-                    data: datosOrigen.map(o => o.TotalDesperdiciado || 0),
-                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-                    borderRadius: 6,
-                    maxBarThickness: 28
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: { left: 22, right: 22, top: 10, bottom: 10 }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return context.parsed.x.toFixed(2) + ' unidades';
-                            },
-                            afterLabel: function (context) {
-                                var item = datosOrigen[context.dataIndex];
-                                return 'Transacciones: ' + (item ? item.CantidadTransacciones : 0);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#FFFFFF' },
-                        grid: { color: 'rgba(255,255,255,0.15)' }
-                    },
-                    y: {
-                        ticks: { color: '#FFFFFF' },
-                        grid: { color: 'rgba(255,255,255,0.10)' }
-                    }
-                }
-            }
+    var btnFiltrar = document.getElementById('btnFiltrarDesperdicios');
+    if (btnFiltrar) {
+        btnFiltrar.addEventListener('click', function (e) {
+            e.preventDefault();
+            refrescarDesperdicios();
         });
     }
 
-    // Grafico Diario (Line)
-    if (datosDias.length > 0) {
-        const ctxDia = document.getElementById('chartPorDia').getContext('2d');
-        new Chart(ctxDia, {
-            type: 'line',
-            data: {
-                labels: datosDias.map(d => {
-                    var fecha = new Date(d.Fecha + 'T00:00:00');
-                    return isNaN(fecha.getTime()) ? d.Fecha : fecha.toLocaleDateString('es-CR');
-                }),
-                datasets: [{
-                    label: 'Desperdicio (unidades)',
-                    data: datosDias.map(d => d.TotalDesperdiciado || 0),
-                    borderColor: '#22D3EE',
-                    backgroundColor: 'rgba(34, 211, 238, 0.20)',
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#22D3EE',
-                    pointRadius: 4,
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: { left: 20, right: 20, top: 10, bottom: 10 }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        labels: { color: '#FFFFFF' }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return context.parsed.y.toFixed(2) + ' unidades';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#FFFFFF' },
-                        grid: { color: 'rgba(255,255,255,0.12)' }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        ticks: { color: '#FFFFFF' },
-                        grid: { color: 'rgba(255,255,255,0.12)' }
-                    }
-                }
-            }
-        });
-    }
+    renderDashboard({
+        totalDesperdiciado: @Html.Raw(Json.Encode(Model.TotalDesperdiciado)),
+        totalTransacciones: @Html.Raw(Json.Encode(Model.TotalTransacciones)),
+        promedioTransaccion: @Html.Raw(Json.Encode(Model.PromedioTransaccion)),
+        productosAltoDesperdicio: datosAltoRiesgo,
+        porProducto: datosProductos,
+        porOrigen: datosOrigen,
+        porDia: datosDias
+    });
 </script>
 
 <style>

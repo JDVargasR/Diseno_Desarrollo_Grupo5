@@ -231,6 +231,25 @@
                 panelTotal.textContent = formatoCRC(total);
             }
 
+            function obtenerResumenCotizacion() {
+                var keys = Object.keys(items);
+                var lineas = [];
+                var total = 0;
+
+                for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    var item = items[key];
+                    var subtotal = item.precio * item.cantidad;
+                    total += subtotal;
+                    lineas.push('<li><strong>' + item.nombre + '</strong> x ' + item.cantidad + ' = ' + formatoCRC(subtotal) + '</li>');
+                }
+
+                return {
+                    html: '<div class="text-start"><p class="mb-2">Revisá los productos antes de enviar la solicitud.</p><ul class="mb-0">' + lineas.join('') + '</ul><hr /><div class="fw-bold">Total estimado: ' + formatoCRC(total) + '</div></div>',
+                    total: total
+                };
+            }
+
             for (var i = 0; i < addButtons.length; i++) {
                 addButtons[i].addEventListener('click', function () {
                     var id = this.getAttribute('data-id');
@@ -277,21 +296,43 @@
                     return;
                 }
 
-                if (window.Swal) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Solicitud enviada',
-                        text: 'Pronto seras contactado por uno de nuestros asesores.'
-                    }).then(function () {
+                var resumen = obtenerResumenCotizacion();
+
+                function confirmarEnvio() {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Solicitud enviada',
+                            text: 'Pronto seras contactado por uno de nuestros asesores.'
+                        }).then(function () {
+                            items = {};
+                            renderPanel();
+                            window.location.href = landingUrl;
+                        });
+                    } else {
+                        items = {};
+                        renderPanel();
+                        alert('Pronto seras contactado por uno de nuestros asesores.');
                         window.location.href = landingUrl;
-                    });
-                } else {
-                    alert('Pronto seras contactado por uno de nuestros asesores.');
-                    window.location.href = landingUrl;
+                    }
                 }
 
-                items = {};
-                renderPanel();
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'question',
+                        title: 'Confirmar solicitud de cotizacion',
+                        html: resumen.html,
+                        showCancelButton: true,
+                        confirmButtonText: 'Confirmar y enviar',
+                        cancelButtonText: 'Cancelar'
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            confirmarEnvio();
+                        }
+                    });
+                } else if (window.confirm('Confirmar envio de la cotizacion con ' + Object.keys(items).length + ' productos?')) {
+                    confirmarEnvio();
+                }
             });
 
             renderPanel();

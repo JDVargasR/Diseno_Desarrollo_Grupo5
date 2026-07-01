@@ -93,12 +93,14 @@
                     <div class="row g-2">
                         <div class="col-md-6">
                             <label class="pf-label">Nombre</label>
-                            @Html.TextBoxFor(m => m.Nombre, new { @class = "pf-input", maxlength = "80" })
+                            @Html.TextBoxFor(m => m.Nombre, new { @class = "pf-input", maxlength = "80", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger small" })
                         </div>
 
                         <div class="col-md-6">
                             <label class="pf-label">Correo</label>
-                            @Html.TextBoxFor(m => m.Correo, new { @class = "pf-input", maxlength = "120", type = "email" })
+                            @Html.TextBoxFor(m => m.Correo, new { @class = "pf-input", maxlength = "120", type = "email", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Correo, "", new { @class = "text-danger small" })
                         </div>
                     </div>
 
@@ -161,6 +163,22 @@
     <script>
         var okMsg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(okMsg));
         var errMsg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(errMsg));
+
+        var perfilForm = document.querySelector('form[action*="Perfil"]');
+        if (perfilForm) {
+            perfilForm.addEventListener('submit', function (e) {
+                var nombre = document.getElementById('Nombre');
+                if (!nombre || !nombre.value || !nombre.value.trim()) {
+                    e.preventDefault();
+                    if (window.Swal) {
+                        Swal.fire({ icon: 'warning', title: 'Falta el nombre', text: 'El nombre es obligatorio.' });
+                    } else {
+                        alert('El nombre es obligatorio.');
+                    }
+                    return false;
+                }
+            });
+        }
 
         if (okMsg) {
             Swal.fire({ icon: 'success', title: 'Listo', text: okMsg, confirmButtonColor: '#10b981' });

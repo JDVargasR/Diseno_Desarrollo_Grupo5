@@ -6,7 +6,18 @@
     var estado = (ViewBag.Estado ?? "").ToString();
     var desde = (ViewBag.Desde ?? "").ToString();
     var hasta = (ViewBag.Hasta ?? "").ToString();
-    var estados = ViewBag.Estados as string[];
+    var estados = ViewBag.Estados as IEnumerable<SelectListItem>;
+    if (estados == null || !estados.Any())
+    {
+        estados = new[]
+        {
+            new SelectListItem { Value = "PENDIENTE", Text = "PENDIENTE" },
+            new SelectListItem { Value = "APROBADA", Text = "APROBADA" },
+            new SelectListItem { Value = "RECHAZADA", Text = "RECHAZADA" },
+            new SelectListItem { Value = "REINTEGRADA", Text = "REINTEGRADA" },
+            new SelectListItem { Value = "PERDIDA_CONTROLADA", Text = "PERDIDA CONTROLADA" }
+        };
+    }
     var esGerente = (bool)(ViewBag.EsGerente ?? false);
 }
 
@@ -36,7 +47,7 @@
         <div class="alert alert-danger cardx" style="padding:12px 14px;">@TempData["ERR"]</div>
     }
 
-    <form method="get" class="page-section mb-3">
+    <form method="get" class="page-section mb-3" id="filtroDevoluciones">
         <div class="row g-2 align-items-end">
             <div class="col-12 col-md-4">
                 <label class="form-label" style="font-weight:600;">Buscar</label>
@@ -44,14 +55,11 @@
             </div>
             <div class="col-12 col-md-3">
                 <label class="form-label" style="font-weight:600;">Estado</label>
-                <select class="form-select" name="estado">
+                <select class="form-select" name="estado" id="estadoDevolucion">
                     <option value="">Todos</option>
-                    @if (estados != null)
+                    @foreach (var item in estados)
                     {
-                        foreach (var e in estados)
-                        {
-                            <option value="@e" @(estado == e ? "selected" : "")>@e</option>
-                        }
+                        <option value="@item.Value" @(string.Equals(estado, item.Value, StringComparison.OrdinalIgnoreCase) ? "selected" : "")>@item.Text</option>
                     }
                 </select>
             </div>
@@ -67,6 +75,23 @@
                 <button class="btn btn-dark" type="submit">Filtrar</button>
             </div>
         </div>
+
+@section scripts{
+    <script>
+        (function () {
+            var input = document.querySelector('#filtroDevoluciones input[name="q"]');
+            if (!input) return;
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    var form = document.getElementById('filtroDevoluciones');
+                    if (form) form.submit();
+                }
+            });
+        })();
+    </script>
+}
     </form>
 
     <div class="page-section mt-3">

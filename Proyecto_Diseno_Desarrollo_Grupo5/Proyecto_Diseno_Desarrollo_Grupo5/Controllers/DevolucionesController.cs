@@ -61,14 +61,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             ViewBag.Estado = estado;
             ViewBag.Desde = desde?.ToString("yyyy-MM-dd");
             ViewBag.Hasta = hasta?.ToString("yyyy-MM-dd");
-            ViewBag.Estados = new[]
-            {
-                EstadoPendiente,
-                EstadoAprobada,
-                EstadoRechazada,
-                EstadoReintegrada,
-                EstadoPerdidaControlada
-            };
+            ViewBag.Estados = ObtenerEstadosDevolucion(estado);
 
             ViewBag.EsGerente = GetCurrentRoleId() == 1;
             return View(items);
@@ -80,6 +73,56 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             var vm = new DevolucionCrearVM();
             CargarListas(vm);
             return View(vm);
+        }
+
+        [HttpGet]
+        public JsonResult FacturaInfo(int idVenta)
+        {
+            var venta = db.VENTAS
+                .Include("CLIENTES")
+                .Include("DETALLES_VENTAS.PRODUCTOS")
+                .FirstOrDefault(v => v.ID_VENTA == idVenta);
+
+            if (venta == null)
+                return Json(new { ok = false, mensaje = "La factura no existe." }, JsonRequestBehavior.AllowGet);
+
+            var devolucionesPrevias = db.DEVOLUCIONES
+                .Where(d => d.ID_VENTA == idVenta)
+                .ToList()
+                .Select(d => ParsearMetadata(d.MOTIVO))
+                .Where(m => m.IdProducto.HasValue && m.Cantidad.HasValue && !string.Equals(m.Estado, EstadoRechazada, StringComparison.OrdinalIgnoreCase))
+                .GroupBy(m => m.IdProducto.Value)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.Cantidad.Value));
+
+            var productos = venta.DETALLES_VENTAS
+                .Where(d => d.ID_PRODUCTO > 0 && d.CANTIDAD > 0 && d.PRODUCTOS != null && !string.IsNullOrWhiteSpace(d.PRODUCTOS.NOMBRE))
+                .GroupBy(d => new { d.ID_PRODUCTO, d.PRODUCTOS.NOMBRE })
+                .Select(g =>
+                {
+                    var comprada = g.Sum(x => x.CANTIDAD);
+                    var devuelta = devolucionesPrevias.ContainsKey(g.Key.ID_PRODUCTO) ? devolucionesPrevias[g.Key.ID_PRODUCTO] : 0m;
+                    var disponible = Math.Max(comprada - devuelta, 0m);
+                    return new
+                    {
+                        idProducto = g.Key.ID_PRODUCTO,
+                        nombreProducto = g.Key.NOMBRE,
+                        cantidadComprada = comprada,
+                        cantidadDisponible = disponible,
+                        cantidadSugerida = disponible > 0 ? disponible : comprada
+                    };
+                })
+                .OrderBy(x => x.nombreProducto)
+                .ToList();
+
+            return Json(new
+            {
+                ok = true,
+                idCliente = venta.ID_CLIENTE,
+                cliente = venta.CLIENTES?.NOMBRE,
+                productos = productos,
+                idProductoSugerido = productos.FirstOrDefault() != null ? (int?)productos.FirstOrDefault().idProducto : null,
+                cantidadSugerida = productos.FirstOrDefault() != null ? (decimal?)productos.FirstOrDefault().cantidadSugerida : null
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -98,7 +141,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             if (venta == null)
             {
-                TempData["ERR"] = "La factura indicada no existe.";
+                TempData["ERR"] = "LaFactura indicada no existe.";
                 return RedirectToAction("Create");
             }
 
@@ -464,24 +507,38 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         private void CargarListas(DevolucionCrearVM vm)
         {
             vm.Ventas = db.VENTAS
-                .OrderByDescending(x => x.ID_VENTA)
-                .Take(300)
-                .ToList()
-                .Select(x => new SelectListItem
-                {
-                    Value = x.ID_VENTA.ToString(),
-                    Text = $"#{x.ID_VENTA} - {x.FECHA:dd/MM/yyyy}"
-                })
-                .ToList();
+                .Where(x => x.CLIENTES != null && x.DETALLES_VENTAS.Any(d => d.PRODUCTOS != null && d.PRODUCTOS.NOMBRE != null && d.PRODUCTOS.NOMBRE != ""))
+                 .OrderByDescending(x => x.ID_VENTA)
+                 .Take(300)
+                 .ToList()
+                 .Select(x => new SelectListItem
+                 {
+                     Value = x.ID_VENTA.ToString(),
+                     Text = $"#{x.ID_VENTA} - {x.FECHA:dd/MM/yyyy}"
+                 })
+                 .ToList();
 
-            vm.Productos = db.PRODUCTOS
-                .Where(x => x.ID_ESTADO == 1)
-                .OrderBy(x => x.NOMBRE)
-                .ToList()
+            vm.Productos = new List<SelectListItem>();
+        }
+
+        private List<SelectListItem> ObtenerEstadosDevolucion(string estadoSeleccionado)
+        {
+            var estados = new[]
+            {
+                EstadoPendiente,
+                EstadoAprobada,
+                EstadoRechazada,
+                EstadoReintegrada,
+                EstadoPerdidaControlada
+            };
+
+            return estados
+                .Distinct()
                 .Select(x => new SelectListItem
                 {
-                    Value = x.ID_PRODUCTO.ToString(),
-                    Text = x.NOMBRE
+                    Value = x,
+                    Text = x.Replace("_", " "),
+                    Selected = string.Equals(x, estadoSeleccionado, StringComparison.OrdinalIgnoreCase)
                 })
                 .ToList();
         }

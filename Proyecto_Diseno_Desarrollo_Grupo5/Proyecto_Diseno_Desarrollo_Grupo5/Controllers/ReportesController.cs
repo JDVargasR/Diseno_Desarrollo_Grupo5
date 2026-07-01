@@ -228,6 +228,13 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 totalDesperdiciado = vm.TotalDesperdiciado,
                 totalTransacciones = vm.TotalTransacciones,
                 promedioTransaccion = vm.PromedioTransaccion,
+                productosAltoDesperdicio = vm.ProductosAltoDesperdicio.Select(p => new
+                {
+                    nombreProducto = p.NombreProducto,
+                    porcentajeDesperdicio = Math.Round(p.PorcentajeDesperdicio, 2),
+                    totalDesperdiciado = p.TotalDesperdiciado,
+                    recomendacion = p.Recomendacion
+                }),
                 porProducto = vm.DesperdiciosPorProducto.Select(p => new
                 {
                     nombre = p.NombreProducto,

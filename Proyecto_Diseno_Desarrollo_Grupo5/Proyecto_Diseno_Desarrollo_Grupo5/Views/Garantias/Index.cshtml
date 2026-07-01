@@ -8,6 +8,7 @@
     var hasta = (ViewBag.Hasta ?? "").ToString();
 
     var estados = ViewBag.Estados as string[];
+    var puedeCerrar = (bool)(ViewBag.PuedeCerrar ?? false);
 
     var current = (int)(ViewBag.Page ?? 1);
     var total = (int)(ViewBag.TotalPages ?? 1);
@@ -38,11 +39,11 @@
         <div class="alert alert-danger cardx" style="padding:12px 14px;">@TempData["ERR"]</div>
     }
 
-    <form method="get" class="page-section mb-3">
+    <form method="get" id="filtroGarantias" class="page-section mb-3">
         <div class="row g-2 align-items-end">
             <div class="col-12 col-md-4">
                 <label class="form-label" style="font-weight:600;">Buscar</label>
-                <input class="form-control" name="q" value="@q" placeholder="#Solicitud, #Venta, cliente o producto" />
+                <input class="form-control" id="qGarantias" name="q" value="@q" placeholder="#Solicitud, #Venta, cliente o producto" />
             </div>
 
             <div class="col-12 col-md-3">
@@ -108,9 +109,21 @@
                                         <a class="btn btn-outline-success btn-sm" href="@Url.Action("Evaluar", "Garantias", new { id = s.IdSolicitud })" title="Evaluar">
                                             <i class="bi bi-clipboard-check"></i>
                                         </a>
-                                        <a class="btn btn-outline-primary btn-sm" href="@Url.Action("Cerrar", "Garantias", new { id = s.IdSolicitud })" title="Cerrar">
-                                            <i class="bi bi-flag"></i>
-                                        </a>
+                                        @if (puedeCerrar)
+                                        {
+                                            if (string.Equals(s.Estado, "FINALIZADA", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <span class="btn btn-outline-secondary btn-sm disabled" title="Ya finalizada" aria-disabled="true">
+                                                    <i class="bi bi-flag"></i>
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-outline-primary btn-sm" href="@Url.Action("Cerrar", "Garantias", new { id = s.IdSolicitud })" title="Cerrar">
+                                                    <i class="bi bi-flag"></i>
+                                                </a>
+                                            }
+                                        }
                                     </div>
                                 </td>
                             </tr>
@@ -151,3 +164,20 @@
         </nav>
     </div>
 </div>
+
+@section scripts{
+    <script>
+        (function () {
+            var input = document.getElementById('qGarantias');
+            if (!input) return;
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    var form = document.getElementById('filtroGarantias');
+                    if (form) form.submit();
+                }
+            });
+        })();
+    </script>
+}

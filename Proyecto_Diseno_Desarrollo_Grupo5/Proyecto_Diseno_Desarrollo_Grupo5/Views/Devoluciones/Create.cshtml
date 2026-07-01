@@ -28,17 +28,19 @@
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label" style="font-weight:700;">Factura</label>
-                @Html.DropDownListFor(x => x.IdVenta, Model.Ventas, "Seleccione...", new { @class = "form-select", required = "required" })
+                @Html.DropDownListFor(x => x.IdVenta, Model.Ventas, "Seleccione...", new { @class = "form-select", id = "IdVentaDevolucion", required = "required" })
+                <small class="text-muted" id="infoClienteDevolucion"></small>
             </div>
 
             <div class="col-md-6">
                 <label class="form-label" style="font-weight:700;">Producto</label>
-                @Html.DropDownListFor(x => x.IdProducto, Model.Productos, "Seleccione...", new { @class = "form-select", required = "required" })
+                @Html.DropDownListFor(x => x.IdProducto, Model.Productos, "Seleccione una factura primero...", new { @class = "form-select", id = "IdProductoDevolucion", required = "required" })
+                <small class="text-muted" id="infoProductoDevolucion"></small>
             </div>
 
             <div class="col-md-4">
                 <label class="form-label" style="font-weight:700;">Cantidad</label>
-                @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", type = "number", step = "0.01", min = "0.01", required = "required" })
+                @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", id = "CantidadDevolucion", type = "number", step = "0.01", min = "0.01", required = "required" })
             </div>
 
             <div class="col-md-4">
@@ -58,3 +60,112 @@
         </div>
     }
 </div>
+
+@section scripts{
+    <script>
+        (function () {
+            var venta = document.getElementById('IdVentaDevolucion');
+            var producto = document.getElementById('IdProductoDevolucion');
+            var cantidad = document.getElementById('CantidadDevolucion');
+            var infoCliente = document.getElementById('infoClienteDevolucion');
+            var infoProducto = document.getElementById('infoProductoDevolucion');
+            var form = document.querySelector('form[action*="Devoluciones"]');
+
+            function resetProductos(mensaje) {
+                producto.innerHTML = '<option value="">' + mensaje + '</option>';
+                producto.disabled = true;
+                infoProducto.textContent = '';
+                cantidad.value = '';
+                cantidad.removeAttribute('max');
+            }
+
+            function renderProductos(items) {
+                var html = '<option value="">Seleccione...</option>';
+                var vistos = {};
+
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    if (!item || vistos[item.idProducto]) continue;
+                    vistos[item.idProducto] = true;
+                    html += '<option value="' + item.idProducto + '" data-comprada="' + item.cantidadComprada + '" data-disponible="' + item.cantidadDisponible + '" data-sugerida="' + item.cantidadSugerida + '">'
+                        + item.nombreProducto + ' (disp. ' + Number(item.cantidadDisponible || 0).toFixed(2) + ')'
+                        + '</option>';
+                }
+
+                producto.innerHTML = html;
+                producto.disabled = items.length === 0;
+            }
+
+            function seleccionarY_sugerirPrimerProducto() {
+                if (!producto || producto.options.length <= 1) return;
+                producto.selectedIndex = 1;
+                sugerirCantidad();
+            }
+
+            function sugerirCantidad() {
+                var option = producto.options[producto.selectedIndex];
+                if (!option || !option.value) {
+                    infoProducto.textContent = '';
+                    cantidad.value = '';
+                    cantidad.removeAttribute('max');
+                    return;
+                }
+
+                var comprada = parseFloat(option.getAttribute('data-comprada')) || 0;
+                var disponible = parseFloat(option.getAttribute('data-disponible')) || 0;
+                var sugerida = parseFloat(option.getAttribute('data-sugerida')) || disponible || comprada;
+
+                infoProducto.textContent = 'Comprado: ' + comprada.toFixed(2) + ' | Disponible: ' + disponible.toFixed(2);
+                cantidad.value = sugerida > 0 ? sugerida : '';
+                cantidad.max = disponible > 0 ? disponible : comprada;
+            }
+
+            venta.addEventListener('change', function () {
+                var idVenta = this.value;
+                infoCliente.textContent = '';
+                resetProductos('Seleccione una factura primero...');
+
+                if (!idVenta) return;
+
+                fetch('@Url.Action("FacturaInfo", "Devoluciones")?idVenta=' + encodeURIComponent(idVenta), { credentials: 'same-origin' })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (!data || !data.ok) {
+                            resetProductos('Sin productos disponibles');
+                            return;
+                        }
+
+                        infoCliente.textContent = data.cliente ? ('Cliente: ' + data.cliente) : '';
+                        renderProductos(data.productos || []);
+                        if (data.idProductoSugerido) {
+                            producto.value = data.idProductoSugerido.toString();
+                            sugerirCantidad();
+                        } else {
+                            seleccionarY_sugerirPrimerProducto();
+                        }
+                    })
+                    .catch(function () {
+                        resetProductos('No se pudo cargar la factura');
+                    });
+            });
+
+            producto.addEventListener('change', sugerirCantidad);
+
+            form.addEventListener('submit', function (e) {
+                var max = parseFloat(cantidad.getAttribute('max')) || 0;
+                var valorCantidad = parseFloat(cantidad.value) || 0;
+
+                if (!venta.value || !producto.value || valorCantidad <= 0 || (max > 0 && valorCantidad > max)) {
+                    e.preventDefault();
+                    if (window.Swal) {
+                        Swal.fire('Datos inválidos', 'Revisá la factura, el producto y la cantidad disponible para devolución.', 'warning');
+                    } else {
+                        alert('Revisá la factura, el producto y la cantidad disponible para devolución.');
+                    }
+                }
+            });
+
+            resetProductos('Seleccione una factura primero...');
+        })();
+    </script>
+}

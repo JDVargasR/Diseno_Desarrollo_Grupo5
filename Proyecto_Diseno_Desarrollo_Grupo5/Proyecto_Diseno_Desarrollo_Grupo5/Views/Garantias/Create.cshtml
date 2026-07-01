@@ -30,17 +30,18 @@
             <div class="row g-3">
                 <div class="col-12 col-md-4">
                     <label class="form-label" style="font-weight:700;">Venta</label>
-                    @Html.DropDownListFor(m => m.IdVenta, Model.Ventas, "Seleccione...", new { @class = "form-select", required = "required" })
+                    @Html.DropDownListFor(m => m.IdVenta, Model.Ventas, "Seleccione...", new { @class = "form-select", id = "IdVentaGarantia", required = "required" })
                 </div>
 
                 <div class="col-12 col-md-4">
                     <label class="form-label" style="font-weight:700;">Cliente</label>
-                    @Html.DropDownListFor(m => m.IdCliente, Model.Clientes, "Seleccione...", new { @class = "form-select", required = "required" })
+                    @Html.HiddenFor(m => m.IdCliente, new { id = "IdClienteGarantia" })
+                    <input type="text" class="form-control" id="txtClienteGarantia" readonly="readonly" placeholder="Seleccione una venta..." />
                 </div>
 
                 <div class="col-12 col-md-4">
                     <label class="form-label" style="font-weight:700;">Producto</label>
-                    @Html.DropDownListFor(m => m.IdProducto, Model.Productos, "Seleccione...", new { @class = "form-select", required = "required" })
+                    @Html.DropDownListFor(m => m.IdProducto, Model.Productos, "Seleccione una venta primero...", new { @class = "form-select", id = "IdProductoGarantia", required = "required" })
                 </div>
 
                 <div class="col-12">
@@ -56,3 +57,87 @@
         }
     </div>
 </div>
+
+@section scripts{
+    <script>
+        (function () {
+            var venta = document.getElementById('IdVentaGarantia');
+            var clienteHidden = document.getElementById('IdClienteGarantia');
+            var clienteTexto = document.getElementById('txtClienteGarantia');
+            var producto = document.getElementById('IdProductoGarantia');
+            var form = document.querySelector('form[action*="Garantias"]');
+
+            function resetProductos(mensaje) {
+                producto.innerHTML = '<option value="">' + mensaje + '</option>';
+                producto.disabled = true;
+            }
+
+            function limpiarCliente() {
+                clienteHidden.value = '';
+                clienteTexto.value = '';
+            }
+
+            function llenarProductos(items) {
+                var html = '<option value="">Seleccione...</option>';
+                var vistos = {};
+
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    if (!item || vistos[item.idProducto]) continue;
+                    vistos[item.idProducto] = true;
+                    html += '<option value="' + item.idProducto + '">' + item.nombreProducto + '</option>';
+                }
+
+                producto.innerHTML = html;
+                producto.disabled = items.length === 0;
+            }
+
+            function seleccionarPrimerProducto() {
+                if (!producto || producto.options.length <= 1) return;
+                producto.selectedIndex = 1;
+            }
+
+            venta.addEventListener('change', function () {
+                var idVenta = this.value;
+                limpiarCliente();
+                resetProductos('Seleccione una venta primero...');
+
+                if (!idVenta) return;
+
+                fetch('@Url.Action("VentaInfo", "Garantias")?idVenta=' + encodeURIComponent(idVenta), { credentials: 'same-origin' })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (!data || !data.ok) {
+                            resetProductos('Sin productos disponibles');
+                            return;
+                        }
+
+                        clienteHidden.value = data.idCliente || '';
+                        clienteTexto.value = data.cliente || '';
+                        llenarProductos(data.productos || []);
+                        if (data.idProductoSugerido) {
+                            producto.value = data.idProductoSugerido.toString();
+                        } else {
+                            seleccionarPrimerProducto();
+                        }
+                    })
+                    .catch(function () {
+                        resetProductos('No se pudo cargar la venta');
+                    });
+            });
+
+            form.addEventListener('submit', function (e) {
+                if (!venta.value || !clienteHidden.value || !producto.value) {
+                    e.preventDefault();
+                    if (window.Swal) {
+                        Swal.fire('Datos incompletos', 'Seleccioná una venta y un producto válido.', 'warning');
+                    } else {
+                        alert('Seleccioná una venta y un producto válido.');
+                    }
+                }
+            });
+
+            resetProductos('Seleccione una venta primero...');
+        })();
+    </script>
+}

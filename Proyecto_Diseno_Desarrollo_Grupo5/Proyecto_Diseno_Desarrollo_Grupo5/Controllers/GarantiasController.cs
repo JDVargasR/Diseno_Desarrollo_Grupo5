@@ -70,6 +70,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             ViewBag.PageSize = pageSize;
             ViewBag.TotalItems = total;
             ViewBag.TotalPages = pageSize <= 0 ? 0 : (int)Math.Ceiling((double)total / pageSize);
+            ViewBag.PuedeCerrar = GetCurrentRoleId() == 1;
 
             ViewBag.Estados = new[]
             {
@@ -89,25 +90,52 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             var vm = new SolicitudGarantiaCrearVM();
 
             vm.Ventas = db.VENTAS
+                .Include(v => v.CLIENTES)
+                .Include(v => v.DETALLES_VENTAS)
                 .OrderByDescending(v => v.ID_VENTA)
+                .Where(v => v.CLIENTES != null && v.DETALLES_VENTAS.Any(d => d.PRODUCTOS != null))
                 .Take(200)
                 .ToList()
                 .Select(v => new SelectListItem { Value = v.ID_VENTA.ToString(), Text = "#" + v.ID_VENTA + " - " + v.FECHA.ToString("dd/MM/yyyy") })
                 .ToList();
 
-            vm.Clientes = db.CLIENTES
-                .OrderBy(c => c.NOMBRE)
-                .ToList()
-                .Select(c => new SelectListItem { Value = c.ID_CLIENTE.ToString(), Text = c.NOMBRE })
-                .ToList();
-
-            vm.Productos = db.PRODUCTOS
-                .OrderBy(p => p.NOMBRE)
-                .ToList()
-                .Select(p => new SelectListItem { Value = p.ID_PRODUCTO.ToString(), Text = p.NOMBRE })
-                .ToList();
+            vm.Clientes = new System.Collections.Generic.List<SelectListItem>();
+            vm.Productos = new System.Collections.Generic.List<SelectListItem>();
 
             return View(vm);
+        }
+
+        [HttpGet]
+        public JsonResult VentaInfo(int idVenta)
+        {
+            var venta = db.VENTAS
+                .Include("CLIENTES")
+                .Include("DETALLES_VENTAS.PRODUCTOS")
+                .FirstOrDefault(v => v.ID_VENTA == idVenta);
+
+            if (venta == null)
+                return Json(new { ok = false, mensaje = "La venta no existe." }, JsonRequestBehavior.AllowGet);
+
+            var productos = venta.DETALLES_VENTAS
+                .Where(d => d.PRODUCTOS != null && !string.IsNullOrWhiteSpace(d.PRODUCTOS.NOMBRE))
+                .GroupBy(d => new { d.ID_PRODUCTO, d.PRODUCTOS.NOMBRE })
+                .Select(g => new
+                {
+                    idProducto = g.Key.ID_PRODUCTO,
+                    nombreProducto = g.Key.NOMBRE,
+                    cantidadComprada = g.Sum(x => x.CANTIDAD)
+                })
+                .OrderBy(x => x.nombreProducto)
+                .ToList();
+
+            return Json(new
+            {
+                ok = true,
+                idCliente = venta.ID_CLIENTE,
+                cliente = venta.CLIENTES?.NOMBRE,
+                productos = productos,
+                idProductoSugerido = productos.FirstOrDefault() != null ? (int?)productos.FirstOrDefault().idProducto : null
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -287,9 +315,14 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         }
 
         [HttpGet]
-        [RolAuthorize(1)]
         public ActionResult Cerrar(int id)
         {
+            if (GetCurrentRoleId() != 1)
+            {
+                TempData["ERR"] = "No tenés permisos para cerrar garantías.";
+                return RedirectToAction("Index");
+            }
+
             var s = db.SOLICITUD_GARANTIA
                 .Include(x => x.CLIENTES)
                 .Include(x => x.PRODUCTOS)
@@ -316,9 +349,14 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [RolAuthorize(1)]
         public ActionResult Cerrar(SolicitudGarantiaCerrarVM vm)
         {
+            if (GetCurrentRoleId() != 1)
+            {
+                TempData["ERR"] = "No tenés permisos para cerrar garantías.";
+                return RedirectToAction("Index");
+            }
+
             if (vm == null || !ModelState.IsValid)
             {
                 TempData["ERR"] = "Revisá los campos.";
@@ -368,6 +406,20 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
             TempData["OK"] = "Solicitud finalizada.";
             return RedirectToAction("Index");
+        }
+
+        private int? GetCurrentUserId()
+        {
+            if (Session["IdUsuario"] == null) return null;
+            int parsed;
+            return int.TryParse(Session["IdUsuario"].ToString(), out parsed) ? parsed : (int?)null;
+        }
+
+        private int? GetCurrentRoleId()
+        {
+            if (Session["IdRol"] == null) return null;
+            int parsed;
+            return int.TryParse(Session["IdRol"].ToString(), out parsed) ? parsed : (int?)null;
         }
     }
 }

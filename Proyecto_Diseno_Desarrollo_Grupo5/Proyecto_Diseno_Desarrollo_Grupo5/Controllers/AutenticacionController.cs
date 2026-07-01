@@ -163,6 +163,17 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             int idUsuario = (int)Session["IdUsuario"];
             model.IdUsuario = idUsuario;
 
+            if (string.IsNullOrWhiteSpace(model.Nombre))
+            {
+                ModelState.AddModelError("Nombre", "El nombre es obligatorio.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Mensaje = "Revisá los datos del perfil.";
+                return RecargarPerfil(model);
+            }
+
             // Validar que si se quiere cambiar contraseña, ambas coincidan
             if (!string.IsNullOrWhiteSpace(model.ContrasenaNueva))
             {
