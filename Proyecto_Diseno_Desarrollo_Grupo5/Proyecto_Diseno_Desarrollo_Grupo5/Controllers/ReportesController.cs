@@ -55,27 +55,13 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             if (desperdicios.Count == 0)
                 return vm;
 
-            // Totales
+            // Totales generales
             vm.TotalDesperdiciado = desperdicios.Sum(d => d.CANTIDAD_DESPERDICIADA);
             vm.TotalTransacciones = desperdicios.Count;
             vm.PromedioTransaccion = vm.TotalTransacciones > 0 ? vm.TotalDesperdiciado / vm.TotalTransacciones : 0;
 
-            // Desperdicios por Producto
-            vm.DesperdiciosPorProducto = desperdicios
-                .Where(d => d.ID_PRODUCTO.HasValue && d.PRODUCTOS != null)
-                .GroupBy(d => new { d.ID_PRODUCTO, d.PRODUCTOS.NOMBRE })
-                .Select(g => new DesperdicioProductoVM
-                {
-                    IdProducto = g.Key.ID_PRODUCTO.Value,
-                    NombreProducto = g.Key.NOMBRE,
-                    TotalDesperdiciado = g.Sum(d => d.CANTIDAD_DESPERDICIADA),
-                    PorcentajeDesperdicio = g.Count() > 0 ? (g.Sum(d => d.CANTIDAD_DESPERDICIADA) / vm.TotalDesperdiciado * 100) : 0,
-                    CantidadTransacciones = g.Count()
-                })
-                .OrderByDescending(d => d.TotalDesperdiciado)
-                .ToList();
-
-            // Desperdicios por Material
+            // ===== CAMBIO PRINCIPAL: Análisis por MATERIALES en lugar de PRODUCTOS =====
+            // Desperdicios por Material (agrupado)
             vm.DesperdiciosPorMaterial = desperdicios
                 .Where(d => d.MATERIALES != null)
                 .GroupBy(d => new { d.ID_MATERIAL, d.MATERIALES.NOMBRE, d.MATERIALES.TIPO })
@@ -85,6 +71,26 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     NombreMaterial = g.Key.NOMBRE,
                     TotalDesperdiciado = g.Sum(d => d.CANTIDAD_DESPERDICIADA),
                     Unidad = g.Key.TIPO,
+                    CantidadTransacciones = g.Count(),
+                    PorcentajeDesperdicio = vm.TotalDesperdiciado > 0 
+                        ? (g.Sum(d => d.CANTIDAD_DESPERDICIADA) / vm.TotalDesperdiciado * 100) 
+                        : 0
+                })
+                .OrderByDescending(d => d.TotalDesperdiciado)
+                .ToList();
+
+            // Mantener por Producto para compatibilidad (pero secundario)
+            vm.DesperdiciosPorProducto = desperdicios
+                .Where(d => d.ID_PRODUCTO.HasValue && d.PRODUCTOS != null)
+                .GroupBy(d => new { d.ID_PRODUCTO, d.PRODUCTOS.NOMBRE })
+                .Select(g => new DesperdicioProductoVM
+                {
+                    IdProducto = g.Key.ID_PRODUCTO.Value,
+                    NombreProducto = g.Key.NOMBRE,
+                    TotalDesperdiciado = g.Sum(d => d.CANTIDAD_DESPERDICIADA),
+                    PorcentajeDesperdicio = vm.TotalDesperdiciado > 0 
+                        ? (g.Sum(d => d.CANTIDAD_DESPERDICIADA) / vm.TotalDesperdiciado * 100) 
+                        : 0,
                     CantidadTransacciones = g.Count()
                 })
                 .OrderByDescending(d => d.TotalDesperdiciado)
@@ -136,26 +142,46 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 fechaCursor = fechaCursor.AddDays(1);
             }
 
-            // Materiales con alto desperdicio (el % de desperdicio pertenece a MATERIALES, no a PRODUCTOS)
-            var totalPorMaterial = desperdicios
+            // ===== MATERIALES CON ALTO DESPERDICIO (basado en % de desperdicios por material) =====
+            var desperdiciosPorMaterialTotal = desperdicios
                 .GroupBy(d => d.ID_MATERIAL)
-                .ToDictionary(g => g.Key, g => g.Sum(x => x.CANTIDAD_DESPERDICIADA));
+                .ToDictionary(
+                    g => g.Key, 
+                    g => new 
+                    { 
+                        Total = g.Sum(x => x.CANTIDAD_DESPERDICIADA),
+                        Transacciones = g.Count()
+                    });
 
             vm.MaterialesAltoDesperdicio = db.MATERIALES
-                .Where(m => m.PORC_DESPERDICIO > 5 && m.ID_ESTADO == 1)
+                .Include(m => m.ESTADO)
+                .Where(m => m.ID_ESTADO == 1)
                 .ToList()
-                .Select(m => new MaterialAltoDesperdicioVM
+                .Select(m => 
                 {
-                    IdMaterial = m.ID_MATERIAL,
-                    NombreMaterial = m.NOMBRE,
-                    PorcentajeDesperdicio = m.PORC_DESPERDICIO,
-                    TotalDesperdiciado = totalPorMaterial.ContainsKey(m.ID_MATERIAL)
-                        ? totalPorMaterial[m.ID_MATERIAL]
-                        : 0,
-                    Recomendacion = m.PORC_DESPERDICIO > 15
-                        ? "Alto desperdicio. Revisar manejo/almacenamiento del material."
-                        : "Monitorear desperdicio"
+                    var desperdicioMaterial = desperdiciosPorMaterialTotal.ContainsKey(m.ID_MATERIAL)
+                        ? desperdiciosPorMaterialTotal[m.ID_MATERIAL]
+                        : null;
+
+                    var porcentajeDesperdicio = desperdicioMaterial != null && vm.TotalDesperdiciado > 0
+                        ? (desperdicioMaterial.Total / vm.TotalDesperdiciado * 100)
+                        : 0m;
+
+                    return new MaterialAltoDesperdicioVM
+                    {
+                        IdMaterial = m.ID_MATERIAL,
+                        NombreMaterial = m.NOMBRE,
+                        PorcentajeDesperdicio = (decimal)porcentajeDesperdicio,
+                        TotalDesperdiciado = desperdicioMaterial?.Total ?? 0,
+                        CantidadTransacciones = desperdicioMaterial?.Transacciones ?? 0,
+                        Recomendacion = porcentajeDesperdicio > 15
+                            ? "⚠ CRÍTICO: Alto desperdicio. Revisar manejo/almacenamiento del material inmediatamente."
+                            : porcentajeDesperdicio > 5
+                            ? "⚠ Monitorear: Desperdicio moderado. Mejorar control de procesos."
+                            : "✓ Aceptable: Porcentaje de desperdicio dentro de parámetros normales."
+                    };
                 })
+                .Where(m => m.TotalDesperdiciado > 0 || m.PorcentajeDesperdicio > 5)
                 .OrderByDescending(m => m.PorcentajeDesperdicio)
                 .ToList();
 

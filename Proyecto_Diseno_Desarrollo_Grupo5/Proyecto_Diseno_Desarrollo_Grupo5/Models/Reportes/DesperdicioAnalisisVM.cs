@@ -54,6 +54,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models.Reportes
         public decimal TotalDesperdiciado { get; set; }
         public string Unidad { get; set; }
         public int CantidadTransacciones { get; set; }
+        public decimal PorcentajeDesperdicio { get; set; }
     }
 
     public class DesperdicioDiaVM
@@ -76,6 +77,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models.Reportes
         public string NombreMaterial { get; set; }
         public decimal PorcentajeDesperdicio { get; set; }
         public decimal TotalDesperdiciado { get; set; }
+        public int CantidadTransacciones { get; set; }
         public string Recomendacion { get; set; }
     }
 
