@@ -262,21 +262,32 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 }),
                 porProducto = vm.DesperdiciosPorProducto.Select(p => new
                 {
-                    nombre = p.NombreProducto,
-                    cantidad = p.TotalDesperdiciado,
-                    porcentaje = Math.Round(p.PorcentajeDesperdicio, 2)
+                    NombreProducto = p.NombreProducto,
+                    nombreProducto = p.NombreProducto,
+                    TotalDesperdiciado = p.TotalDesperdiciado,
+                    totalDesperdiciado = p.TotalDesperdiciado,
+                    PorcentajeDesperdicio = Math.Round(p.PorcentajeDesperdicio, 2),
+                    porcentajeDesperdicio = Math.Round(p.PorcentajeDesperdicio, 2)
                 }),
                 porMaterial = vm.DesperdiciosPorMaterial.Select(m => new
                 {
-                    nombre = m.NombreMaterial,
-                    cantidad = m.TotalDesperdiciado,
-                    unidad = m.Unidad
+                    NombreMaterial = m.NombreMaterial,
+                    nombreMaterial = m.NombreMaterial,
+                    TotalDesperdiciado = m.TotalDesperdiciado,
+                    totalDesperdiciado = m.TotalDesperdiciado,
+                    Unidad = m.Unidad,
+                    unidad = m.Unidad,
+                    PorcentajeDesperdicio = Math.Round(m.PorcentajeDesperdicio, 2),
+                    porcentajeDesperdicio = Math.Round(m.PorcentajeDesperdicio, 2)
                 }),
                 porOrigen = vm.DesperdiciosPorOrigen.Select(o => new
                 {
+                    Origen = o.Origen,
                     origen = o.Origen,
-                    cantidad = o.TotalDesperdiciado,
-                    transacciones = o.CantidadTransacciones
+                    TotalDesperdiciado = o.TotalDesperdiciado,
+                    totalDesperdiciado = o.TotalDesperdiciado,
+                    CantidadTransacciones = o.CantidadTransacciones,
+                    cantidadTransacciones = o.CantidadTransacciones
                 }),
                 porDia = vm.DesperdiciosPorDia.Select(d => new
                 {

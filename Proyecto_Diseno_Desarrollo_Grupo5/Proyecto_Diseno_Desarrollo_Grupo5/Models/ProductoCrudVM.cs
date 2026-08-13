@@ -46,6 +46,11 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         public int ID_ESTADO { get; set; }
         public string ESTADO { get; set; }
         public decimal STOCK { get; set; }
+
+        // Propiedades para alertas de bajo stock
+        public const int STOCK_MINIMO = 10;
+        public bool STOCK_BAJO => STOCK < STOCK_MINIMO;
+        public bool STOCK_CRITICO => STOCK <= 0;
     }
 
     public class ProductoVentaVM

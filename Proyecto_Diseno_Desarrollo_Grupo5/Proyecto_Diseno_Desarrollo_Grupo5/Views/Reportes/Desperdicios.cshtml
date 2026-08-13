@@ -92,7 +92,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <strong><i class="bi bi-pie-chart"></i> Desperdicios por Producto</strong>
+                    <strong><i class="bi bi-pie-chart"></i> Desperdicios por Material</strong>
                 </div>
                 <div class="card-body chart-body">
                     <canvas id="chartPorProducto" height="300"></canvas>
@@ -238,21 +238,21 @@
         document.getElementById('kpiPromedioTransaccion').textContent = Number(data.promedioTransaccion || 0).toFixed(2);
         document.getElementById('kpiProductosAltoRiesgo').textContent = (data.materialesAltoDesperdicio || []).length;
 
-        datosProductos = data.porProducto || [];
+        datosMateriales = data.porMaterial || [];
         datosOrigen = data.porOrigen || [];
         datosDias = data.porDia || [];
         datosAltoRiesgo = data.materialesAltoDesperdicio || [];
 
         destruirGraficos();
 
-        if (datosProductos.length > 0) {
-            const ctxProducto = document.getElementById('chartPorProducto').getContext('2d');
-            chartProducto = new Chart(ctxProducto, {
+        if (datosMateriales.length > 0) {
+            const ctxMaterial = document.getElementById('chartPorProducto').getContext('2d');
+            chartProducto = new Chart(ctxMaterial, {
                 type: 'pie',
                 data: {
-                    labels: datosProductos.map(function (p) { return p.NombreProducto || p.nombreProducto || p.nombre || 'Sin nombre'; }),
+                    labels: datosMateriales.map(function (m) { return m.NombreMaterial || m.nombreMaterial || m.nombre || 'Sin nombre'; }),
                     datasets: [{
-                        data: datosProductos.map(function (p) { return Number(p.TotalDesperdiciado ?? p.totalDesperdiciado ?? p.cantidad ?? 0); }),
+                        data: datosMateriales.map(function (m) { return Number(m.TotalDesperdiciado ?? m.totalDesperdiciado ?? m.cantidad ?? 0); }),
                         backgroundColor: coloresPrimarios
                     }]
                 },
@@ -419,12 +419,15 @@
         });
     }
 
+    var datosMateriales = @Html.Raw(Json.Encode(Model.DesperdiciosPorMaterial.Select(m => new { m.NombreMaterial, m.TotalDesperdiciado }).ToList()));
+
     renderDashboard({
         totalDesperdiciado: @Html.Raw(Json.Encode(Model.TotalDesperdiciado)),
         totalTransacciones: @Html.Raw(Json.Encode(Model.TotalTransacciones)),
         promedioTransaccion: @Html.Raw(Json.Encode(Model.PromedioTransaccion)),
-        productosAltoDesperdicio: datosAltoRiesgo,
+        materialesAltoDesperdicio: datosAltoRiesgo,
         porProducto: datosProductos,
+        porMaterial: datosMateriales,
         porOrigen: datosOrigen,
         porDia: datosDias
     });

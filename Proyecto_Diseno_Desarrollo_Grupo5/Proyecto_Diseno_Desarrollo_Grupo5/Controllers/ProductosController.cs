@@ -32,25 +32,38 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             var skip = (Math.Max(page, 1) - 1) * pageSize;
             var items = query.Skip(skip).Take(pageSize).ToList();
 
+            var productosVista = items
+                .Select(p => new ProductoFilaVM
+                {
+                    ID_PRODUCTO = p.ID_PRODUCTO,
+                    NOMBRE = p.NOMBRE,
+                    PRECIO_VENTA = p.PRECIO_VENTA,
+                    ID_CATEGORIA = p.ID_CATEGORIA,
+                    CATEGORIA = p.CATEGORIAS.NOMBRE,
+                    ID_ESTADO = p.ID_ESTADO,
+                    ESTADO = p.ESTADO.NOMBRE,
+                    STOCK = p.STOCK
+                })
+                .ToList();
+
+            // Detectar productos con bajo stock
+            var productosBajoStock = productosVista.Where(p => p.STOCK_BAJO).ToList();
+            if (productosBajoStock.Count > 0)
+            {
+                var nombres = string.Join(", ", productosBajoStock.Take(3).Select(p => p.NOMBRE));
+                if (productosBajoStock.Count > 3)
+                    nombres += " y " + (productosBajoStock.Count - 3) + " mas";
+
+                ViewBag.AlertaBajoStock = $"Hay {productosBajoStock.Count} producto(s) con bajo stock: {nombres}";
+            }
+
             var vm = new ProductoCrudVM
             {
                 Q = q,
                 Page = page,
                 PageSize = pageSize,
                 TotalItems = total,
-                Productos = items
-                    .Select(p => new ProductoFilaVM
-                    {
-                        ID_PRODUCTO = p.ID_PRODUCTO,
-                        NOMBRE = p.NOMBRE,
-                        PRECIO_VENTA = p.PRECIO_VENTA,
-                        ID_CATEGORIA = p.ID_CATEGORIA,
-                        CATEGORIA = p.CATEGORIAS.NOMBRE,
-                        ID_ESTADO = p.ID_ESTADO,
-                        ESTADO = p.ESTADO.NOMBRE,
-                        STOCK = p.STOCK
-                    })
-                    .ToList(),
+                Productos = productosVista,
 
                 Categorias = db.CATEGORIAS
                     .OrderBy(c => c.NOMBRE)

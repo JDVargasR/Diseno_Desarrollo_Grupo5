@@ -59,9 +59,9 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Fecha</th>
-                                        <th>Categoria</th>
+                                        <th>Material</th>
+                                        <th>Categoria/Tipo</th>
                                         <th>Cantidad</th>
-                                        <th>Producto</th>
                                         <th>Venta #</th>
                                         <th>Usuario</th>
                                         <th>Motivo</th>
@@ -75,12 +75,14 @@
                                                 <small>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</small>
                                             </td>
                                             <td>
-                                                <strong>@(string.IsNullOrWhiteSpace(item.Unidad) ? "Sin categoria" : item.Unidad)</strong>
+                                                <strong>@(string.IsNullOrWhiteSpace(item.Material) ? "Sin material" : item.Material)</strong>
+                                            </td>
+                                            <td>
+                                                <strong>@(string.IsNullOrWhiteSpace(item.Unidad) ? "- " : item.Unidad)</strong>
                                             </td>
                                             <td>
                                                 <span class="badge bg-danger">@item.CantidadDesperdiciada.ToString("F2")</span>
                                             </td>
-                                            <td>@item.Producto</td>
                                             <td>
                                                 @if (item.IdVenta.HasValue)
                                                 {

@@ -37,6 +37,13 @@
         <div class="alert alert-warning cardx" style="padding:12px 14px;">@TempData["Mensaje"]</div>
     }
 
+    @if (ViewBag.AlertaBajoStock != null)
+    {
+        <div class="alert alert-warning cardx" style="padding:12px 14px; border-left: 4px solid #ffc107;">
+            <strong><i class="bi bi-exclamation-triangle"></i> Alerta de Inventario:</strong> @ViewBag.AlertaBajoStock
+        </div>
+    }
+
     <div class="page-section mb-3">
         @using (Html.BeginForm("Index", "Productos", FormMethod.Get))
         {
