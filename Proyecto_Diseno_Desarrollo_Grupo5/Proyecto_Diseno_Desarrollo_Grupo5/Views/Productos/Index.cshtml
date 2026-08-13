@@ -59,7 +59,7 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Precio</th>
-                        <th>% Desperdicio</th>
+                        <th>Stock</th>
                         <th>Categoría</th>
                         <th>Estado</th>
                         @if (!esSoloLectura)
@@ -75,8 +75,8 @@
                             <td>@p.NOMBRE</td>
                             <td>₡@p.PRECIO_VENTA.ToString("N2")</td>
                             <td>
-                                <span class="badge @(p.PORC_DESPERDICIO > 5 ? "bg-warning" : "bg-secondary")">
-                                    @p.PORC_DESPERDICIO.ToString("F2")%
+                                <span class="badge @(p.STOCK <= 0 ? "bg-danger" : (p.STOCK < 10 ? "bg-warning" : "bg-secondary"))">
+                                    @p.STOCK.ToString("N2")
                                 </span>
                             </td>
                             <td>@p.CATEGORIA</td>
@@ -91,7 +91,7 @@
                                     <button class="btn btn-outline-primary btn-sm me-1"
                                             data-bs-toggle="modal"
                                             data-bs-target="#modalEditar"
-                                            onclick="cargarProductoEditar('@p.ID_PRODUCTO', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@(p.PRECIO_VENTA.ToString(System.Globalization.CultureInfo.InvariantCulture))', '@p.ID_CATEGORIA', '@(p.PORC_DESPERDICIO.ToString(System.Globalization.CultureInfo.InvariantCulture))')">
+                                            onclick="cargarProductoEditar('@p.ID_PRODUCTO', '@Html.Raw(HttpUtility.JavaScriptStringEncode(p.NOMBRE ?? ""))', '@(p.PRECIO_VENTA.ToString(System.Globalization.CultureInfo.InvariantCulture))', '@p.ID_CATEGORIA', '@(p.STOCK.ToString(System.Globalization.CultureInfo.InvariantCulture))')">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
 
@@ -104,13 +104,13 @@
 
                                         if (p.ID_ESTADO == 1)
                                         {
-                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Inactivar este producto?');" title="Inactivar">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return AlphaConfirm.antes(event, { titulo: '¿Inactivar este producto?', texto: 'El producto dejará de estar disponible para la venta.', afectaInventario: false, icono: 'warning' });" title="Inactivar">
                                                 <i class="bi bi-x-circle"></i>
                                             </button>
                                         }
                                         else
                                         {
-                                            <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('¿Activar este producto?');" title="Activar">
+                                            <button type="submit" class="btn btn-outline-success btn-sm" onclick="return AlphaConfirm.antes(event, { titulo: '¿Activar este producto?', texto: 'El producto volverá a estar disponible para la venta.', afectaInventario: false, icono: 'question' });" title="Activar">
                                                 <i class="bi bi-check-circle"></i>
                                             </button>
                                         }
@@ -194,10 +194,10 @@
                             </select>
                         </div>
                         <div class="mb-2">
-                            <label class="form-label">% Desperdicio (0–100) <span class="text-danger">*</span></label>
-                            <input class="form-control" name="PORC_DESPERDICIO" id="crear_PORC_DESPERDICIO"
-                                   type="number" step="0.01" min="0" max="100" value="0" />
-                            <small class="text-muted">Porcentaje estimado de desperdicio en producción.</small>
+                            <label class="form-label">Stock <span class="text-danger">*</span></label>
+                            <input class="form-control" name="STOCK" id="crear_STOCK"
+                                   type="number" step="0.01" min="0" value="0" />
+                            <small class="text-muted">Cantidad disponible en inventario.</small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -250,10 +250,10 @@
                             </select>
                         </div>
                         <div class="mb-2">
-                            <label class="form-label">% Desperdicio (0–100) <span class="text-danger">*</span></label>
-                            <input class="form-control" name="PORC_DESPERDICIO" id="edit_PORC_DESPERDICIO"
-                                   type="number" step="0.01" min="0" max="100" />
-                            <small class="text-muted">Porcentaje estimado de desperdicio en producción.</small>
+                            <label class="form-label">Stock <span class="text-danger">*</span></label>
+                            <input class="form-control" name="STOCK" id="edit_STOCK"
+                                   type="number" step="0.01" min="0" />
+                            <small class="text-muted">Cantidad disponible en inventario.</small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -269,13 +269,13 @@
 <script>
     var _productoEditarPendiente = null;
 
-    function cargarProductoEditar(id, nombre, precio, idCategoria, porcDesperdicio) {
+    function cargarProductoEditar(id, nombre, precio, idCategoria, stock) {
         _productoEditarPendiente = {
             id: id,
             nombre: nombre,
             precio: String(precio).replace(/,/g, '.'),
             idCategoria: idCategoria,
-            porcDesperdicio: String(porcDesperdicio).replace(/,/g, '.')
+            stock: String(stock).replace(/,/g, '.')
         };
     }
 
@@ -291,11 +291,11 @@
 
                     setTimeout(function () {
                         var precioEl = document.getElementById("edit_PRECIO_VENTA");
-                        var porcEl = document.getElementById("edit_PORC_DESPERDICIO");
+                        var stockEl = document.getElementById("edit_STOCK");
                         precioEl.value = d.precio;
-                        porcEl.value = d.porcDesperdicio;
+                        stockEl.value = d.stock;
                         precioEl.dispatchEvent(new Event('input'));
-                        porcEl.dispatchEvent(new Event('input'));
+                        stockEl.dispatchEvent(new Event('input'));
                     }, 50);
 
                     ocultarErrores('editar-errores');
@@ -367,19 +367,17 @@
             errores.push('Debe seleccionar una categoría.');
         }
 
-        var porcId = prefijo === 'crear' ? 'crear_PORC_DESPERDICIO' : 'edit_PORC_DESPERDICIO';
-        var porcEl = document.getElementById(porcId);
-        var porcStr = porcEl ? porcEl.value.trim() : '';
-        if (porcStr === '') {
-            errores.push('El porcentaje de desperdicio es obligatorio (puede ser 0).');
+        var stockId = prefijo === 'crear' ? 'crear_STOCK' : 'edit_STOCK';
+        var stockEl = document.getElementById(stockId);
+        var stockStr = stockEl ? stockEl.value.trim() : '';
+        if (stockStr === '') {
+            errores.push('El stock es obligatorio (puede ser 0).');
         } else {
-            var porc = parseFloat(porcStr);
-            if (isNaN(porc)) {
-                errores.push('El % de desperdicio debe ser un número válido.');
-            } else if (porc < 0) {
-                errores.push('El % de desperdicio no puede ser negativo.');
-            } else if (porc > 100) {
-                errores.push('El % de desperdicio no puede superar 100%.');
+            var stock = parseFloat(stockStr);
+            if (isNaN(stock)) {
+                errores.push('El stock debe ser un número válido.');
+            } else if (stock < 0) {
+                errores.push('El stock no puede ser negativo.');
             }
         }
 
@@ -389,6 +387,17 @@
         }
 
         ocultarErrores(errorContenedor);
-        document.getElementById(formId).submit();
+
+        var esEdicion = prefijo !== 'crear';
+        AlphaConfirm.preguntar({
+            titulo: esEdicion ? '¿Guardar cambios del producto?' : '¿Guardar nuevo producto?',
+            texto: esEdicion ? 'Se actualizará la información de este producto.' : 'Se creará un nuevo producto en el catálogo.',
+            afectaInventario: false,
+            icono: 'question'
+        }).then(function (confirmado) {
+            if (confirmado) {
+                document.getElementById(formId).submit();
+            }
+        });
     }
 </script>

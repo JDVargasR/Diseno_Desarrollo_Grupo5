@@ -48,7 +48,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                         CATEGORIA = p.CATEGORIAS.NOMBRE,
                         ID_ESTADO = p.ID_ESTADO,
                         ESTADO = p.ESTADO.NOMBRE,
-                        PORC_DESPERDICIO = p.PORC_DESPERDICIO
+                        STOCK = p.STOCK
                     })
                     .ToList(),
 
@@ -94,7 +94,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             return false;
         }
 
-        private string ValidarCamposProducto(string nombre, decimal precio, decimal porc)
+        private string ValidarCamposProducto(string nombre, decimal precio, decimal stock)
         {
             if (string.IsNullOrWhiteSpace(nombre))
                 return "El nombre del producto es obligatorio.";
@@ -108,8 +108,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             if (precio < 0.01m || precio > 10_000_000m)
                 return "El precio de venta debe estar entre ₡0.01 y ₡10,000,000.";
 
-            if (porc < 0m || porc > 100m)
-                return "El porcentaje de desperdicio debe estar entre 0 y 100.";
+            if (stock < 0m)
+                return "El stock no puede ser negativo.";
 
             return null;
         }
@@ -120,9 +120,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         public ActionResult Create(ProductoCrudVM vm)
         {
             TryParseDecimalFromRequest("PRECIO_VENTA", out decimal precio);
-            TryParseDecimalFromRequest("PORC_DESPERDICIO", out decimal porc);
+            TryParseDecimalFromRequest("STOCK", out decimal stock);
 
-            var error = ValidarCamposProducto(vm.NOMBRE, precio, porc);
+            var error = ValidarCamposProducto(vm.NOMBRE, precio, stock);
             if (error != null)
             {
                 TempData["ERR"] = error;
@@ -144,7 +144,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 PRECIO_VENTA = precio,
                 ID_CATEGORIA = vm.ID_CATEGORIA,
                 ID_ESTADO = (vm.ID_ESTADO > 0 ? vm.ID_ESTADO : activoId),
-                PORC_DESPERDICIO = porc
+                STOCK = stock
             };
 
             db.PRODUCTOS.Add(p);
@@ -159,12 +159,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         public ActionResult Edit(ProductoCrudVM vm)
         {
             bool precioParsed = TryParseDecimalFromRequest("PRECIO_VENTA", out decimal precio);
-            bool porcParsed = TryParseDecimalFromRequest("PORC_DESPERDICIO", out decimal porc);
+            bool stockParsed = TryParseDecimalFromRequest("STOCK", out decimal stock);
 
             if (!precioParsed) precio = vm.PRECIO_VENTA;
-            if (!porcParsed) porc = vm.PORC_DESPERDICIO;
+            if (!stockParsed) stock = vm.STOCK;
 
-            var error = ValidarCamposProducto(vm.NOMBRE, precio, porc);
+            var error = ValidarCamposProducto(vm.NOMBRE, precio, stock);
             if (error != null)
             {
                 TempData["ERR"] = error;
@@ -183,7 +183,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             p.NOMBRE = vm.NOMBRE.Trim();
             p.PRECIO_VENTA = precio;
             p.ID_CATEGORIA = vm.ID_CATEGORIA;
-            p.PORC_DESPERDICIO = porc;
+            p.STOCK = stock;
 
             db.SaveChanges();
             TempData["OK"] = "Producto actualizado correctamente.";

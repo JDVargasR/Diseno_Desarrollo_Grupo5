@@ -46,7 +46,7 @@
 
                 <div class="col-12 d-flex justify-content-end gap-2">
                     <a class="btn btn-light" href="@Url.Action("Index","Garantias")">Cancelar</a>
-                    <button class="btn btn-primary btn-primary-pill" type="submit" onclick="return confirm('¿Marcar la solicitud como FINALIZADA?');">Finalizar</button>
+                    <button class="btn btn-primary btn-primary-pill" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: '¿Marcar la solicitud como FINALIZADA?', texto: 'Esta acción cerrará definitivamente la solicitud de garantía.', afectaInventario: false, icono: 'question' });">Finalizar</button>
                 </div>
             </div>
         }

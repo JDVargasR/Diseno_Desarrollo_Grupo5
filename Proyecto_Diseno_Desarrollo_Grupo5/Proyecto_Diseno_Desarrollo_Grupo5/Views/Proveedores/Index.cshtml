@@ -95,13 +95,13 @@
                                         <input type="hidden" name="q" value="@Model.Q" />
                                         if (p.ID_ESTADO == 1)
                                         {
-                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Inactivar este proveedor?');" title="Inactivar">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return AlphaConfirm.antes(event, { titulo: '¿Inactivar este proveedor?', texto: 'El proveedor dejará de estar disponible para nuevas compras.', afectaInventario: false, icono: 'warning' });" title="Inactivar">
                                                 <i class="bi bi-x-circle"></i>
                                             </button>
                                         }
                                         else
                                         {
-                                            <button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('¿Activar este proveedor?');" title="Activar">
+                                            <button type="submit" class="btn btn-outline-success btn-sm" onclick="return AlphaConfirm.antes(event, { titulo: '¿Activar este proveedor?', texto: 'El proveedor volverá a estar disponible.', afectaInventario: false, icono: 'question' });" title="Activar">
                                                 <i class="bi bi-check-circle"></i>
                                             </button>
                                         }

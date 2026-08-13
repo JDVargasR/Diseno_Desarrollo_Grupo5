@@ -62,9 +62,22 @@
 
         <div class="page-section mb-3">
             <div class="row g-2 align-items-end">
-                <div class="col-md-5">
+                <div class="col-md-3">
+                    <label class="form-label" style="font-weight:600;">Tipo de ítem</label>
+                    <select id="tipoItemSelect" class="form-select">
+                        <option value="PRODUCTO">Producto</option>
+                        <option value="MATERIAL">Material</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4" id="productoSelectWrap">
                     <label class="form-label" style="font-weight:600;">Producto</label>
                     @Html.DropDownList("productoSelect", Model.Productos, "Seleccione un producto", new { @class = "form-select" })
+                </div>
+
+                <div class="col-md-4 d-none" id="materialSelectWrap">
+                    <label class="form-label" style="font-weight:600;">Material</label>
+                    @Html.DropDownList("materialSelect", Model.Materiales, "Seleccione un material", new { @class = "form-select" })
                 </div>
 
                 <div class="col-md-2">
@@ -72,12 +85,12 @@
                     <input class="form-control" type="number" step="0.01" min="0.01" id="cantInput" />
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label" style="font-weight:600;">Precio Unitario (₡)</label>
                     <input class="form-control" type="number" step="0.01" min="0" id="precioInput" />
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <button type="button" class="btn btn-dark w-100" style="height:44px; border-radius:10px; font-weight:600;" onclick="agregarItem()">
                         + Agregar
                     </button>
@@ -90,7 +103,8 @@
                 <table class="table mb-0" id="tablaDetalle">
                     <thead>
                         <tr>
-                            <th>Producto</th>
+                            <th style="width:100px;">Tipo</th>
+                            <th>Ítem</th>
                             <th style="width:120px;">Cantidad</th>
                             <th style="width:150px;">Precio</th>
                             <th style="width:150px;">Subtotal</th>
@@ -102,7 +116,7 @@
             </div>
 
             <div class="d-flex justify-content-end gap-2 mt-3">
-                <button type="submit" class="btn btn-primary btn-primary-pill">Guardar venta</button>
+                <button type="submit" class="btn btn-primary btn-primary-pill" onclick="return AlphaConfirm.antes(event, { titulo: '¿Guardar esta venta?', texto: 'Se descontará el stock de los materiales usados en los productos vendidos.', afectaInventario: true, icono: 'question' });">Guardar venta</button>
             </div>
         </div>
 
@@ -123,6 +137,32 @@
         }
         };
 
+        const materialesPrecio = {
+        @for (int i = 0; i < Model.MaterialesConPrecio.Count; i++)
+        {
+            var m = Model.MaterialesConPrecio[i];
+        <text>
+            "@m.IdMaterial": @m.PrecioVenta.ToString(System.Globalization.CultureInfo.InvariantCulture)@(i < Model.MaterialesConPrecio.Count - 1 ? "," : "")
+        </text>
+        }
+        };
+
+        const tipoItemSelect = document.getElementById("tipoItemSelect");
+        const productoSelectWrap = document.getElementById("productoSelectWrap");
+        const materialSelectWrap = document.getElementById("materialSelectWrap");
+
+        tipoItemSelect.addEventListener("change", function () {
+            const precioInput = document.getElementById("precioInput");
+            if (this.value === "MATERIAL") {
+                productoSelectWrap.classList.add("d-none");
+                materialSelectWrap.classList.remove("d-none");
+            } else {
+                materialSelectWrap.classList.add("d-none");
+                productoSelectWrap.classList.remove("d-none");
+            }
+            precioInput.value = "";
+        });
+
         document.getElementsByName("productoSelect")[0].addEventListener("change", function () {
             const idProd = this.value;
             const precioInput = document.getElementById("precioInput");
@@ -132,6 +172,28 @@
             } else {
                 precioInput.value = "";
             }
+        });
+
+        document.getElementsByName("materialSelect")[0].addEventListener("change", function () {
+            const idMat = this.value;
+            const precioInput = document.getElementById("precioInput");
+
+            if (idMat && materialesPrecio[idMat] !== undefined) {
+                precioInput.value = materialesPrecio[idMat];
+            } else {
+                precioInput.value = "";
+            }
+        });
+
+        // Evita que presionar Enter en Cantidad/Precio dispare el submit del formulario
+        // (envío accidental de la venta vacía) en lugar de agregar el producto a la lista.
+        ["cantInput", "precioInput"].forEach(function (id) {
+            document.getElementById(id).addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    agregarItem();
+                }
+            });
         });
 
         function money(n) {
@@ -147,14 +209,19 @@
         }
 
         function agregarItem() {
-            const sel = document.getElementsByName("productoSelect")[0];
-            const idProd = sel.value;
-            const prodText = sel.options[sel.selectedIndex]?.text || "";
+            const tipo = tipoItemSelect.value;
+            const isMaterial = tipo === "MATERIAL";
+            const sel = isMaterial
+                ? document.getElementsByName("materialSelect")[0]
+                : document.getElementsByName("productoSelect")[0];
+
+            const idSel = sel.value;
+            const itemText = sel.options[sel.selectedIndex]?.text || "";
 
             const cant = parseFloat(document.getElementById("cantInput").value);
             const precio = parseFloat(document.getElementById("precioInput").value);
 
-            if (!idProd) { alert("Seleccione un producto"); return; }
+            if (!idSel) { alert(isMaterial ? "Seleccione un material" : "Seleccione un producto"); return; }
             if (!cant || cant <= 0) { alert("Cantidad inválida"); return; }
             if (precio == null || isNaN(precio) || precio < 0) { alert("Precio inválido"); return; }
 
@@ -165,7 +232,8 @@
             tr.setAttribute("data-subtotal", subtotal);
 
             tr.innerHTML = `
-                <td>${prodText}</td>
+                <td>${isMaterial ? "Material" : "Producto"}</td>
+                <td>${itemText}</td>
                 <td>${money(cant)}</td>
                 <td>${money(precio)}</td>
                 <td>${money(subtotal)}</td>
@@ -177,7 +245,9 @@
 
             const hidden = document.getElementById("hiddenContainer");
             hidden.insertAdjacentHTML("beforeend", `
-                <input type="hidden" name="IdProducto" value="${idProd}" />
+                <input type="hidden" name="TipoItem" value="${tipo}" />
+                <input type="hidden" name="IdProducto" value="${isMaterial ? "" : idSel}" />
+                <input type="hidden" name="IdMaterial" value="${isMaterial ? idSel : ""}" />
                 <input type="hidden" name="Cantidad" value="${cant}" />
                 <input type="hidden" name="PrecioUnitario" value="${precio}" />
             `);
@@ -196,10 +266,10 @@
             tr.remove();
 
             const hidden = document.querySelectorAll("#hiddenContainer input");
-            const base = index * 3;
-            if (hidden[base]) hidden[base].remove();
-            if (hidden[base + 1]) hidden[base + 1].remove();
-            if (hidden[base + 2]) hidden[base + 2].remove();
+            const base = index * 5;
+            for (let k = 0; k < 5; k++) {
+                if (hidden[base + k]) hidden[base + k].remove();
+            }
 
             recalcularTotal();
         }

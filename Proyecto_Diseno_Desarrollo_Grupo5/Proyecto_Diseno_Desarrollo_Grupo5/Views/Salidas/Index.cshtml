@@ -5,6 +5,32 @@
 
 @section styles{
     <link rel="stylesheet" href="~/StaticFiles/css/Cliente.css" />
+    <style>
+        .badge-mov {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: .3px;
+        }
+        .badge-mov-entrada { background: #d1f2e0; color: #0f6b3a; }
+        .badge-mov-salida { background: #fde2e1; color: #a3271e; }
+        .badge-mov-pendiente { background: #fff3cd; color: #7a5b00; }
+        .badge-mov-confirmado { background: #dbeafe; color: #1d4ed8; }
+        .badge-mov-anulado { background: #e5e7eb; color: #4b5563; text-decoration: line-through; }
+        .salidas-empty {
+            text-align: center;
+            padding: 48px 18px;
+            color: #6c757d;
+        }
+        .salidas-empty i {
+            font-size: 42px;
+            display: block;
+            margin-bottom: 10px;
+            opacity: .6;
+        }
+    </style>
 }
 
 <div class="container" style="max-width:1200px; padding-top:30px;">
@@ -69,7 +95,7 @@
 
     <div class="page-section">
         <div class="cardx table-wrap">
-            <table class="table">
+            <table class="table align-middle">
                 <thead>
                     <tr>
                         <th>Fecha</th>
@@ -87,14 +113,21 @@
                     {
                         foreach (var item in Model.Movimientos)
                         {
+                            var tipoClase = string.Equals(item.Tipo, "ENTRADA", StringComparison.OrdinalIgnoreCase) ? "badge-mov-entrada" : "badge-mov-salida";
+                            var estadoClase = string.Equals(item.Estado, "ANULADO", StringComparison.OrdinalIgnoreCase)
+                                ? "badge-mov-anulado"
+                                : string.Equals(item.Estado, "PENDIENTE", StringComparison.OrdinalIgnoreCase)
+                                    ? "badge-mov-pendiente"
+                                    : "badge-mov-confirmado";
+
                             <tr>
                                 <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td>@item.Tipo</td>
+                                <td><span class="badge-mov @tipoClase">@item.Tipo</span></td>
                                 <td>@item.Material</td>
                                 <td>@item.Proveedor</td>
                                 <td>@item.Cantidad.ToString("N2")</td>
                                 <td>@item.Motivo</td>
-                                <td>@item.Estado</td>
+                                <td><span class="badge-mov @estadoClase">@item.Estado</span></td>
                                 <td class="text-end">
                                     <a class="btn btn-outline-info btn-sm" href="@Url.Action("Comprobante","Salidas", new { id = item.IdMovimiento })">Comprobante</a>
                                     @if (item.PuedeAnular)
@@ -102,7 +135,7 @@
                                         <form method="post" action="@Url.Action("Anular","Salidas")" class="d-inline">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@item.IdMovimiento" />
-                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Seguro que desea anular este movimiento?');">Anular</button>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return AlphaConfirm.antes(event, { titulo: '¿Anular este movimiento?', texto: 'Esta acción afecta el inventario y revertirá el efecto del movimiento sobre el stock.', afectaInventario: true, icono: 'warning' });">Anular</button>
                                         </form>
                                     }
                                 </td>
@@ -112,7 +145,12 @@
                     else
                     {
                         <tr>
-                            <td colspan="8" class="text-center text-muted" style="padding:18px;">No hay movimientos para los filtros seleccionados.</td>
+                            <td colspan="8">
+                                <div class="salidas-empty">
+                                    <i class="bi bi-inbox"></i>
+                                    No hay movimientos para los filtros seleccionados.
+                                </div>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -120,3 +158,4 @@
         </div>
     </div>
 </div>
+

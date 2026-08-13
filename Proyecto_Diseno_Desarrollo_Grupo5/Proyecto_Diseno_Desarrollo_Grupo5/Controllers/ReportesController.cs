@@ -136,28 +136,27 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 fechaCursor = fechaCursor.AddDays(1);
             }
 
-            // Productos con alto desperdicio
-            var totalPorProducto = desperdicios
-                .Where(d => d.ID_PRODUCTO.HasValue)
-                .GroupBy(d => d.ID_PRODUCTO.Value)
+            // Materiales con alto desperdicio (el % de desperdicio pertenece a MATERIALES, no a PRODUCTOS)
+            var totalPorMaterial = desperdicios
+                .GroupBy(d => d.ID_MATERIAL)
                 .ToDictionary(g => g.Key, g => g.Sum(x => x.CANTIDAD_DESPERDICIADA));
 
-            vm.ProductosAltoDesperdicio = db.PRODUCTOS
-                .Where(p => p.PORC_DESPERDICIO > 5 && p.ID_ESTADO == 1)
+            vm.MaterialesAltoDesperdicio = db.MATERIALES
+                .Where(m => m.PORC_DESPERDICIO > 5 && m.ID_ESTADO == 1)
                 .ToList()
-                .Select(p => new ProductoAltoDesperdicioVM
+                .Select(m => new MaterialAltoDesperdicioVM
                 {
-                    IdProducto = p.ID_PRODUCTO,
-                    NombreProducto = p.NOMBRE,
-                    PorcentajeDesperdicio = p.PORC_DESPERDICIO,
-                    TotalDesperdiciado = totalPorProducto.ContainsKey(p.ID_PRODUCTO)
-                        ? totalPorProducto[p.ID_PRODUCTO]
+                    IdMaterial = m.ID_MATERIAL,
+                    NombreMaterial = m.NOMBRE,
+                    PorcentajeDesperdicio = m.PORC_DESPERDICIO,
+                    TotalDesperdiciado = totalPorMaterial.ContainsKey(m.ID_MATERIAL)
+                        ? totalPorMaterial[m.ID_MATERIAL]
                         : 0,
-                    Recomendacion = p.PORC_DESPERDICIO > 15
-                        ? "Alto desperdicio. Revisar procesos de produccion."
+                    Recomendacion = m.PORC_DESPERDICIO > 15
+                        ? "Alto desperdicio. Revisar manejo/almacenamiento del material."
                         : "Monitorear desperdicio"
                 })
-                .OrderByDescending(p => p.PorcentajeDesperdicio)
+                .OrderByDescending(m => m.PorcentajeDesperdicio)
                 .ToList();
 
             return vm;
@@ -228,12 +227,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 totalDesperdiciado = vm.TotalDesperdiciado,
                 totalTransacciones = vm.TotalTransacciones,
                 promedioTransaccion = vm.PromedioTransaccion,
-                productosAltoDesperdicio = vm.ProductosAltoDesperdicio.Select(p => new
+                materialesAltoDesperdicio = vm.MaterialesAltoDesperdicio.Select(m => new
                 {
-                    nombreProducto = p.NombreProducto,
-                    porcentajeDesperdicio = Math.Round(p.PorcentajeDesperdicio, 2),
-                    totalDesperdiciado = p.TotalDesperdiciado,
-                    recomendacion = p.Recomendacion
+                    nombreMaterial = m.NombreMaterial,
+                    porcentajeDesperdicio = Math.Round(m.PorcentajeDesperdicio, 2),
+                    totalDesperdiciado = m.TotalDesperdiciado,
+                    recomendacion = m.Recomendacion
                 }),
                 porProducto = vm.DesperdiciosPorProducto.Select(p => new
                 {

@@ -46,7 +46,7 @@
             </div>
             <div class="col-12 d-flex justify-content-end gap-2 mt-2">
                 <a href="@Url.Action("Index","Salidas")" class="btn btn-light">Cancelar</a>
-                <button type="submit" class="btn @(esEntrada ? "btn-success" : "btn-danger")">@(esEntrada ? "Guardar ingreso" : "Guardar salida")</button>
+                <button type="submit" class="btn @(esEntrada ? "btn-success" : "btn-danger")" onclick="return AlphaConfirm.antes(event, { titulo: @Html.Raw(esEntrada ? "'¿Registrar esta entrada?'" : "'¿Registrar esta salida?'"), texto: 'Esta acción afecta el inventario del material seleccionado.', afectaInventario: true, icono: 'question' });">@(esEntrada ? "Guardar ingreso" : "Guardar salida")</button>
             </div>
         </div>
     }

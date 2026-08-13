@@ -19,6 +19,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         public string UsuarioRegistro { get; set; }
         public string UsuarioDecision { get; set; }
         public DateTime? FechaDecision { get; set; }
+        public string NombrePersonaDevuelve { get; set; }
     }
 
     public class DevolucionCrearVM
@@ -38,6 +39,15 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         [Required]
         [StringLength(300)]
         public string Motivo { get; set; }
+
+        [Required]
+        [StringLength(140)]
+        [Display(Name = "Nombre de la persona que devuelve")]
+        public string NombrePersonaDevuelve { get; set; }
+
+        [Required]
+        [Display(Name = "Fecha de devolución")]
+        public DateTime FechaDevolucion { get; set; } = DateTime.Today;
 
         [Range(1, 365)]
         public int PoliticaDias { get; set; } = 30;

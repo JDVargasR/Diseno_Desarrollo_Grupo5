@@ -1,5 +1,4 @@
 using Proyecto_Diseno_Desarrollo_Grupo5.EF;
-using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
@@ -100,7 +99,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 .Select(g =>
                 {
                     var comprada = g.Sum(x => x.CANTIDAD);
-                    var devuelta = devolucionesPrevias.ContainsKey(g.Key.ID_PRODUCTO) ? devolucionesPrevias[g.Key.ID_PRODUCTO] : 0m;
+                    var devuelta = devolucionesPrevias.ContainsKey(g.Key.ID_PRODUCTO.Value) ? devolucionesPrevias[g.Key.ID_PRODUCTO.Value] : 0m;
                     var disponible = Math.Max(comprada - devuelta, 0m);
                     return new
                     {
@@ -158,7 +157,25 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 return RedirectToAction("Create");
             }
 
-            var ahora = DateTime.Now;
+            if (vm.FechaDevolucion.Date > DateTime.Today)
+            {
+                TempData["ERR"] = "La fecha de devolución no puede ser futura.";
+                return RedirectToAction("Create");
+            }
+
+            if (vm.FechaDevolucion.Date < venta.FECHA.Date)
+            {
+                TempData["ERR"] = "La fecha de devolución no puede ser anterior a la fecha de la venta.";
+                return RedirectToAction("Create");
+            }
+
+            if (string.IsNullOrWhiteSpace(vm.NombrePersonaDevuelve))
+            {
+                TempData["ERR"] = "Debe indicar el nombre de la persona que realiza la devolución.";
+                return RedirectToAction("Create");
+            }
+
+            var ahora = vm.FechaDevolucion;
             var limitePolitica = venta.FECHA.AddDays(vm.PoliticaDias);
             var garantia = db.GARANTIAS.FirstOrDefault(g => g.ID_PRODUCTO == vm.IdProducto);
             var dentroPolitica = ahora <= limitePolitica;
@@ -184,7 +201,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             var entidad = new DEVOLUCIONES
             {
                 ID_VENTA = vm.IdVenta,
-                FECHA = DateTime.Now,
+                FECHA = vm.FechaDevolucion,
+                NOMBRE_PERSONA_DEVUELVE = (vm.NombrePersonaDevuelve ?? "").Trim(),
                 MOTIVO = SerializarMetadata(metadata)
             };
 
@@ -500,7 +518,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     : "N/D",
                 UsuarioDecision = x.Meta.IdUsuarioDecision.HasValue && usuarios.ContainsKey(x.Meta.IdUsuarioDecision.Value)
                     ? usuarios[x.Meta.IdUsuarioDecision.Value]
-                    : "-"
+                    : "-",
+                NombrePersonaDevuelve = string.IsNullOrWhiteSpace(x.Dev.NOMBRE_PERSONA_DEVUELVE) ? "N/D" : x.Dev.NOMBRE_PERSONA_DEVUELVE
             }).ToList();
         }
 

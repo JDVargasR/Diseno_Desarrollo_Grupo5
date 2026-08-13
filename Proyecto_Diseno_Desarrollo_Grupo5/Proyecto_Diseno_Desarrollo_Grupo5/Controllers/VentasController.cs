@@ -79,6 +79,11 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 .OrderBy(p => p.NOMBRE)
                 .ToList();
 
+            var materialesActivos = db.MATERIALES
+                .Where(m => m.ID_ESTADO == 1)
+                .OrderBy(m => m.NOMBRE)
+                .ToList();
+
             var vm = new VentaCrearVM
             {
                 Productos = productosActivos
@@ -89,12 +94,29 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     })
                     .ToList(),
 
+                Materiales = materialesActivos
+                    .Select(m => new SelectListItem
+                    {
+                        Value = m.ID_MATERIAL.ToString(),
+                        Text = m.NOMBRE
+                    })
+                    .ToList(),
+
                 ProductosConPrecio = productosActivos
                     .Select(p => new ProductoVentaVM
                     {
                         IdProducto = p.ID_PRODUCTO,
                         Nombre = p.NOMBRE,
                         PrecioVenta = p.PRECIO_VENTA
+                    })
+                    .ToList(),
+
+                MaterialesConPrecio = materialesActivos
+                    .Select(m => new MaterialVentaVM
+                    {
+                        IdMaterial = m.ID_MATERIAL,
+                        Nombre = m.NOMBRE,
+                        PrecioVenta = m.COSTO_UNITARIO
                     })
                     .ToList()
             };
@@ -104,17 +126,19 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(int? IdCliente, int[] IdProducto, decimal[] Cantidad, decimal[] PrecioUnitario)
+        public ActionResult Create(int? IdCliente, string[] TipoItem, int?[] IdProducto, int?[] IdMaterial, decimal[] Cantidad, decimal[] PrecioUnitario)
         {
-            if (!IdCliente.HasValue || IdCliente.Value <= 0 || IdProducto == null || IdProducto.Length == 0)
+            if (!IdCliente.HasValue || IdCliente.Value <= 0 || TipoItem == null || TipoItem.Length == 0)
             {
-                TempData["ERR"] = "Debés seleccionar cliente y agregar al menos un producto.";
+                TempData["ERR"] = "Debés seleccionar cliente y agregar al menos un producto o material.";
                 return RedirectToAction("Create");
             }
 
-            if (Cantidad == null || PrecioUnitario == null || Cantidad.Length != IdProducto.Length || PrecioUnitario.Length != IdProducto.Length)
+            if (Cantidad == null || PrecioUnitario == null || IdProducto == null || IdMaterial == null
+                || Cantidad.Length != TipoItem.Length || PrecioUnitario.Length != TipoItem.Length
+                || IdProducto.Length != TipoItem.Length || IdMaterial.Length != TipoItem.Length)
             {
-                TempData["ERR"] = "Detalle de productos inválido. Volvé a agregar los productos.";
+                TempData["ERR"] = "Detalle de ítems inválido. Volvé a agregar los productos o materiales.";
                 return RedirectToAction("Create");
             }
 
@@ -134,10 +158,13 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     db.SaveChanges();
 
                     decimal total = 0;
+                    int? idUsuario = null;
+                    if (Session["IdUsuario"] != null)
+                        idUsuario = Convert.ToInt32(Session["IdUsuario"]);
 
-                    for (int i = 0; i < IdProducto.Length; i++)
+                    for (int i = 0; i < TipoItem.Length; i++)
                     {
-                        var idProd = IdProducto[i];
+                        var tipo = (TipoItem[i] ?? "").Trim().ToUpperInvariant();
                         var cant = Cantidad[i];
                         var precio = PrecioUnitario[i];
 
@@ -145,95 +172,82 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                         if (precio < 0) precio = 0;
 
                         var subtotal = cant * precio;
+
+                        if (tipo == "MATERIAL")
+                        {
+                            var idMat = IdMaterial[i];
+                            if (!idMat.HasValue || idMat.Value <= 0)
+                                throw new Exception("Ítem de tipo material inválido.");
+
+                            var material = db.MATERIALES.Find(idMat.Value);
+                            if (material == null)
+                                throw new Exception("Material no encontrado.");
+
+                            if (material.STOCK < cant)
+                                throw new Exception($"Stock insuficiente en material: {material.NOMBRE}. Disponible: {material.STOCK}, requerido: {cant}");
+
+                            material.STOCK -= cant;
+
+                            db.DETALLES_VENTAS.Add(new DETALLES_VENTAS
+                            {
+                                ID_VENTA = venta.ID_VENTA,
+                                ID_MATERIAL = idMat.Value,
+                                CANTIDAD = cant,
+                                PRECIO_UNITARIO = precio,
+                                SUBTOTAL = subtotal,
+                                TIPO_ITEM = "MATERIAL"
+                            });
+
+                            // Registrar desperdicio usando el porcentaje configurado en el material.
+                            if (material.PORC_DESPERDICIO > 0)
+                            {
+                                var cantidadDesperdiciada = cant * (material.PORC_DESPERDICIO / 100m);
+
+                                if (cantidadDesperdiciada > 0)
+                                {
+                                    db.DESPERDICIOS_MATERIAL.Add(new DESPERDICIOS_MATERIAL
+                                    {
+                                        ID_MATERIAL = material.ID_MATERIAL,
+                                        CANTIDAD_DESPERDICIADA = cantidadDesperdiciada,
+                                        REUTILIZABLE = "N",
+                                        CANTIDAD_REUTILIZADA = 0,
+                                        MOTIVO = "Desperdicio generado por venta directa de material.",
+                                        FECHA = DateTime.Now,
+                                        ID_USUARIO = idUsuario,
+                                        ID_VENTA = venta.ID_VENTA,
+                                        ORIGEN = "VENTA"
+                                    });
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var idProd = IdProducto[i];
+                            if (!idProd.HasValue || idProd.Value <= 0)
+                                throw new Exception("Ítem de tipo producto inválido.");
+
+                            var producto = db.PRODUCTOS.Find(idProd.Value);
+                            if (producto == null)
+                                throw new Exception("Producto no encontrado.");
+
+                            if (producto.STOCK < cant)
+                                throw new Exception($"Stock insuficiente en producto: {producto.NOMBRE}. Disponible: {producto.STOCK}, requerido: {cant}");
+
+                            producto.STOCK -= cant;
+
+                            db.DETALLES_VENTAS.Add(new DETALLES_VENTAS
+                            {
+                                ID_VENTA = venta.ID_VENTA,
+                                ID_PRODUCTO = idProd.Value,
+                                CANTIDAD = cant,
+                                PRECIO_UNITARIO = precio,
+                                SUBTOTAL = subtotal,
+                                TIPO_ITEM = "PRODUCTO"
+                            });
+                        }
+
                         total += subtotal;
-
-                        db.DETALLES_VENTAS.Add(new DETALLES_VENTAS
-                        {
-                            ID_VENTA = venta.ID_VENTA,
-                            ID_PRODUCTO = idProd,
-                            CANTIDAD = cant,
-                            PRECIO_UNITARIO = precio,
-                            SUBTOTAL = subtotal
-                        });
-
-                        var receta = db.PRODUCTO_MATERIAL
-                            .Where(pm => pm.ID_PRODUCTO == idProd)
-                            .ToList();
-
-                        // Obtener el producto para verificar porcentaje de desperdicio
-                        var producto = db.PRODUCTOS.Find(idProd);
-
-                        // Registrar desperdicios basado en el porcentaje del producto
-                        if (producto != null && producto.PORC_DESPERDICIO > 0)
-                        {
-                            int? idUsuario = null;
-                            if (Session["IdUsuario"] != null)
-                                idUsuario = Convert.ToInt32(Session["IdUsuario"]);
-
-                            if (receta.Count > 0)
-                            {
-                                // Si hay receta, registrar desperdicio por cada material
-                                foreach (var r in receta)
-                                {
-                                    var cantidadUsada = cant * r.CANTIDAD_USADA;
-                                    var cantidadDesperdiciada = cantidadUsada * (producto.PORC_DESPERDICIO / 100);
-
-                                    db.DESPERDICIOS_MATERIAL.Add(new DESPERDICIOS_MATERIAL
-                                    {
-                                        ID_MATERIAL = r.ID_MATERIAL,
-                                        CANTIDAD_DESPERDICIADA = cantidadDesperdiciada,
-                                        CANTIDAD_REUTILIZADA = 0,
-                                        ID_USUARIO = idUsuario,
-                                        FECHA = DateTime.Now,
-                                        REUTILIZABLE = "S",
-                                        MOTIVO = "Desperdicio normal de producción",
-                                        ID_VENTA = venta.ID_VENTA,
-                                        ID_PRODUCTO = idProd,
-                                        ORIGEN = "VENTA"
-                                    });
-                                }
-                            }
-                            else
-                            {
-                                // Si no hay receta, registrar desperdicio directo del producto
-                                // Buscar un material genérico o el primero disponible
-                                var primerMaterial = db.MATERIALES.FirstOrDefault();
-                                if (primerMaterial != null)
-                                {
-                                    var cantidadDesperdiciada = cant * (producto.PORC_DESPERDICIO / 100);
-
-                                    db.DESPERDICIOS_MATERIAL.Add(new DESPERDICIOS_MATERIAL
-                                    {
-                                        ID_MATERIAL = primerMaterial.ID_MATERIAL,
-                                        CANTIDAD_DESPERDICIADA = cantidadDesperdiciada,
-                                        CANTIDAD_REUTILIZADA = 0,
-                                        ID_USUARIO = idUsuario,
-                                        FECHA = DateTime.Now,
-                                        REUTILIZABLE = "S",
-                                        MOTIVO = $"Desperdicio del {producto.PORC_DESPERDICIO}% en producción (sin receta específica)",
-                                        ID_VENTA = venta.ID_VENTA,
-                                        ID_PRODUCTO = idProd,
-                                        ORIGEN = "VENTA"
-                                    });
-                                }
-                            }
-                        }
-
-                        // Descontar del stock de materiales si hay receta
-                        foreach (var r in receta)
-                        {
-                            var material = db.MATERIALES.Find(r.ID_MATERIAL);
-                            if (material == null) continue;
-
-                            var descuento = cant * r.CANTIDAD_USADA;
-
-                            if (material.STOCK < descuento)
-                                throw new Exception($"Stock insuficiente en material: {material.NOMBRE}. Disponible: {material.STOCK}, requerido: {descuento}");
-
-                            material.STOCK -= descuento;
-                        }
                     }
-
 
                     venta.TOTAL = total;
                     db.SaveChanges();
@@ -400,7 +414,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     nombreMaterial = d.MATERIALES.NOMBRE,
                     cantidad = d.CANTIDAD_DESPERDICIADA,
                     unidad = d.MATERIALES.TIPO,
-                    producto = d.PRODUCTOS.NOMBRE,
+                    producto = d.PRODUCTOS == null ? null : d.PRODUCTOS.NOMBRE,
                     fecha = d.FECHA,
                     motivo = d.MOTIVO
                 })
@@ -508,17 +522,25 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
                     foreach (var det in venta.DETALLES_VENTAS.ToList())
                     {
-                        var receta = db.PRODUCTO_MATERIAL
-                            .Where(pm => pm.ID_PRODUCTO == det.ID_PRODUCTO)
-                            .ToList();
+                        var tipo = (det.TIPO_ITEM ?? "PRODUCTO").Trim().ToUpperInvariant();
 
-                        foreach (var r in receta)
+                        if (tipo == "MATERIAL")
                         {
-                            var material = db.MATERIALES.Find(r.ID_MATERIAL);
-                            if (material == null) continue;
+                            if (det.ID_MATERIAL.HasValue)
+                            {
+                                var materialVendido = db.MATERIALES.Find(det.ID_MATERIAL.Value);
+                                if (materialVendido != null)
+                                    materialVendido.STOCK += det.CANTIDAD;
+                            }
+                            continue;
+                        }
 
-                            var devolucion = det.CANTIDAD * r.CANTIDAD_USADA;
-                            material.STOCK += devolucion;
+                        // Compatibilidad con ventas antiguas: reintegrar stock del producto terminado
+                        if (det.ID_PRODUCTO.HasValue)
+                        {
+                            var productoVendido = db.PRODUCTOS.Find(det.ID_PRODUCTO.Value);
+                            if (productoVendido != null)
+                                productoVendido.STOCK += det.CANTIDAD;
                         }
                     }
 

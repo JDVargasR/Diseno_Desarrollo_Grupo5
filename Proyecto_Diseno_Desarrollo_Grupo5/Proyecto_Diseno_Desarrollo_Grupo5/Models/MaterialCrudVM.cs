@@ -15,6 +15,10 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         public string UNIDAD_MEDIDA { get; set; }
         public decimal STOCK_MINIMO { get; set; }
 
+        [System.ComponentModel.DataAnnotations.Range(0, 100, ErrorMessage = "El porcentaje de desperdicio debe estar entre 0 y 100.")]
+        public decimal PORC_DESPERDICIO { get; set; }
+        public int ID_CATEGORIA { get; set; }
+
         // Para ajuste manual de existencias
         public decimal AJUSTE_CANTIDAD { get; set; }
         public string AJUSTE_OBSERVACION { get; set; }
@@ -22,6 +26,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         public List<MaterialFilaVM> Materiales { get; set; }
         public List<SelectListItem> Proveedores { get; set; }
         public List<SelectListItem> Estados { get; set; }
+        public List<SelectListItem> Categorias { get; set; }
 
         // Paginación
         public int Page { get; set; } = 1;
@@ -47,5 +52,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         public bool STOCK_BAJO { get; set; }
         public string FECHA_MODIFICACION { get; set; }
         public string USUARIO_MODIFICACION { get; set; }
+        public decimal PORC_DESPERDICIO { get; set; }
+        public int? ID_CATEGORIA { get; set; }
+        public string CATEGORIA { get; set; }
     }
 }

@@ -26,7 +26,10 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {
-                    query = query.Where(m => m.NOMBRE.Contains(q) || m.TIPO.Contains(q) || m.PROVEEDORES.NOMBRE.Contains(q));
+                    query = query.Where(m => m.NOMBRE.Contains(q)
+                        || m.TIPO.Contains(q)
+                        || (m.CATEGORIAS != null && m.CATEGORIAS.NOMBRE.Contains(q))
+                        || m.PROVEEDORES.NOMBRE.Contains(q));
                 }
 
                 query = query.OrderBy(m => m.NOMBRE);
@@ -54,7 +57,10 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                             ID_PROVEEDOR = m.ID_PROVEEDOR,
                             PROVEEDOR = m.PROVEEDORES.NOMBRE,
                             ID_ESTADO = m.ID_ESTADO,
-                            ESTADO = m.ESTADO.NOMBRE
+                            ESTADO = m.ESTADO.NOMBRE,
+                            PORC_DESPERDICIO = m.PORC_DESPERDICIO,
+                            ID_CATEGORIA = m.ID_CATEGORIA,
+                            CATEGORIA = m.CATEGORIAS != null ? m.CATEGORIAS.NOMBRE : null
                         })
                         .ToList(),
 
@@ -66,6 +72,17 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                         {
                             Value = p.ID_PROVEEDOR.ToString(),
                             Text = p.NOMBRE
+                        })
+                        .ToList(),
+
+                    Categorias = db.CATEGORIAS
+                        .Where(c => c.ID_ESTADO == activoId)
+                        .OrderBy(c => c.NOMBRE)
+                        .ToList()
+                        .Select(c => new SelectListItem
+                        {
+                            Value = c.ID_CATEGORIA.ToString(),
+                            Text = c.NOMBRE
                         })
                         .ToList(),
 
@@ -95,7 +112,8 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 {
                     Materiales = new List<MaterialFilaVM>(),
                     Proveedores = new List<SelectListItem>(),
-                    Estados = new List<SelectListItem>()
+                    Estados = new List<SelectListItem>(),
+                    Categorias = new List<SelectListItem>()
                 };
                 return View(vm);
             }
@@ -106,9 +124,28 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(MaterialCrudVM vm)
         {
-            if (string.IsNullOrWhiteSpace(vm.NOMBRE) || string.IsNullOrWhiteSpace(vm.TIPO) || vm.ID_PROVEEDOR <= 0)
+            if (string.IsNullOrWhiteSpace(vm.NOMBRE) || vm.ID_PROVEEDOR <= 0)
             {
                 TempData["Mensaje"] = "Todos los campos son requeridos. Verifique nombre, tipo, proveedor y costo.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            if (vm.ID_CATEGORIA <= 0)
+            {
+                TempData["Mensaje"] = "Debe seleccionar una categoría (tipo) para el material.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            var categoria = db.CATEGORIAS.Find(vm.ID_CATEGORIA);
+            if (categoria == null)
+            {
+                TempData["Mensaje"] = "La categoría seleccionada no es válida.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            if (vm.PORC_DESPERDICIO < 0 || vm.PORC_DESPERDICIO > 100)
+            {
+                TempData["Mensaje"] = "El porcentaje de desperdicio debe estar entre 0 y 100.";
                 return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
             }
 
@@ -125,11 +162,13 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             var mat = new MATERIALES
             {
                 NOMBRE = vm.NOMBRE.Trim(),
-                TIPO = vm.TIPO.Trim(),
+                TIPO = categoria.NOMBRE,
                 STOCK = vm.STOCK,
                 COSTO_UNITARIO = vm.COSTO_UNITARIO,
                 ID_PROVEEDOR = vm.ID_PROVEEDOR,
-                ID_ESTADO = estadoActivo != null ? estadoActivo.ID_ESTADO : 1
+                ID_ESTADO = estadoActivo != null ? estadoActivo.ID_ESTADO : 1,
+                PORC_DESPERDICIO = vm.PORC_DESPERDICIO,
+                ID_CATEGORIA = vm.ID_CATEGORIA
             };
 
             db.MATERIALES.Add(mat);
@@ -150,9 +189,28 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             var mat = db.MATERIALES.Find(vm.ID_MATERIAL);
             if (mat == null) return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
 
-            if (string.IsNullOrWhiteSpace(vm.NOMBRE) || string.IsNullOrWhiteSpace(vm.TIPO) || vm.ID_PROVEEDOR <= 0)
+            if (string.IsNullOrWhiteSpace(vm.NOMBRE) || vm.ID_PROVEEDOR <= 0)
             {
                 TempData["Mensaje"] = "Todos los campos son requeridos.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            if (vm.ID_CATEGORIA <= 0)
+            {
+                TempData["Mensaje"] = "Debe seleccionar una categoría (tipo) para el material.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            var categoria = db.CATEGORIAS.Find(vm.ID_CATEGORIA);
+            if (categoria == null)
+            {
+                TempData["Mensaje"] = "La categoría seleccionada no es válida.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            if (vm.PORC_DESPERDICIO < 0 || vm.PORC_DESPERDICIO > 100)
+            {
+                TempData["Mensaje"] = "El porcentaje de desperdicio debe estar entre 0 y 100.";
                 return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
             }
 
@@ -165,11 +223,13 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             }
 
             mat.NOMBRE = vm.NOMBRE.Trim();
-            mat.TIPO = vm.TIPO.Trim();
+            mat.TIPO = categoria.NOMBRE;
             mat.STOCK = vm.STOCK;
             mat.COSTO_UNITARIO = vm.COSTO_UNITARIO;
             mat.ID_PROVEEDOR = vm.ID_PROVEEDOR;
             mat.ID_ESTADO = vm.ID_ESTADO;
+            mat.PORC_DESPERDICIO = vm.PORC_DESPERDICIO;
+            mat.ID_CATEGORIA = vm.ID_CATEGORIA;
 
             db.SaveChanges();
 

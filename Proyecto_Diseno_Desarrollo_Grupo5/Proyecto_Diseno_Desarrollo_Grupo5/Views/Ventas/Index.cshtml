@@ -103,7 +103,7 @@
                                             <button type="submit"
                                                     class="btn btn-outline-danger btn-sm"
                                                     title="Cancelar venta"
-                                                    onclick="return confirm('¿Cancelar la venta #@v.IdVenta?')">
+                                                    onclick="return AlphaConfirm.antes(event, { titulo: '¿Cancelar la venta #@v.IdVenta?', texto: 'Se reintegrará el stock de los materiales usados en esta venta.', afectaInventario: true, icono: 'warning' });">
                                                 <i class="bi bi-x-circle"></i>
                                             </button>
                                         </form>
@@ -214,7 +214,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-primary-pill">Guardar pago</button>
+                    <button type="submit" class="btn btn-primary btn-primary-pill" onclick="return AlphaConfirm.antes(event, { titulo: '¿Registrar este pago?', texto: 'El monto se aplicará al saldo pendiente de la venta.', afectaInventario: false, icono: 'question' });">Guardar pago</button>
                 </div>
             }
 

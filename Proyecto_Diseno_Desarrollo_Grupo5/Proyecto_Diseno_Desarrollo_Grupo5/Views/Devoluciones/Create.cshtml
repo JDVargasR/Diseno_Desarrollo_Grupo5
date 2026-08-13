@@ -48,6 +48,16 @@
                 @Html.TextBoxFor(x => x.PoliticaDias, new { @class = "form-control", type = "number", min = "1", max = "365", required = "required" })
             </div>
 
+            <div class="col-md-6">
+                <label class="form-label" style="font-weight:700;">Nombre de la persona que devuelve</label>
+                @Html.TextBoxFor(x => x.NombrePersonaDevuelve, new { @class = "form-control", maxlength = "140", required = "required", placeholder = "Nombre completo" })
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" style="font-weight:700;">Fecha de devolución</label>
+                @Html.TextBoxFor(x => x.FechaDevolucion, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+            </div>
+
             <div class="col-12">
                 <label class="form-label" style="font-weight:700;">Motivo</label>
                 @Html.TextAreaFor(x => x.Motivo, new { @class = "form-control", rows = 4, maxlength = "300", required = "required", placeholder = "Describe el motivo de la devolución" })
@@ -55,7 +65,7 @@
 
             <div class="col-12 d-flex justify-content-end gap-2 mt-2">
                 <a href="@Url.Action("Index","Devoluciones")" class="btn btn-light">Cancelar</a>
-                <button type="submit" class="btn btn-primary btn-primary-pill">Guardar devolución</button>
+                <button type="submit" class="btn btn-primary btn-primary-pill" onclick="return AlphaConfirm.antes(event, { titulo: '¿Registrar esta devolución?', texto: 'Quedará pendiente de aprobación y podrá afectar el inventario según el estado del producto.', afectaInventario: true, icono: 'question' });">Guardar devolución</button>
             </div>
         </div>
     }

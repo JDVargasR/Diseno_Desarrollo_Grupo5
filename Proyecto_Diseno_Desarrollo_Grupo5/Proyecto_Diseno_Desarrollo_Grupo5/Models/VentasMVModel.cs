@@ -7,7 +7,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
 {
     public class VentaCrearItemVM
     {
-        public int IdProducto { get; set; }
+        public string TipoItem { get; set; } // "PRODUCTO" o "MATERIAL"
+        public int? IdProducto { get; set; }
+        public int? IdMaterial { get; set; }
         public string Producto { get; set; }
         public decimal Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
@@ -21,10 +23,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
 
         public List<SelectListItem> Clientes { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> Productos { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> Materiales { get; set; } = new List<SelectListItem>();
 
         public List<VentaCrearItemVM> Items { get; set; } = new List<VentaCrearItemVM>();
 
         public List<ProductoVentaVM> ProductosConPrecio { get; set; } = new List<ProductoVentaVM>();
+        public List<MaterialVentaVM> MaterialesConPrecio { get; set; } = new List<MaterialVentaVM>();
     }
 
     public class VentaFilaVM

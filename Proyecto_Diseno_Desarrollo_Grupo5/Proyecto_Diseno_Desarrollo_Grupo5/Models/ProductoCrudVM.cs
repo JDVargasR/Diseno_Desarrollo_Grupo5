@@ -17,9 +17,9 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
         public decimal PRECIO_VENTA { get; set; }
         public int ID_CATEGORIA { get; set; }
         public int ID_ESTADO { get; set; }
-        
-        [Range(0, 100)]
-        public decimal PORC_DESPERDICIO { get; set; }
+
+        [Range(0, 999999999, ErrorMessage = "El stock debe ser un valor válido.")]
+        public decimal STOCK { get; set; }
 
         public List<ProductoFilaVM> Productos { get; set; }
 
@@ -45,12 +45,19 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Models
 
         public int ID_ESTADO { get; set; }
         public string ESTADO { get; set; }
-        public decimal PORC_DESPERDICIO { get; set; }
+        public decimal STOCK { get; set; }
     }
 
     public class ProductoVentaVM
     {
         public int IdProducto { get; set; }
+        public string Nombre { get; set; }
+        public decimal PrecioVenta { get; set; }
+    }
+
+    public class MaterialVentaVM
+    {
+        public int IdMaterial { get; set; }
         public string Nombre { get; set; }
         public decimal PrecioVenta { get; set; }
     }

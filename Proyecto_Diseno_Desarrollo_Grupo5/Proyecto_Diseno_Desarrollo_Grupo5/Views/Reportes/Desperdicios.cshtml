@@ -79,8 +79,8 @@
         <div class="col-md-3">
             <div class="card text-center">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Productos Alto Riesgo</h6>
-                    <h3 class="card-title text-warning" id="kpiProductosAltoRiesgo">@Model.ProductosAltoDesperdicio.Count</h3>
+                    <h6 class="card-subtitle mb-2 text-muted">Materiales Alto Riesgo</h6>
+                    <h3 class="card-title text-warning" id="kpiProductosAltoRiesgo">@Model.MaterialesAltoDesperdicio.Count</h3>
                     <small class="text-muted">> 5% desperdicio</small>
                 </div>
             </div>
@@ -124,37 +124,37 @@
         </div>
     </div>
 
-    <!-- Productos con Alto Desperdicio -->
+    <!-- Materiales con Alto Desperdicio -->
     <div class="row mb-4" id="altoRiesgoContainer">
-    @if (Model.ProductosAltoDesperdicio.Any())
+    @if (Model.MaterialesAltoDesperdicio.Any())
     {
         <div class="col-md-12">
             <div class="card border-warning">
                 <div class="card-header bg-warning text-dark">
-                <strong><i class="bi bi-exclamation-triangle"></i> Productos con Alto Desperdicio (Requieren Atencion)</strong>
+                <strong><i class="bi bi-exclamation-triangle"></i> Materiales con Alto Desperdicio (Requieren Atencion)</strong>
                 </div>
                 <div class="card-body" id="altoRiesgoBody">
                     <table class="table table-hover" id="altoRiesgoTable">
                         <thead class="table-light">
                             <tr>
-                                <th>Producto</th>
+                                <th>Material</th>
                                 <th>% Desperdicio</th>
                                 <th>Total Desperdiciado</th>
                                 <th>Recomendacion</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var producto in Model.ProductosAltoDesperdicio.OrderByDescending(p => p.PorcentajeDesperdicio))
+                            @foreach (var material in Model.MaterialesAltoDesperdicio.OrderByDescending(m => m.PorcentajeDesperdicio))
                             {
-                                <tr class="@(producto.PorcentajeDesperdicio > 15 ? "table-danger" : "table-warning")">
-                                    <td><strong>@producto.NombreProducto</strong></td>
+                                <tr class="@(material.PorcentajeDesperdicio > 15 ? "table-danger" : "table-warning")">
+                                    <td><strong>@material.NombreMaterial</strong></td>
                                     <td>
-                                        <span class="badge bg-@(producto.PorcentajeDesperdicio > 15 ? "danger" : "warning")">
-                                            @producto.PorcentajeDesperdicio.ToString("F2")%
+                                        <span class="badge bg-@(material.PorcentajeDesperdicio > 15 ? "danger" : "warning")">
+                                            @material.PorcentajeDesperdicio.ToString("F2")%
                                         </span>
                                     </td>
-                                    <td>@producto.TotalDesperdiciado.ToString("F2")</td>
-                                    <td>@producto.Recomendacion</td>
+                                    <td>@material.TotalDesperdiciado.ToString("F2")</td>
+                                    <td>@material.Recomendacion</td>
                                 </tr>
                             }
                         </tbody>
@@ -166,7 +166,7 @@
     else
     {
         <div class="col-md-12">
-            <div class="alert alert-info">No hay productos con alto desperdicio en el período seleccionado.</div>
+            <div class="alert alert-info">No hay materiales con alto desperdicio en el período seleccionado.</div>
         </div>
     }
     </div>
@@ -177,7 +177,7 @@
     var datosProductos = @Html.Raw(Json.Encode(Model.DesperdiciosPorProducto.Select(p => new { p.NombreProducto, p.TotalDesperdiciado }).ToList()));
     var datosOrigen = @Html.Raw(Json.Encode(Model.DesperdiciosPorOrigen.Select(o => new { o.Origen, o.TotalDesperdiciado, o.CantidadTransacciones }).ToList()));
     var datosDias = @Html.Raw(Json.Encode(Model.DesperdiciosPorDia.Select(d => new { Fecha = d.Fecha.ToString("yyyy-MM-dd"), d.TotalDesperdiciado }).ToList()));
-    var datosAltoRiesgo = @Html.Raw(Json.Encode(Model.ProductosAltoDesperdicio.Select(p => new { p.NombreProducto, p.PorcentajeDesperdicio, p.TotalDesperdiciado, p.Recomendacion }).ToList()));
+    var datosAltoRiesgo = @Html.Raw(Json.Encode(Model.MaterialesAltoDesperdicio.Select(m => new { m.NombreMaterial, m.PorcentajeDesperdicio, m.TotalDesperdiciado, m.Recomendacion }).ToList()));
 
     var chartProducto = null;
     var chartOrigen = null;
@@ -195,20 +195,20 @@
         if (chartDia) { chartDia.destroy(); chartDia = null; }
     }
 
-    function renderAltoRiesgo(productos) {
+    function renderAltoRiesgo(materiales) {
         var container = document.getElementById('altoRiesgoContainer');
         if (!container) return;
 
-        if (!productos || productos.length === 0) {
-            container.innerHTML = '<div class="col-md-12"><div class="alert alert-info">No hay productos con alto desperdicio en el período seleccionado.</div></div>';
+        if (!materiales || materiales.length === 0) {
+            container.innerHTML = '<div class="col-md-12"><div class="alert alert-info">No hay materiales con alto desperdicio en el período seleccionado.</div></div>';
             return;
         }
 
-        var rows = productos.map(function (producto) {
-            var nombre = producto.NombreProducto || producto.nombreProducto || producto.nombre || '';
-            var porcentaje = Number(producto.PorcentajeDesperdicio ?? producto.porcentajeDesperdicio ?? producto.porcentaje ?? 0);
-            var total = Number(producto.TotalDesperdiciado ?? producto.totalDesperdiciado ?? producto.cantidad ?? 0);
-            var recomendacion = producto.Recomendacion || producto.recomendacion || '';
+        var rows = materiales.map(function (material) {
+            var nombre = material.NombreMaterial || material.nombreMaterial || material.nombre || '';
+            var porcentaje = Number(material.PorcentajeDesperdicio ?? material.porcentajeDesperdicio ?? material.porcentaje ?? 0);
+            var total = Number(material.TotalDesperdiciado ?? material.totalDesperdiciado ?? material.cantidad ?? 0);
+            var recomendacion = material.Recomendacion || material.recomendacion || '';
             var clase = porcentaje > 15 ? 'table-danger' : 'table-warning';
             var badge = porcentaje > 15 ? 'danger' : 'warning';
             return '<tr class="' + clase + '">'
@@ -221,10 +221,10 @@
 
         container.innerHTML = '<div class="col-md-12">'
             + '<div class="card border-warning">'
-            + '<div class="card-header bg-warning text-dark"><strong><i class="bi bi-exclamation-triangle"></i> Productos con Alto Desperdicio (Requieren Atencion)</strong></div>'
+            + '<div class="card-header bg-warning text-dark"><strong><i class="bi bi-exclamation-triangle"></i> Materiales con Alto Desperdicio (Requieren Atencion)</strong></div>'
             + '<div class="card-body" id="altoRiesgoBody">'
             + '<table class="table table-hover" id="altoRiesgoTable">'
-            + '<thead class="table-light"><tr><th>Producto</th><th>% Desperdicio</th><th>Total Desperdiciado</th><th>Recomendacion</th></tr></thead>'
+            + '<thead class="table-light"><tr><th>Material</th><th>% Desperdicio</th><th>Total Desperdiciado</th><th>Recomendacion</th></tr></thead>'
             + '<tbody>' + rows + '</tbody>'
             + '</table>'
             + '</div>'
@@ -236,12 +236,12 @@
         document.getElementById('kpiTotalDesperdiciado').textContent = Number(data.totalDesperdiciado || 0).toFixed(2);
         document.getElementById('kpiTotalTransacciones').textContent = data.totalTransacciones || 0;
         document.getElementById('kpiPromedioTransaccion').textContent = Number(data.promedioTransaccion || 0).toFixed(2);
-        document.getElementById('kpiProductosAltoRiesgo').textContent = (data.productosAltoDesperdicio || []).length;
+        document.getElementById('kpiProductosAltoRiesgo').textContent = (data.materialesAltoDesperdicio || []).length;
 
         datosProductos = data.porProducto || [];
         datosOrigen = data.porOrigen || [];
         datosDias = data.porDia || [];
-        datosAltoRiesgo = data.productosAltoDesperdicio || [];
+        datosAltoRiesgo = data.materialesAltoDesperdicio || [];
 
         destruirGraficos();
 

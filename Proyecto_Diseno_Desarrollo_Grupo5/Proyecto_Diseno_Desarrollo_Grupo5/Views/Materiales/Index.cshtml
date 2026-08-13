@@ -39,7 +39,7 @@
             <div class="row g-2 align-items-end">
                 <div class="col-md-9">
                     <label class="form-label" style="font-weight:600;">Buscar</label>
-                    <input type="text" name="q" value="@Model.Q" class="form-control" placeholder="Nombre, tipo o proveedor" />
+                    <input type="text" name="q" value="@Model.Q" class="form-control" placeholder="Nombre, categoría/tipo o proveedor" />
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-dark w-100" style="height:44px; border-radius:10px; font-weight:600;">🔎 Buscar</button>
@@ -54,9 +54,10 @@
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Tipo</th>
+                        <th>Categoría / Tipo</th>
                         <th>Stock</th>
                         <th>Costo Unit.</th>
+                        <th>% Desperdicio</th>
                         <th>Proveedor</th>
                         <th>Estado</th>
                         <th>Alerta</th>
@@ -71,9 +72,14 @@
                     {
                         <tr>
                             <td>@m.NOMBRE</td>
-                            <td>@m.TIPO</td>
+                            <td>@(m.CATEGORIA ?? m.TIPO)</td>
                             <td>@m.STOCK</td>
                             <td>₡@m.COSTO_UNITARIO.ToString("N2")</td>
+                            <td>
+                                <span class="badge @(m.PORC_DESPERDICIO > 5 ? "bg-warning" : "bg-secondary")">
+                                    @m.PORC_DESPERDICIO.ToString("F2")%
+                                </span>
+                            </td>
                             <td>@m.PROVEEDOR</td>
                             <td>@m.ESTADO</td>
                             <td>
@@ -92,7 +98,7 @@
                                     <button class="btn btn-outline-primary btn-sm me-1"
                                             data-bs-toggle="modal"
                                             data-bs-target="#modalEditar"
-                                            onclick="cargarMaterialEditar('@m.ID_MATERIAL', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.NOMBRE ?? ""))', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.TIPO ?? ""))', '@m.STOCK', '@m.COSTO_UNITARIO', '@m.ID_PROVEEDOR', '@m.ID_ESTADO')">
+                                            onclick="cargarMaterialEditar('@m.ID_MATERIAL', '@Html.Raw(HttpUtility.JavaScriptStringEncode(m.NOMBRE ?? ""))', '@m.ID_CATEGORIA', '@m.STOCK', '@m.COSTO_UNITARIO', '@m.ID_PROVEEDOR', '@m.ID_ESTADO', '@(m.PORC_DESPERDICIO.ToString(System.Globalization.CultureInfo.InvariantCulture))')">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
 
@@ -102,7 +108,7 @@
                                         <input type="hidden" name="id" value="@m.ID_MATERIAL" />
                                         <input type="hidden" name="page" value="@Model.Page" />
                                         <input type="hidden" name="q" value="@Model.Q" />
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar este material?');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return AlphaConfirm.antes(event, { titulo: '¿Eliminar este material?', texto: 'Esta acción afecta el inventario y no se puede deshacer.', afectaInventario: true, icono: 'warning' });">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     }
@@ -162,18 +168,13 @@
                         <input class="form-control" name="NOMBRE" required />
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Tipo de material</label>
-                        <select class="form-select" name="TIPO" required>
-                            <option value="">-- Seleccione tipo --</option>
-                            <option value="Granito">Granito</option>
-                            <option value="Mármol">Mármol</option>
-                            <option value="Cuarzo">Cuarzo</option>
-                            <option value="Piedra Natural">Piedra Natural</option>
-                            <option value="Cerámica">Cerámica</option>
-                            <option value="Porcelanato">Porcelanato</option>
-                            <option value="Herramienta">Herramienta</option>
-                            <option value="Insumo">Insumo</option>
-                            <option value="Otro">Otro</option>
+                        <label class="form-label">Tipo de material (Categoría)</label>
+                        <select class="form-select" name="ID_CATEGORIA" required>
+                            <option value="">-- Seleccione categoría --</option>
+                            @foreach (var c in Model.Categorias)
+                            {
+                                <option value="@c.Value">@c.Text</option>
+                            }
                         </select>
                     </div>
                     <div class="mb-2">
@@ -186,6 +187,11 @@
                     <div class="mb-2">
                         <label class="form-label">Stock actual</label>
                         <input class="form-control" name="STOCK" type="number" step="0.01" min="0" value="0" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">% Desperdicio (0–100)</label>
+                        <input class="form-control" name="PORC_DESPERDICIO" type="number" step="0.01" min="0" max="100" value="0" required />
+                        <small class="text-muted">Porcentaje estimado de desperdicio al usar este material.</small>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Costo unitario (₡)</label>
@@ -204,7 +210,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-primary-pill">Guardar</button>
+                    <button type="submit" class="btn btn-primary btn-primary-pill" onclick="return AlphaConfirm.antes(event, { titulo: '¿Guardar nuevo material?', texto: 'Se registrará un nuevo material en el inventario.', afectaInventario: true, icono: 'question' });">Guardar</button>
                 </div>
             }
         </div>
@@ -230,22 +236,23 @@
                         <input class="form-control" name="NOMBRE" id="edit_NOMBRE" required />
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Tipo de material</label>
-                        <select class="form-select" name="TIPO" id="edit_TIPO" required>
-                            <option value="Granito">Granito</option>
-                            <option value="Mármol">Mármol</option>
-                            <option value="Cuarzo">Cuarzo</option>
-                            <option value="Piedra Natural">Piedra Natural</option>
-                            <option value="Cerámica">Cerámica</option>
-                            <option value="Porcelanato">Porcelanato</option>
-                            <option value="Herramienta">Herramienta</option>
-                            <option value="Insumo">Insumo</option>
-                            <option value="Otro">Otro</option>
+                        <label class="form-label">Tipo de material (Categoría)</label>
+                        <select class="form-select" name="ID_CATEGORIA" id="edit_ID_CATEGORIA" required>
+                            <option value="">-- Seleccione categoría --</option>
+                            @foreach (var c in Model.Categorias)
+                            {
+                                <option value="@c.Value">@c.Text</option>
+                            }
                         </select>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Stock actual</label>
                         <input class="form-control" name="STOCK" id="edit_STOCK" type="number" step="0.01" min="0" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">% Desperdicio (0–100)</label>
+                        <input class="form-control" name="PORC_DESPERDICIO" id="edit_PORC_DESPERDICIO" type="number" step="0.01" min="0" max="100" required />
+                        <small class="text-muted">Porcentaje estimado de desperdicio al usar este material.</small>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Costo unitario (₡)</label>
@@ -272,7 +279,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-primary-pill">Guardar cambios</button>
+                    <button type="submit" class="btn btn-primary btn-primary-pill" onclick="return AlphaConfirm.antes(event, { titulo: '¿Guardar cambios del material?', texto: 'Se actualizará la información y el stock de este material.', afectaInventario: true, icono: 'question' });">Guardar cambios</button>
                 </div>
             }
         </div>
@@ -281,14 +288,15 @@
 }
 
 <script>
-    function cargarMaterialEditar(id, nombre, tipo, stock, costo, idProveedor, idEstado) {
+    function cargarMaterialEditar(id, nombre, idCategoria, stock, costo, idProveedor, idEstado, porcDesperdicio) {
         document.getElementById("edit_ID_MATERIAL").value = id;
         document.getElementById("edit_NOMBRE").value = nombre;
-        document.getElementById("edit_TIPO").value = tipo;
+        document.getElementById("edit_ID_CATEGORIA").value = idCategoria;
         document.getElementById("edit_STOCK").value = stock;
         document.getElementById("edit_COSTO_UNITARIO").value = costo;
         document.getElementById("edit_ID_PROVEEDOR").value = idProveedor;
         document.getElementById("edit_ID_ESTADO").value = idEstado;
+        document.getElementById("edit_PORC_DESPERDICIO").value = porcDesperdicio;
     }
 
 </script>

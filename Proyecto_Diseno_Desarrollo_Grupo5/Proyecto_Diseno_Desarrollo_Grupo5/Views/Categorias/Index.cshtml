@@ -80,7 +80,7 @@
                                     <input type="hidden" name="id" value="@c.ID_CATEGORIA" />
                                     <input type="hidden" name="page" value="@Model.Page" />
                                     <input type="hidden" name="q" value="@Model.Q" />
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Inactivar esta categoría?');">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return AlphaConfirm.antes(event, { titulo: '¿Inactivar esta categoría?', texto: 'Los materiales asociados podrían quedar sin categoría activa visible.', afectaInventario: false, icono: 'warning' });">
                                         <i class="bi bi-x-circle"></i>
                                     </button>
                                 }
