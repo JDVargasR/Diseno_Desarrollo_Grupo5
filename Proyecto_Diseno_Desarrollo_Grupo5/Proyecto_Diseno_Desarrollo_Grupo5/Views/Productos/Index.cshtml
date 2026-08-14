@@ -37,13 +37,6 @@
         <div class="alert alert-warning cardx" style="padding:12px 14px;">@TempData["Mensaje"]</div>
     }
 
-    @if (ViewBag.AlertaBajoStock != null)
-    {
-        <div class="alert alert-warning cardx" style="padding:12px 14px; border-left: 4px solid #ffc107;">
-            <strong><i class="bi bi-exclamation-triangle"></i> Alerta de Inventario:</strong> @ViewBag.AlertaBajoStock
-        </div>
-    }
-
     <div class="page-section mb-3">
         @using (Html.BeginForm("Index", "Productos", FormMethod.Get))
         {
@@ -69,6 +62,7 @@
                         <th>Stock</th>
                         <th>Categoría</th>
                         <th>Estado</th>
+                        <th>Alerta</th>
                         @if (!esSoloLectura)
                         {
                             <th style="width:220px; text-align:right;">Acciones</th>
@@ -91,6 +85,16 @@
                                 <span class="badge-pill @(p.ID_ESTADO == 1 ? "badge-ok" : "badge-off")">
                                     @(p.ID_ESTADO == 1 ? "ACTIVO" : "INACTIVO")
                                 </span>
+                            </td>
+                            <td>
+                                @if (p.STOCK_BAJO)
+                                {
+                                    <span style="color:#dc3545;font-weight:800;">Stock bajo</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#198754;font-weight:800;">OK</span>
+                                }
                             </td>
                             @if (!esSoloLectura)
                             {
