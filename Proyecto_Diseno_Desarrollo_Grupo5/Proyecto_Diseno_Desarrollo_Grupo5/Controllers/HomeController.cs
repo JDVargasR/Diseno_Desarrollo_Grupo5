@@ -72,10 +72,10 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             {
                 var term = q.Trim();
                 query = query.Where(x =>
-                    (x.DESCRIPCION ?? "").Contains(term) ||
-                    (x.ACCION ?? "").Contains(term) ||
-                    (x.MODULO ?? "").Contains(term) ||
-                    (x.USUARIO_NOMBRE ?? "").Contains(term));
+                    Helpers.TextHelper.Contiene(x.DESCRIPCION, term) ||
+                    Helpers.TextHelper.Contiene(x.ACCION, term) ||
+                    Helpers.TextHelper.Contiene(x.MODULO, term) ||
+                    Helpers.TextHelper.Contiene(x.USUARIO_NOMBRE, term));
             }
 
             if (!string.IsNullOrWhiteSpace(accion))

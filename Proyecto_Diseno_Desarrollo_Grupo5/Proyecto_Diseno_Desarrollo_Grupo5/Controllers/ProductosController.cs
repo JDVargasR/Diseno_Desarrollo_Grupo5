@@ -1,7 +1,9 @@
 ﻿using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
+using Proyecto_Diseno_Desarrollo_Grupo5.Helpers;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
@@ -19,25 +21,25 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             ViewBag.EsSoloLectura = (Session["IdRol"] ?? "").ToString() == "2";
 
             q = (q ?? "").Trim();
-            var query = db.PRODUCTOS.AsQueryable();
+            var query = db.PRODUCTOS.Include(p => p.CATEGORIAS).AsQueryable();
+
+            var todos = query.OrderBy(p => p.NOMBRE).ToList();
 
             if (!string.IsNullOrWhiteSpace(q))
             {
-                query = query.Where(p => p.NOMBRE.Contains(q) || p.CATEGORIAS.NOMBRE.Contains(q));
+                todos = todos.Where(p => TextHelper.Contiene(p.NOMBRE, q) || (p.CATEGORIAS != null && TextHelper.Contiene(p.CATEGORIAS.NOMBRE, q))).ToList();
             }
 
-            query = query.OrderBy(p => p.NOMBRE);
-
-            var total = query.Count();
+            var total = todos.Count;
             var skip = (Math.Max(page, 1) - 1) * pageSize;
-            var items = query.Skip(skip).Take(pageSize).ToList();
+            var items = todos.Skip(skip).Take(pageSize).ToList();
 
             var productosVista = items
                 .Select(p => new ProductoFilaVM
                 {
                     ID_PRODUCTO = p.ID_PRODUCTO,
                     NOMBRE = p.NOMBRE,
-                    PRECIO_VENTA = p.PRECIO_VENTA,
+
                     ID_CATEGORIA = p.ID_CATEGORIA,
                     CATEGORIA = p.CATEGORIAS.NOMBRE,
                     ID_ESTADO = p.ID_ESTADO,

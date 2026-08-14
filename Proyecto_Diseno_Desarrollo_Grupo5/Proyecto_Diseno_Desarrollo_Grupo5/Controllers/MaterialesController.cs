@@ -1,8 +1,10 @@
 using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
+using Proyecto_Diseno_Desarrollo_Grupo5.Helpers;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -22,28 +24,30 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             try
             {
                 q = (q ?? "").Trim();
-                var query = db.MATERIALES.AsQueryable();
+                var todos = db.MATERIALES
+                    .Include(m => m.CATEGORIAS)
+                    .Include(m => m.PROVEEDORES)
+                    .OrderBy(m => m.NOMBRE)
+                    .ToList();
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {
-                    query = query.Where(m => m.NOMBRE.Contains(q)
-                        || m.TIPO.Contains(q)
-                        || (m.CATEGORIAS != null && m.CATEGORIAS.NOMBRE.Contains(q))
-                        || m.PROVEEDORES.NOMBRE.Contains(q));
+                    todos = todos.Where(m => TextHelper.Contiene(m.NOMBRE, q)
+                        || TextHelper.Contiene(m.TIPO, q)
+                        || (m.CATEGORIAS != null && TextHelper.Contiene(m.CATEGORIAS.NOMBRE, q))
+                        || TextHelper.Contiene(m.PROVEEDORES.NOMBRE, q)).ToList();
                 }
 
-                query = query.OrderBy(m => m.NOMBRE);
-
-                var total = query.Count();
+                var total = todos.Count;
                 var skip = (Math.Max(page,1) - 1) * pageSize;
-                var items = query.Skip(skip).Take(pageSize).ToList();
+                var items = todos.Skip(skip).Take(pageSize).ToList();
 
                 var activoId = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Activo")?.ID_ESTADO ?? 1;
 
                 var vm = new MaterialCrudVM
                 {
                     Q = q,
-                    Page = page,
+
                     PageSize = pageSize,
                     TotalItems = total,
                     Materiales = items

@@ -15,6 +15,7 @@
     const uRol = document.getElementById("uRol");
     const uRolGroup = document.getElementById("uRolGroup");
     const uPass = document.getElementById("uPass");
+    const uPassGroup = document.getElementById("uPassGroup");
     const modalTitle = document.getElementById("modalUsuarioTitle");
 
     const actualizarVisibilidadRol = (esEdicion) => {
@@ -24,6 +25,16 @@
             uRolGroup.classList.add("d-none");
         } else {
             uRolGroup.classList.remove("d-none");
+        }
+    };
+
+    const actualizarVisibilidadPass = (esEdicion) => {
+        if (!uPassGroup) return;
+
+        if (esEdicion) {
+            uPassGroup.classList.add("d-none");
+        } else {
+            uPassGroup.classList.remove("d-none");
         }
     };
 
@@ -39,7 +50,7 @@
         const nombre = (uNombre.value || "").trim();
         const correo = (uCorreo.value || "").trim();
         const rol = parseInt(uRol.value || "0", 10);
-        const pass = (uPass.value || "").trim();
+        const pass = esEdicion ? "" : (uPass.value || "").trim();
 
         if (nombre.length < 2) {
             Swal.fire("Validación", "El nombre debe tener al menos 2 caracteres.", "warning");
@@ -79,6 +90,7 @@
     btnNuevo.addEventListener("click", () => {
         limpiar();
         actualizarVisibilidadRol(false);
+        actualizarVisibilidadPass(false);
         modalTitle.textContent = "Nuevo Usuario";
         modal.show();
     });
@@ -99,6 +111,7 @@
             uPass.value = "";
 
             actualizarVisibilidadRol(true);
+            actualizarVisibilidadPass(true);
             modalTitle.textContent = "Editar Usuario";
             modal.show();
         });
@@ -117,7 +130,7 @@
             Nombre: (uNombre.value || "").trim(),
             Correo: (uCorreo.value || "").trim(),
             IdRol: puedeElegirRol ? parseInt(uRol.value || "0", 10) : ROL_CLIENTE,
-            Contrasena: (uPass.value || "").trim()
+            Contrasena: esEdicion ? "" : (uPass.value || "").trim()
         };
 
         const url = esEdicion ? "/Usuarios/Update" : "/Usuarios/Create";

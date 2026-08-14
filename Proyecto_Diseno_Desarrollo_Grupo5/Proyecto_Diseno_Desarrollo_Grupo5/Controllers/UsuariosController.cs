@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
 {
-    [RolAuthorize(1,2)]
+    [RolAuthorize(1)]
     public class UsuariosController : Controller
     {
         private DBGRUPO5Entities db = new DBGRUPO5Entities();
@@ -58,12 +58,19 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         {
             var esAdministrador = EsAdministradorEnSesion();
 
+            // Se trae la lista sin filtrar por texto en el SP (que usa LIKE sensible a acentos)
+            // y se filtra en memoria de forma insensible a tildes/mayúsculas.
             var lista = db.Database.SqlQuery<UsuariosModel>(
                 "EXEC dbo.SP_USUARIOS_LISTAR @Q, @ID_ROL, @ID_ESTADO",
-                new SqlParameter("@Q", (object)q ?? DBNull.Value),
+                new SqlParameter("@Q", DBNull.Value),
                 new SqlParameter("@ID_ROL", rol),
                 new SqlParameter("@ID_ESTADO", estado)
             ).ToList();
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                lista = lista.Where(u => Helpers.TextHelper.Contiene(u.Nombre, q) || Helpers.TextHelper.Contiene(u.Correo, q)).ToList();
+            }
 
             var total = lista.Count;
             var skip = (Math.Max(page, 1) - 1) * pageSize;
@@ -152,7 +159,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 new SqlParameter("@NOMBRE", model.Nombre),
                 new SqlParameter("@CORREO", model.Correo),
                 new SqlParameter("@ID_ROL", model.IdRol),
-                new SqlParameter("@CONTRASENA", (object)model.Contrasena ?? DBNull.Value),
+                new SqlParameter("@CONTRASENA", string.IsNullOrEmpty(model.Contrasena) ? (object)DBNull.Value : model.Contrasena),
                 okParam,
                 msgParam
             );

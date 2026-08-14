@@ -1,5 +1,6 @@
 using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
+using Proyecto_Diseno_Desarrollo_Grupo5.Helpers;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
 using System.Collections.Generic;
@@ -20,18 +21,17 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             try
             {
                 q = (q ?? "").Trim();
-                var query = db.PROVEEDORES.AsQueryable();
+                var todos = db.PROVEEDORES.OrderBy(p => p.NOMBRE).ToList();
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {
-                    query = query.Where(p => p.NOMBRE.Contains(q) || p.CONTACTO.Contains(q) || p.TELEFONO.Contains(q));
+                    todos = todos.Where(p => TextHelper.Contiene(p.NOMBRE, q) || TextHelper.Contiene(p.CONTACTO, q) || TextHelper.Contiene(p.TELEFONO, q)).ToList();
                 }
 
-                query = query.OrderBy(p => p.NOMBRE);
-
-                var total = query.Count();
+                var total = todos.Count;
                 var skip = (Math.Max(page, 1) - 1) * pageSize;
-                var items = query.Skip(skip).Take(pageSize).ToList();
+                var items = todos.Skip(skip).Take(pageSize).ToList();
+
 
                 var vm = new ProveedorCrudVM
                 {
@@ -108,6 +108,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
             }
 
+            if (!System.Text.RegularExpressions.Regex.IsMatch(vm.TELEFONO.Trim(), "^[0-9]{8}$"))
+            {
+                TempData["Mensaje"] = "El teléfono debe contener exactamente 8 dígitos numéricos.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
             var estadoActivo = db.ESTADO.FirstOrDefault(e => e.NOMBRE == "Activo");
 
             var prov = new PROVEEDORES
@@ -155,6 +161,12 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             if (string.IsNullOrWhiteSpace(vm.NOMBRE) || string.IsNullOrWhiteSpace(vm.CONTACTO) || string.IsNullOrWhiteSpace(vm.TELEFONO))
             {
                 TempData["Mensaje"] = "Todos los campos son requeridos.";
+                return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(vm.TELEFONO.Trim(), "^[0-9]{8}$"))
+            {
+                TempData["Mensaje"] = "El teléfono debe contener exactamente 8 dígitos numéricos.";
                 return RedirectToAction("Index", new { page = vm.Page, q = vm.Q });
             }
 

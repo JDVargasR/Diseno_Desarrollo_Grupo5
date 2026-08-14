@@ -1,4 +1,5 @@
 ﻿using Proyecto_Diseno_Desarrollo_Grupo5.EF;
+using Proyecto_Diseno_Desarrollo_Grupo5.Helpers;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
 using System.Data.Entity;
@@ -22,15 +23,16 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         {
             q = (q ?? "").Trim();
 
-            var ventas = db.VENTAS.AsQueryable();
+            var ventas = db.VENTAS.Include(v => v.CLIENTES).AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(q))
+            int idFiltro = 0;
+            bool esNumero = int.TryParse(q, out idFiltro);
+
+            if (!string.IsNullOrWhiteSpace(q) && esNumero)
             {
-                if (int.TryParse(q, out int n))
-                    ventas = ventas.Where(v => v.ID_VENTA == n || v.ID_CLIENTE == n);
-                else
-                    ventas = ventas.Where(v => v.CLIENTES.NOMBRE.Contains(q));
+                ventas = ventas.Where(v => v.ID_VENTA == idFiltro || v.ID_CLIENTE == idFiltro);
             }
+
 
             var pagosPorVenta = db.PAGOS
                 .GroupBy(p => p.ID_VENTA)
@@ -56,6 +58,11 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                              IdEstado = v.ID_ESTADO,
                              Estado = v.ESTADO.NOMBRE
                          }).ToList();
+
+            if (!string.IsNullOrWhiteSpace(q) && !esNumero)
+            {
+                lista = lista.Where(v => TextHelper.Contiene(v.Cliente, q)).ToList();
+            }
 
             // Paginación server-side
             var total = lista.Count;

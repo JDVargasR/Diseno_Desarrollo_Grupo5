@@ -229,7 +229,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                 return View("Create", BuildForm(tipo, vm));
             }
 
-            var observacion = "ORIGEN=MANUAL;ESTADO=PENDIENTE;MOTIVO=" + Sanitizar(vm.Motivo);
+            var observacion = "ORIGEN=MANUAL;MOTIVO=" + Sanitizar(vm.Motivo);
             if (observacion.Length > 250) observacion = observacion.Substring(0, 250);
 
             var movimiento = new MOVIMIENTOS_INVENTARIO
@@ -278,7 +278,6 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
         {
             if (m == null || meta == null) return false;
             if (meta.EsAnulado) return false;
-            if (!meta.EsPendiente) return false;
             if (!meta.EsOrigenManual) return false;
 
             var observacion = (m.OBSERVACION ?? string.Empty).ToUpperInvariant();

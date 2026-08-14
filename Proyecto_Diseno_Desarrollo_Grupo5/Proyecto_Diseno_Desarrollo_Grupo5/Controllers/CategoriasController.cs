@@ -1,5 +1,6 @@
 using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
+using Proyecto_Diseno_Desarrollo_Grupo5.Helpers;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models;
 using System;
 using System.Linq;
@@ -17,18 +18,16 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             try
             {
                 q = (q ?? "").Trim();
-                var query = db.CATEGORIAS.AsQueryable();
+                var todos = db.CATEGORIAS.OrderBy(c => c.NOMBRE).ToList();
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {
-                    query = query.Where(c => c.NOMBRE.Contains(q) || c.DESCRIPCION.Contains(q));
+                    todos = todos.Where(c => TextHelper.Contiene(c.NOMBRE, q) || TextHelper.Contiene(c.DESCRIPCION, q)).ToList();
                 }
 
-                query = query.OrderBy(c => c.NOMBRE);
-
-                var total = query.Count();
+                var total = todos.Count;
                 var skip = (Math.Max(page, 1) - 1) * pageSize;
-                var items = query.Skip(skip).Take(pageSize).ToList();
+                var items = todos.Skip(skip).Take(pageSize).ToList();
 
                 var vm = new CategoriaCrudVM
                 {

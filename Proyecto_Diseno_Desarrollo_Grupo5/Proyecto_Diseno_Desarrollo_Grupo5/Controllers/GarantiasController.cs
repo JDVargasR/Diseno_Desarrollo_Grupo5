@@ -1,5 +1,6 @@
 using Proyecto_Diseno_Desarrollo_Grupo5.EF;
 using Proyecto_Diseno_Desarrollo_Grupo5.Filters;
+using Proyecto_Diseno_Desarrollo_Grupo5.Helpers;
 using Proyecto_Diseno_Desarrollo_Grupo5.Models.Garantias;
 using System;
 using System.Data.Entity;
@@ -18,15 +19,13 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
             q = (q ?? "").Trim();
             estado = (estado ?? "").Trim();
 
-            var query = db.SOLICITUD_GARANTIA.AsQueryable();
+            var query = db.SOLICITUD_GARANTIA.Include(x => x.CLIENTES).Include(x => x.PRODUCTOS).AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(q))
-            {
-                if (int.TryParse(q, out var n))
-                    query = query.Where(x => x.ID_SOLICITUD == n || x.ID_VENTA == n || x.ID_CLIENTE == n);
-                else
-                    query = query.Where(x => (x.CLIENTES.NOMBRE ?? "").Contains(q) || (x.PRODUCTOS.NOMBRE ?? "").Contains(q));
-            }
+            int idFiltro = 0;
+            bool esNumero = !string.IsNullOrWhiteSpace(q) && int.TryParse(q, out idFiltro);
+
+            if (esNumero)
+                query = query.Where(x => x.ID_SOLICITUD == idFiltro || x.ID_VENTA == idFiltro || x.ID_CLIENTE == idFiltro);
 
             if (!string.IsNullOrWhiteSpace(estado))
                 query = query.Where(x => x.ESTADO == estado);
@@ -57,6 +56,11 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                              IdTecnico = s.ID_TECNICO,
                              Tecnico = (u == null ? null : u.NOMBRE)
                          }).ToList();
+
+            if (!string.IsNullOrWhiteSpace(q) && !esNumero)
+            {
+                lista = lista.Where(x => TextHelper.Contiene(x.Cliente, q) || TextHelper.Contiene(x.Producto, q)).ToList();
+            }
 
             var total = lista.Count;
             var skip = (Math.Max(page, 1) - 1) * pageSize;

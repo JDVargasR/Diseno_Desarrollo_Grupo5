@@ -243,6 +243,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\PermisosHelper.cs" />
+    <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Models\CategoriaCrudVM.cs" />
     <Compile Include="Models\ClienteCrudVM.cs" />
     <Compile Include="Models\DevolucionesVM.cs" />
@@ -338,7 +339,6 @@
     <Content Include="StaticFiles\img\AlphaStockLogo.png" />
     <Content Include="StaticFiles\js\alphastock-ui.js" />
     <Content Include="StaticFiles\js\Autenticacion.js" />
-    <Content Include="StaticFiles\js\Confirmaciones.js" />
     <Content Include="StaticFiles\js\customScrollReveal.js" />
     <Content Include="StaticFiles\js\Index.js" />
     <Content Include="StaticFiles\js\jquery-1.11.2.min.js" />

@@ -167,7 +167,14 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Teléfono</label>
-                        <input class="form-control" name="TELEFONO" required />
+                        <input class="form-control" name="TELEFONO"
+                               type="tel"
+                               maxlength="8"
+                               placeholder="Ej: 88887777"
+                               inputmode="numeric"
+                               pattern="[0-9]{8}"
+                               required />
+                        <small class="text-muted">Solo números, exactamente 8 dígitos.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -203,7 +210,14 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Teléfono</label>
-                        <input class="form-control" name="TELEFONO" id="edit_TELEFONO" required />
+                        <input class="form-control" name="TELEFONO" id="edit_TELEFONO"
+                               type="tel"
+                               maxlength="8"
+                               placeholder="Ej: 88887777"
+                               inputmode="numeric"
+                               pattern="[0-9]{8}"
+                               required />
+                        <small class="text-muted">Solo números, exactamente 8 dígitos.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
