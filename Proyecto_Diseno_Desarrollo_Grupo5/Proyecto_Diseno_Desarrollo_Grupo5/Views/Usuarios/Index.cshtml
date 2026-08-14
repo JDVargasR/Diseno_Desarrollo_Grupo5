@@ -106,21 +106,23 @@
                                     </td>
 
                                     <td class="text-end">
-                                        <button class="btn btn-outline-primary btn-sm me-1 btnEditar"
-                                                title="Editar"
-                                                data-id="@u.IdUsuario"
-                                                data-nombre="@u.Nombre"
-                                                data-correo="@u.Correo"
-                                                data-rol="@u.IdRol">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
+                                        <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                            <button class="btn btn-outline-primary btn-sm btnEditar"
+                                                    title="Editar"
+                                                    data-id="@u.IdUsuario"
+                                                    data-nombre="@u.Nombre"
+                                                    data-correo="@u.Correo"
+                                                    data-rol="@u.IdRol">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
 
-                                        <button class="btn btn-outline-danger btn-sm btnToggle"
-                                                title="@(esActivo ? "Inactivar" : "Activar")"
-                                                data-id="@u.IdUsuario"
-                                                data-estado="@(esActivo ? 1 : 2)">
-                                            <i class="bi @(esActivo ? "bi-person-x" : "bi-person-check")"></i>
-                                        </button>
+                                            <button class="btn btn-outline-danger btn-sm btnToggle"
+                                                    title="@(esActivo ? "Inactivar" : "Activar")"
+                                                    data-id="@u.IdUsuario"
+                                                    data-estado="@(esActivo ? 1 : 2)">
+                                                <i class="bi @(esActivo ? "bi-person-x" : "bi-person-check")"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             }

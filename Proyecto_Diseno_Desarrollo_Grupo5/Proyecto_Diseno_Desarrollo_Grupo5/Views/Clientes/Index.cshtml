@@ -38,7 +38,7 @@
                     <div class="col-md-9">
                         <label class="form-label" style="font-weight:600;">Buscar</label>
                         <input type="text" name="q" value="@Model.Q"
-                               class="form-control" placeholder="Nombre, Telefono o Correo"
+                               class="form-control" placeholder="Nombre o Correo"
                                maxlength="100" />
                     </div>
                     <div class="col-md-3">
@@ -95,36 +95,38 @@
                             </td>
 
                             <td class="text-end" style="width:100px;">
-                                <button class="btn btn-outline-primary btn-sm me-1"
-                                        title="Editar"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalEditar"
-                                        onclick="cargarClienteEditar('@c.ID_CLIENTE',
+                                <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                    <button class="btn btn-outline-primary btn-sm"
+                                            title="Editar"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEditar"
+                                            onclick="cargarClienteEditar('@c.ID_CLIENTE',
               '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(c.NOMBRE ?? ""))',
               '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(c.TELEFONO ?? ""))',
               '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(c.CORREO ?? ""))',
               '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(c.DIRECCION ?? ""))',
               '@c.ID_ESTADO')">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-
-                                @using (Html.BeginForm("ToggleEstado", "Clientes", FormMethod.Post, new { style = "display:inline;" }))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@c.ID_CLIENTE" />
-                                    <input type="hidden" name="q" value="@Model.Q" />
-                                    <input type="hidden" name="sortOrder" value="@Request["sortOrder"]" />
-                                    <input type="hidden" name="page" value="@Model.Page" />
-
-                                    var esActivo = (c.ID_ESTADO == 1);
-                                    <input type="hidden" name="accionBitacora" value="@(esActivo ? "DESACTIVAR" : "ACTIVAR")" />
-
-                                    <button type="submit"
-                                            class="btn btn-outline-danger btn-sm"
-                                            title="@(esActivo ? "Inactivar" : "Activar")">
-                                        <i class="bi @(esActivo ? "bi-person-x" : "bi-person-check")"></i>
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
-                                }
+
+                                    @using (Html.BeginForm("ToggleEstado", "Clientes", FormMethod.Post, new { style = "display:inline;" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@c.ID_CLIENTE" />
+                                        <input type="hidden" name="q" value="@Model.Q" />
+                                        <input type="hidden" name="sortOrder" value="@Request["sortOrder"]" />
+                                        <input type="hidden" name="page" value="@Model.Page" />
+
+                                        var esActivo = (c.ID_ESTADO == 1);
+                                        <input type="hidden" name="accionBitacora" value="@(esActivo ? "DESACTIVAR" : "ACTIVAR")" />
+
+                                        <button type="submit"
+                                                class="btn btn-outline-danger btn-sm"
+                                                title="@(esActivo ? "Inactivar" : "Activar")">
+                                            <i class="bi @(esActivo ? "bi-person-x" : "bi-person-check")"></i>
+                                        </button>
+                                    }
+                                </div>
                             </td>
                         </tr>
                     }

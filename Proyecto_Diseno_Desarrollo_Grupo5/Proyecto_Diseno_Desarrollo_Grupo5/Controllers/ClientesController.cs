@@ -26,8 +26,7 @@ namespace Proyecto_Diseno_Desarrollo_Grupo5.Controllers
                     clientesQuery = clientesQuery.Where(c => c.ID_CLIENTE == idBuscado);
                 else
                     clientesQuery = clientesQuery.Where(c => c.NOMBRE.Contains(q)
-                                                          || c.CORREO.Contains(q)
-                                                          || c.TELEFONO.Contains(q));
+                                                          || c.CORREO.Contains(q));
             }
 
             switch (sortOrder)

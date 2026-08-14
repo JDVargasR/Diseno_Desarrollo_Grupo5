@@ -36,7 +36,7 @@
                 <input id="busquedaVentas"
                        class="form-control"
                        type="text"
-                       placeholder="Buscar cliente, fecha, total, estado..." />
+                       placeholder="Buscar cliente, fecha, estado..." />
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
                         <tr>
                             <td>@v.Cliente</td>
                             <td>@v.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>₡@v.Total.ToString("N2")</td>
+                            <td class="no-search">₡@v.Total.ToString("N2")</td>
                             <td>₡@v.Pagado.ToString("N2")</td>
                             <td>₡@v.Saldo.ToString("N2")</td>
                             <td>
@@ -259,7 +259,11 @@
                 const filtro = input.value.toLowerCase().trim();
 
                 filas.forEach(function (fila) {
-                    const textoFila = fila.innerText.toLowerCase();
+                    const textoFila = Array.from(fila.querySelectorAll("td"))
+                        .filter(function (td) { return !td.classList.contains("no-search"); })
+                        .map(function (td) { return td.innerText; })
+                        .join(" ")
+                        .toLowerCase();
 
                     if (textoFila.includes(filtro)) {
                         fila.style.display = "";
