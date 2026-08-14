@@ -1,6 +1,6 @@
 @model System.Collections.Generic.List<Proyecto_Diseno_Desarrollo_Grupo5.Models.Garantias.SolicitudGarantiaFilaVM>
 @{
-    ViewBag.Title = "Garantías";
+    ViewBag.Title = "GarantÃ­as";
 
     var q = (ViewBag.Q ?? "").ToString();
     var estado = (ViewBag.Estado ?? "").ToString();
@@ -22,8 +22,8 @@
 
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
-            <h2 class="page-title">Garantías</h2>
-            <div class="page-subtitle">Solicitudes, evaluación y cierre</div>
+            <h2 class="page-title">GarantÃ­as</h2>
+            <div class="page-subtitle">Solicitudes, evaluaciÃ³n y cierre</div>
         </div>
 
         <a class="btn btn-primary" href="@Url.Action("Create","Garantias")">+ Nueva solicitud</a>
@@ -144,7 +144,7 @@
             int end = Math.Min(total, current + 2);
         }
 
-        <nav aria-label="Paginación" class="mt-3">
+        <nav aria-label="PaginaciÃ³n" class="mt-3">
             <ul class="pagination">
                 <li class="page-item @(current == 1 ? "disabled" : "")">
                     <a class="page-link" href="@Url.Action("Index", new { q = q, estado = estado, desde = desde, hasta = hasta, page = current - 1 })">Anterior</a>

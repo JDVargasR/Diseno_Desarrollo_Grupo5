@@ -1,6 +1,6 @@
 @model Proyecto_Diseno_Desarrollo_Grupo5.Models.Garantias.SolicitudGarantiaEvaluarVM
 @{
-    ViewBag.Title = "Evaluar garantÌa";
+    ViewBag.Title = "Evaluar garant√≠a";
 }
 
 @section styles{
@@ -12,7 +12,7 @@
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
             <h2 class="page-title">Evaluar solicitud</h2>
-            <div class="page-subtitle">TÈcnico: resultado y observaciones</div>
+            <div class="page-subtitle">T√©cnico: resultado y observaciones</div>
         </div>
         <a class="btn btn-outline-secondary" href="@Url.Action("Index","Garantias")">Volver</a>
     </div>
@@ -41,12 +41,12 @@
 
                 <div class="col-12">
                     <label class="form-label" style="font-weight:700;">Observaciones</label>
-                    @Html.TextAreaFor(m => m.ObservacionesTecnicas, 4, 40, new { @class = "form-control", placeholder = "Detalle tÈcnico / justificaciÛn..." })
+                    @Html.TextAreaFor(m => m.ObservacionesTecnicas, 4, 40, new { @class = "form-control", placeholder = "Detalle t√©cnico / justificaci√≥n..." })
                 </div>
 
                 <div class="col-12 d-flex justify-content-end gap-2">
                     <a class="btn btn-light" href="@Url.Action("Index","Garantias")">Cancelar</a>
-                    <button class="btn btn-primary btn-primary-pill" type="submit">Guardar evaluaciÛn</button>
+                    <button class="btn btn-primary btn-primary-pill" type="submit">Guardar evaluaci√≥n</button>
                 </div>
             </div>
         }

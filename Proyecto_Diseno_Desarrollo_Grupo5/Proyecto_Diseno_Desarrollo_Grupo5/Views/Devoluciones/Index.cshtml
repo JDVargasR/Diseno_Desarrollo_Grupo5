@@ -29,11 +29,11 @@
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
             <h2 class="page-title">Devoluciones</h2>
-            <div class="page-subtitle">Registro, aprobación y control de inventario</div>
+            <div class="page-subtitle">Registro, aprobaciÃ³n y control de inventario</div>
         </div>
         <div class="d-flex gap-2">
             <a class="btn btn-outline-dark" href="@Url.Action("Reporte","Devoluciones")">Reporte mensual</a>
-            <a class="btn btn-primary" href="@Url.Action("Create","Devoluciones")">+ Nueva devolución</a>
+            <a class="btn btn-primary" href="@Url.Action("Create","Devoluciones")">+ Nueva devoluciÃ³n</a>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
         <div class="row g-2 align-items-end">
             <div class="col-12 col-md-4">
                 <label class="form-label" style="font-weight:600;">Buscar</label>
-                <input class="form-control" name="q" value="@q" placeholder="#Devolución, factura, producto o motivo" />
+                <input class="form-control" name="q" value="@q" placeholder="#DevoluciÃ³n, factura, producto o motivo" />
             </div>
             <div class="col-12 col-md-3">
                 <label class="form-label" style="font-weight:600;">Estado</label>
@@ -105,7 +105,7 @@
                         <th>Cantidad</th>
                         <th>Persona que devuelve</th>
                         <th>Estado</th>
-                        <th>Condición</th>
+                        <th>CondiciÃ³n</th>
                         <th>Motivo</th>
                         <th>Fecha</th>
                         <th style="width:280px; text-align:right;">Acciones</th>
@@ -137,14 +137,14 @@
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@d.IdDevolucion" />
                                                 <input type="hidden" name="decision" value="APROBAR" />
-                                                <button class="btn btn-outline-success btn-sm" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: '¿Aprobar esta devolución?', texto: 'Quedará lista para procesar su condición (buen estado o dañada), lo cual afectará el inventario.', afectaInventario: true, icono: 'question' });">Aprobar</button>
+                                                <button class="btn btn-outline-success btn-sm" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: 'Â¿Aprobar esta devoluciÃ³n?', texto: 'QuedarÃ¡ lista para procesar su condiciÃ³n (buen estado o daÃ±ada), lo cual afectarÃ¡ el inventario.', afectaInventario: true, icono: 'question' });">Aprobar</button>
                                             </form>
 
                                             <form method="post" action="@Url.Action("Resolver","Devoluciones")" class="d-inline">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@d.IdDevolucion" />
                                                 <input type="hidden" name="decision" value="RECHAZAR" />
-                                                <button class="btn btn-outline-danger btn-sm" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: '¿Rechazar esta devolución?', texto: 'No se realizarán cambios en el inventario.', afectaInventario: false, icono: 'warning' });">Rechazar</button>
+                                                <button class="btn btn-outline-danger btn-sm" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: 'Â¿Rechazar esta devoluciÃ³n?', texto: 'No se realizarÃ¡n cambios en el inventario.', afectaInventario: false, icono: 'warning' });">Rechazar</button>
                                             </form>
                                         </div>
                                     }
@@ -155,14 +155,14 @@
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@d.IdDevolucion" />
                                                 <input type="hidden" name="condicion" value="BUENO" />
-                                                <button class="btn btn-outline-primary btn-sm" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: '¿Marcar como buen estado?', texto: 'El producto se reintegrará al stock disponible.', afectaInventario: true, icono: 'question' });">Buen estado</button>
+                                                <button class="btn btn-outline-primary btn-sm" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: 'Â¿Marcar como buen estado?', texto: 'El producto se reintegrarÃ¡ al stock disponible.', afectaInventario: true, icono: 'question' });">Buen estado</button>
                                             </form>
 
                                             <form method="post" action="@Url.Action("ProcesarInventario","Devoluciones")" class="d-inline">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@d.IdDevolucion" />
                                                 <input type="hidden" name="condicion" value="DANADO" />
-                                                <button class="btn btn-outline-warning btn-sm" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: '¿Marcar como dañado?', texto: 'El producto se registrará como pérdida controlada y NO se reintegrará al stock.', afectaInventario: true, icono: 'warning' });">Dañado</button>
+                                                <button class="btn btn-outline-warning btn-sm" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: 'Â¿Marcar como daÃ±ado?', texto: 'El producto se registrarÃ¡ como pÃ©rdida controlada y NO se reintegrarÃ¡ al stock.', afectaInventario: true, icono: 'warning' });">DaÃ±ado</button>
                                             </form>
                                         </div>
                                     }

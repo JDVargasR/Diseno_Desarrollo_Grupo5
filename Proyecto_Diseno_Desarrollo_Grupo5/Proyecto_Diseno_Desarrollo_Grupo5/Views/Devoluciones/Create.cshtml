@@ -1,6 +1,6 @@
 @model Proyecto_Diseno_Desarrollo_Grupo5.Models.DevolucionCrearVM
 @{
-    ViewBag.Title = "Registrar devoluciÛn";
+    ViewBag.Title = "Registrar devoluci√≥n";
 }
 
 @section styles{
@@ -10,8 +10,8 @@
 <div class="container" style="max-width:900px; padding-top:30px;">
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
-            <h2 class="page-title">Nueva devoluciÛn</h2>
-            <div class="page-subtitle">Registrar devoluciÛn de un producto vendido</div>
+            <h2 class="page-title">Nueva devoluci√≥n</h2>
+            <div class="page-subtitle">Registrar devoluci√≥n de un producto vendido</div>
         </div>
         <a class="btn btn-outline-dark" href="@Url.Action("Index","Devoluciones")">Volver</a>
     </div>
@@ -44,7 +44,7 @@
             </div>
 
             <div class="col-md-4">
-                <label class="form-label" style="font-weight:700;">PolÌtica (dÌas)</label>
+                <label class="form-label" style="font-weight:700;">Pol√≠tica (d√≠as)</label>
                 @Html.TextBoxFor(x => x.PoliticaDias, new { @class = "form-control", type = "number", min = "1", max = "365", required = "required" })
             </div>
 
@@ -54,18 +54,18 @@
             </div>
 
             <div class="col-md-6">
-                <label class="form-label" style="font-weight:700;">Fecha de devoluciÛn</label>
+                <label class="form-label" style="font-weight:700;">Fecha de devoluci√≥n</label>
                 @Html.TextBoxFor(x => x.FechaDevolucion, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
             </div>
 
             <div class="col-12">
                 <label class="form-label" style="font-weight:700;">Motivo</label>
-                @Html.TextAreaFor(x => x.Motivo, new { @class = "form-control", rows = 4, maxlength = "300", required = "required", placeholder = "Describe el motivo de la devoluciÛn" })
+                @Html.TextAreaFor(x => x.Motivo, new { @class = "form-control", rows = 4, maxlength = "300", required = "required", placeholder = "Describe el motivo de la devoluci√≥n" })
             </div>
 
             <div class="col-12 d-flex justify-content-end gap-2 mt-2">
                 <a href="@Url.Action("Index","Devoluciones")" class="btn btn-light">Cancelar</a>
-                <button type="submit" class="btn btn-primary btn-primary-pill" onclick="return AlphaConfirm.antes(event, { titulo: 'øRegistrar esta devoluciÛn?', texto: 'Quedar· pendiente de aprobaciÛn y podr· afectar el inventario seg˙n el estado del producto.', afectaInventario: true, icono: 'question' });">Guardar devoluciÛn</button>
+                <button type="submit" class="btn btn-primary btn-primary-pill" onclick="return AlphaConfirm.antes(event, { titulo: '¬øRegistrar esta devoluci√≥n?', texto: 'Quedar√° pendiente de aprobaci√≥n y podr√° afectar el inventario seg√°n el estado del producto.', afectaInventario: true, icono: 'question' });">Guardar devoluci√≥n</button>
             </div>
         </div>
     }
@@ -168,9 +168,9 @@
                 if (!venta.value || !producto.value || valorCantidad <= 0 || (max > 0 && valorCantidad > max)) {
                     e.preventDefault();
                     if (window.Swal) {
-                        Swal.fire('Datos inv·lidos', 'Revis· la factura, el producto y la cantidad disponible para devoluciÛn.', 'warning');
+                        Swal.fire('Datos inv√°lidos', 'Revis√° la factura, el producto y la cantidad disponible para devoluci√≥n.', 'warning');
                     } else {
-                        alert('Revis· la factura, el producto y la cantidad disponible para devoluciÛn.');
+                        alert('Revis√° la factura, el producto y la cantidad disponible para devoluci√≥n.');
                     }
                 }
             });

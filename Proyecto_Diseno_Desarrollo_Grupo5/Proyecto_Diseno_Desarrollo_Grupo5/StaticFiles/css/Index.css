@@ -485,6 +485,11 @@ main.page-content {
     border-top: 1px solid var(--border);
 }
 
+.card.bg-light {
+    background: rgba(32,37,52,.55) !important;
+    color: var(--text) !important;
+}
+
 .table {
     color: var(--text);
     --bs-table-bg: transparent;
@@ -544,6 +549,11 @@ thead.table-light th {
     font-size: 13px;
 }
 
+.form-select option {
+    background: var(--bg2);
+    color: var(--text);
+}
+
 .modal-content {
     background: rgba(32,37,52,.98);
     border: 1px solid var(--border);
@@ -556,6 +566,14 @@ thead.table-light th {
 
 .modal-footer {
     border-top: 1px solid var(--border);
+}
+
+.modal-body {
+    color: var(--text);
+}
+
+.modal-body .form-label {
+    color: var(--muted);
 }
 
 .btn-close {
@@ -640,6 +658,18 @@ thead.table-light th {
     color: var(--text);
 }
 
+.btn-light {
+    background: rgba(148,163,184,.12);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.btn-light:hover {
+    background: rgba(148,163,184,.20);
+    border-color: var(--muted);
+    color: var(--text);
+}
+
 .btn-success {
     background: var(--accent);
     border-color: var(--accent);
@@ -686,6 +716,33 @@ thead.table-light th {
     background: rgba(245,158,11,.12);
     border-color: rgba(245,158,11,.20);
     color: #fbbf24;
+}
+
+.alert-danger {
+    background: rgba(248,81,73,.12);
+    border-color: rgba(248,81,73,.20);
+    color: #ff7b73;
+}
+
+.alert-info {
+    background: rgba(56,189,248,.12);
+    border-color: rgba(56,189,248,.20);
+    color: #7dd3fc;
+}
+
+.badge.bg-warning {
+    background: rgba(245,158,11,.18) !important;
+    color: #fbbf24 !important;
+}
+
+.badge.bg-danger {
+    background: rgba(248,81,73,.18) !important;
+    color: #ff7b73 !important;
+}
+
+.badge.bg-info {
+    background: rgba(56,189,248,.18) !important;
+    color: #7dd3fc !important;
 }
 
 hr {
@@ -769,3 +826,47 @@ nav[aria-label="Paginación"] {
     margin-top: 18px !important;
     margin-bottom: 22px;
 }
+
+/* ====== Paneles/página estandar usados en las vistas CRUD (Ventas, Clientes, Proveedores, Materiales, Devoluciones, etc.) ====== */
+.page-title {
+    font-size: 28px;
+    font-weight: 900;
+    margin: 0;
+    color: var(--text);
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.page-section {
+    background: rgba(32,37,52,.55);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 14px 30px rgba(0,0,0,.14);
+}
+
+.cardx:not(.alert) {
+    background: rgba(32,37,52,.55);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(0,0,0,.14);
+    color: var(--text);
+}
+
+.alert.cardx {
+    border-radius: 16px;
+    border-width: 1px;
+}
+
+.table-wrap {
+    padding: 6px;
+    overflow-x: auto;
+}
+
+    .table-wrap .table {
+        margin-bottom: 0;
+    }

@@ -1,6 +1,6 @@
 @model Proyecto_Diseno_Desarrollo_Grupo5.Models.Garantias.SolicitudGarantiaCerrarVM
 @{
-    ViewBag.Title = "Cerrar garantía";
+    ViewBag.Title = "Cerrar garantÃ­a";
 }
 
 @section styles{
@@ -12,7 +12,7 @@
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
             <h2 class="page-title">Cerrar solicitud</h2>
-            <div class="page-subtitle">Administrador: marcar garantía como finalizada</div>
+            <div class="page-subtitle">Administrador: marcar garantÃ­a como finalizada</div>
         </div>
         <a class="btn btn-outline-secondary" href="@Url.Action("Index","Garantias")">Volver</a>
     </div>
@@ -40,13 +40,13 @@
                 </div>
 
                 <div class="col-12">
-                    <label class="form-label" style="font-weight:700;">Observación final (opcional)</label>
+                    <label class="form-label" style="font-weight:700;">ObservaciÃ³n final (opcional)</label>
                     @Html.TextAreaFor(m => m.ObservacionFinal, 3, 40, new { @class = "form-control", placeholder = "Notas de cierre..." })
                 </div>
 
                 <div class="col-12 d-flex justify-content-end gap-2">
                     <a class="btn btn-light" href="@Url.Action("Index","Garantias")">Cancelar</a>
-                    <button class="btn btn-primary btn-primary-pill" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: '¿Marcar la solicitud como FINALIZADA?', texto: 'Esta acción cerrará definitivamente la solicitud de garantía.', afectaInventario: false, icono: 'question' });">Finalizar</button>
+                    <button class="btn btn-primary btn-primary-pill" type="submit" onclick="return AlphaConfirm.antes(event, { titulo: 'Â¿Marcar la solicitud como FINALIZADA?', texto: 'Esta acciÃ³n cerrarÃ¡ definitivamente la solicitud de garantÃ­a.', afectaInventario: false, icono: 'question' });">Finalizar</button>
                 </div>
             </div>
         }

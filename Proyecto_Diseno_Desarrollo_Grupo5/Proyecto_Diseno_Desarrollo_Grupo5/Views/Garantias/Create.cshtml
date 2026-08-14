@@ -1,6 +1,6 @@
 @model Proyecto_Diseno_Desarrollo_Grupo5.Models.Garantias.SolicitudGarantiaCrearVM
 @{
-    ViewBag.Title = "Nueva solicitud de garantÌa";
+    ViewBag.Title = "Nueva solicitud de garant√≠a";
 }
 
 @section styles{
@@ -12,7 +12,7 @@
     <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
             <h2 class="page-title">Nueva solicitud</h2>
-            <div class="page-subtitle">Registro de solicitud de garantÌa</div>
+            <div class="page-subtitle">Registro de solicitud de garant√≠a</div>
         </div>
         <a class="btn btn-outline-secondary" href="@Url.Action("Index","Garantias")">Volver</a>
     </div>
@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="col-12">
-                    <label class="form-label" style="font-weight:700;">DescripciÛn de la falla</label>
+                    <label class="form-label" style="font-weight:700;">Descripci√≥n de la falla</label>
                     @Html.TextAreaFor(m => m.DescripcionFalla, 4, 40, new { @class = "form-control", required = "required", placeholder = "Describa el problema presentado..." })
                 </div>
 
@@ -130,9 +130,9 @@
                 if (!venta.value || !clienteHidden.value || !producto.value) {
                     e.preventDefault();
                     if (window.Swal) {
-                        Swal.fire('Datos incompletos', 'Seleccion· una venta y un producto v·lido.', 'warning');
+                        Swal.fire('Datos incompletos', 'Seleccion√° una venta y un producto v√°lido.', 'warning');
                     } else {
-                        alert('Seleccion· una venta y un producto v·lido.');
+                        alert('Seleccion√° una venta y un producto v√°lido.');
                     }
                 }
             });
